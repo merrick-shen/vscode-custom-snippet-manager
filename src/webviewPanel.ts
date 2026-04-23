@@ -2,6 +2,7 @@
  * 编辑器 Webview 面板
  * 负责创建和管理用于新建/编辑代码片段的独立面板
  * 通过 postMessage 与前端 Vue 应用进行双向通信
+ * 支持编辑器就绪检测，确保数据在 webview 完全加载后才发送
  */
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -53,6 +54,11 @@ export class WebviewPanel {
 
     // 面板关闭时释放资源
     this.panel.onDidDispose(() => this.dispose(), null, this.disposables);
+
+    // 面板状态变化时更新标题
+    this.panel.onDidChangeViewState(() => {
+      this.updateTitle();
+    }, null, this.disposables);
   }
 
   /**
@@ -60,6 +66,7 @@ export class WebviewPanel {
    * 如果面板已存在则复用，否则创建新面板
    * @param extensionUri 扩展资源路径
    * @param snippetService 片段数据服务
+   * @param context 扩展上下文
    * @param snippet 可选的片段数据，传入时进入编辑模式
    */
   public static createOrShow(
@@ -107,6 +114,15 @@ export class WebviewPanel {
     }
   }
 
+  /** 更新面板标题，反映当前编辑状态 */
+  private updateTitle(): void {
+    if (this.pendingSnippet) {
+      this.panel.title = `Edit: ${this.pendingSnippet.name}`;
+    } else {
+      this.panel.title = 'New Snippet';
+    }
+  }
+
   /**
    * 处理来自 webview 的消息
    * 根据消息类型执行对应的 CRUD 操作
@@ -115,7 +131,13 @@ export class WebviewPanel {
     switch (msg.type) {
       // 新建片段
       case 'createSnippet': {
-        const created = this.snippetService.create(msg.payload as Omit<SnippetData, 'id'>);
+        const data = msg.payload as Omit<SnippetData, 'id'>;
+        // 校验必填字段
+        if (!data.name?.trim() || !data.prefix?.trim() || !data.body?.trim()) {
+          this.postToWebview('error', 'Missing required fields');
+          return;
+        }
+        const created = this.snippetService.create(data);
         this.postToWebview('snippetCreated', created);
         // 通知侧边栏刷新列表
         vscode.commands.executeCommand('custom-snippet-manager.refreshSidebar');
@@ -126,9 +148,18 @@ export class WebviewPanel {
       case 'updateSnippet': {
         const payload = msg.payload as { id: string } & Omit<SnippetData, 'id'>;
         const { id, ...data } = payload;
+        // 校验必填字段
+        if (!id || !data.name?.trim() || !data.prefix?.trim() || !data.body?.trim()) {
+          this.postToWebview('error', 'Missing required fields');
+          return;
+        }
         const updated = this.snippetService.update(id, data);
-        this.postToWebview('snippetUpdated', updated);
-        vscode.commands.executeCommand('custom-snippet-manager.refreshSidebar');
+        if (updated) {
+          this.postToWebview('snippetUpdated', updated);
+          vscode.commands.executeCommand('custom-snippet-manager.refreshSidebar');
+        } else {
+          this.postToWebview('error', 'Snippet not found');
+        }
         break;
       }
 
@@ -155,6 +186,7 @@ export class WebviewPanel {
   /**
    * 生成 webview 的 HTML 内容
    * 读取构建产物 index.html，注入视图模式标识、CSP 策略，并替换资源路径
+   * 所有资源路径必须使用 asWebviewUri 处理，确保 webview 安全策略下可访问
    */
   private getWebviewHtml(webview: vscode.Webview): string {
     const distUri = vscode.Uri.joinPath(this.extensionUri, 'webview', 'dist');
@@ -168,9 +200,13 @@ export class WebviewPanel {
 
     let html = fs.readFileSync(htmlPath, 'utf-8');
 
-    // 注入视图模式、语言偏好和 VS Code API，前端根据此值决定渲染侧边栏还是编辑器
+    // 注入视图模式、语言偏好和 VS Code API
+    // 前端根据 __VIEW_MODE 决定渲染侧边栏还是编辑器
     const locale = this.context.globalState.get<string>('locale', 'zh');
-    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'editor'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`);
+    html = html.replace(
+      '<head>',
+      `<head><script>window.__VIEW_MODE = 'editor'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`
+    );
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
     html = html.replace(

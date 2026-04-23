@@ -7,7 +7,13 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { SnippetService } from './snippetService';
+import { SnippetService, SnippetData } from './snippetService';
+
+/** Webview 消息格式 */
+interface WebviewMessage {
+  type: string;
+  payload?: unknown;
+}
 
 export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   /** 视图标识，需与 package.json 中的 views.id 一致 */
@@ -60,35 +66,53 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.html = this.getWebviewHtml(webviewView.webview);
 
     // 监听来自侧边栏 webview 的消息
-    webviewView.webview.onDidReceiveMessage((msg: { type: string; payload?: unknown }) => {
-      switch (msg.type) {
-        // 前端请求获取片段列表
-        case 'getSnippets':
-          this.postToView('snippetsList', this.snippetService.getAll());
-          break;
-
-        // 前端请求打开编辑器（新建或编辑片段）
-        case 'openEditor':
-          vscode.commands.executeCommand('custom-snippet-manager.openEditor', msg.payload);
-          break;
-
-        // 前端请求删除片段
-        case 'deleteSnippet': {
-          const { id } = msg.payload as { id: string };
-          this.snippetService.delete(id);
-          // 删除后刷新列表
-          this.postToView('snippetsList', this.snippetService.getAll());
-          break;
-        }
-
-        // 前端切换语言，持久化保存到 globalState
-        case 'changeLocale': {
-          const locale = msg.payload as string;
-          this.setLocale(locale);
-          break;
-        }
-      }
+    webviewView.webview.onDidReceiveMessage((msg: WebviewMessage) => {
+      this.handleMessage(msg);
     });
+  }
+
+  /**
+   * 处理来自 webview 的消息
+   * 统一消息分发入口，根据类型执行对应操作
+   */
+  private handleMessage(msg: WebviewMessage): void {
+    switch (msg.type) {
+      // 前端请求获取片段列表
+      case 'getSnippets':
+        this.postToView('snippetsList', this.snippetService.getAll());
+        break;
+
+      // 前端请求打开编辑器（新建或编辑片段）
+      case 'openEditor':
+        vscode.commands.executeCommand('custom-snippet-manager.openEditor', msg.payload);
+        break;
+
+      // 前端请求删除片段
+      case 'deleteSnippet': {
+        const { id } = msg.payload as { id: string };
+        if (!id) {
+          this.postToView('error', 'Invalid snippet ID');
+          return;
+        }
+        const success = this.snippetService.delete(id);
+        if (success) {
+          // 删除成功后刷新列表
+          this.postToView('snippetsList', this.snippetService.getAll());
+        } else {
+          this.postToView('error', 'Snippet not found');
+        }
+        break;
+      }
+
+      // 前端切换语言，持久化保存到 globalState
+      case 'changeLocale': {
+        const locale = msg.payload as string;
+        if (locale === 'zh' || locale === 'en') {
+          this.setLocale(locale);
+        }
+        break;
+      }
+    }
   }
 
   /** 刷新侧边栏列表，由编辑器面板保存/删除片段后调用 */
@@ -107,6 +131,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
    * 生成侧边栏 webview 的 HTML 内容
    * 与编辑器面板共享同一套 Vue 构建产物，通过 __VIEW_MODE 区分渲染
    * 注入 __LOCALE 确保语言偏好与编辑器面板同步
+   * 所有资源路径必须使用 asWebviewUri 处理
    */
   private getWebviewHtml(webview: vscode.Webview): string {
     const distUri = vscode.Uri.joinPath(this.extensionUri, 'webview', 'dist');
@@ -121,7 +146,10 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
     // 注入视图模式、语言偏好和 VS Code API
     const locale = this.getLocale();
-    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`);
+    html = html.replace(
+      '<head>',
+      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`
+    );
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
     html = html.replace(

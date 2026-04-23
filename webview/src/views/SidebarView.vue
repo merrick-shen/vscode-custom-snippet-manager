@@ -25,6 +25,10 @@ const searchQuery = ref('')
 const languageFilter = ref('*')
 // 当前待删除的片段，用于弹窗确认
 const deletingSnippet = ref<Snippet | null>(null)
+// 错误提示信息
+const errorMessage = ref('')
+// 错误提示自动隐藏定时器
+let errorTimer: ReturnType<typeof setTimeout> | null = null
 
 // 语言下拉选项，动态生成以支持 i18n，包含图标信息
 const languageOptions = computed(() => [
@@ -116,9 +120,35 @@ function toggleLocale() {
   postToExt('changeLocale', locale.value)
 }
 
+/** 显示错误提示，3 秒后自动隐藏 */
+function showError(msg: string) {
+  errorMessage.value = msg
+  if (errorTimer) {
+    clearTimeout(errorTimer)
+  }
+  errorTimer = setTimeout(() => {
+    errorMessage.value = ''
+    errorTimer = null
+  }, 3000)
+}
+
+/** 清除错误提示 */
+function clearError() {
+  errorMessage.value = ''
+  if (errorTimer) {
+    clearTimeout(errorTimer)
+    errorTimer = null
+  }
+}
+
 // 监听后端返回的片段列表数据（包括删除后自动刷新）
 onExtMessage('snippetsList', (payload) => {
   snippets.value = payload as Snippet[]
+})
+
+// 监听后端返回的错误消息
+onExtMessage('error', (payload) => {
+  showError(payload as string)
 })
 
 // 组件挂载时请求片段列表
@@ -129,6 +159,16 @@ onMounted(() => {
 
 <template>
   <div class="sidebar-view">
+    <!-- 错误提示条 -->
+    <transition name="slide-fade">
+      <div v-if="errorMessage" class="error-bar">
+        <span class="error-text">{{ errorMessage }}</span>
+        <button class="error-close" @click="clearError">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </transition>
+
     <!-- 顶部标题栏：图标 + 标题 + 语言切换 -->
     <div class="sidebar-header">
       <div class="header-content">
@@ -266,6 +306,65 @@ onMounted(() => {
   height: 100vh;
   overflow: hidden;
   position: relative;
+}
+
+/* ===== 错误提示条 ===== */
+.error-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background: rgba(244, 135, 113, 0.15);
+  border-bottom: 1px solid rgba(244, 135, 113, 0.3);
+  color: var(--vscode-errorForeground, #f48771);
+  font-size: 12px;
+}
+
+.error-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.error-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--vscode-errorForeground, #f48771);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.error-close:hover {
+  background: rgba(244, 135, 113, 0.2);
+}
+
+/* 错误提示动画 */
+.slide-fade-enter-active {
+  transition: all 0.2s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.15s ease-in;
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-4px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-2px);
+  opacity: 0;
 }
 
 /* ===== 顶部标题栏 ===== */

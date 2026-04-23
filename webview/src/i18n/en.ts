@@ -52,4 +52,7 @@ export default {
   lang: {
     switchTo: '中文',
   },
+  error: {
+    generic: 'Operation failed, please try again',
+  },
 }

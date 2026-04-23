@@ -34,9 +34,63 @@
     "commands": [
       {
         "command": "custom-snippet-manager.openEditor",
-        "title": "New Snippet"
+        "title": "New Snippet",
+        "icon": "$(add)"
+      },
+      {
+        "command": "custom-snippet-manager.openSnippetLibrary",
+        "title": "Open Snippet Library"
+      },
+      {
+        "command": "custom-snippet-manager.insertSnippet",
+        "title": "Insert Snippet"
+      },
+      {
+        "command": "custom-snippet-manager.triggerCompletion",
+        "title": "Trigger Snippet Completion"
       }
-    ]
+    ],
+    "keybindings": [
+      {
+        "command": "custom-snippet-manager.insertSnippet",
+        "key": "ctrl+alt+i",
+        "mac": "cmd+alt+i",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "custom-snippet-manager.triggerCompletion",
+        "key": "ctrl+alt+space",
+        "mac": "cmd+alt+space",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "custom-snippet-manager.insertSnippet",
+          "when": "editorTextFocus",
+          "group": "snippet@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "custom-snippet-manager.openEditor",
+          "when": "true"
+        },
+        {
+          "command": "custom-snippet-manager.openSnippetLibrary",
+          "when": "true"
+        },
+        {
+          "command": "custom-snippet-manager.insertSnippet",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "custom-snippet-manager.triggerCompletion",
+          "when": "editorTextFocus"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

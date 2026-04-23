@@ -2,6 +2,7 @@
  * 片段数据服务
  * 负责代码片段的持久化存储和 CRUD 操作
  * 数据存储在 VS Code 全局存储目录下的 snippets.json 文件中
+ * 支持数据变更事件通知，便于补全提供者等模块响应数据变化
  */
 import * as vscode from 'vscode';
 import * as fs from 'fs';
@@ -9,13 +10,25 @@ import * as path from 'path';
 
 /** 片段数据结构 */
 export interface SnippetData {
+  /** 唯一标识符 */
   id: string;
+  /** 片段名称 */
   name: string;
+  /** 触发前缀，输入此值触发补全 */
   prefix: string;
+  /** 代码片段内容 */
   body: string;
+  /** 片段描述 */
   description: string;
+  /** 适用语言，'*' 表示所有语言 */
   language: string;
 }
+
+/** 数据变更事件类型 */
+export type SnippetChangeType = 'create' | 'update' | 'delete';
+
+/** 数据变更事件回调函数类型 */
+export type SnippetChangeHandler = (type: SnippetChangeType, snippet: SnippetData) => void;
 
 export class SnippetService {
   /** VS Code 全局存储 URI */
@@ -24,6 +37,8 @@ export class SnippetService {
   private readonly filePath: string;
   /** 内存中的片段数据缓存 */
   private snippets: SnippetData[] = [];
+  /** 数据变更事件处理器列表 */
+  private changeHandlers: SnippetChangeHandler[] = [];
 
   constructor(context: vscode.ExtensionContext) {
     this.storageUri = context.globalStorageUri;
@@ -47,6 +62,7 @@ export class SnippetService {
         const raw = fs.readFileSync(this.filePath, 'utf-8');
         this.snippets = JSON.parse(raw) as SnippetData[];
       } catch {
+        // 文件损坏时重置为空数组，避免阻塞整个扩展
         this.snippets = [];
       }
     } else {
@@ -59,9 +75,58 @@ export class SnippetService {
     fs.writeFileSync(this.filePath, JSON.stringify(this.snippets, null, 2), 'utf-8');
   }
 
+  /**
+   * 注册数据变更事件处理器
+   * 当片段被创建、更新或删除时，所有注册的处理器都会被调用
+   * @param handler 变更事件回调函数
+   * @returns 取消注册的函数
+   */
+  public onChange(handler: SnippetChangeHandler): () => void {
+    this.changeHandlers.push(handler);
+    // 返回取消注册的函数，方便调用者管理生命周期
+    return () => {
+      this.changeHandlers = this.changeHandlers.filter((h) => h !== handler);
+    };
+  }
+
+  /**
+   * 通知所有变更事件处理器
+   * @param type 变更类型
+   * @param snippet 变更的片段数据
+   */
+  private notifyChange(type: SnippetChangeType, snippet: SnippetData): void {
+    this.changeHandlers.forEach((handler) => {
+      try {
+        handler(type, snippet);
+      } catch {
+        // 处理器异常不影响其他处理器和主流程
+      }
+    });
+  }
+
   /** 获取所有片段的浅拷贝 */
   getAll(): SnippetData[] {
     return [...this.snippets];
+  }
+
+  /**
+   * 根据 ID 获取单个片段
+   * @param id 片段唯一标识符
+   * @returns 片段数据，未找到时返回 undefined
+   */
+  getById(id: string): SnippetData | undefined {
+    return this.snippets.find((s) => s.id === id);
+  }
+
+  /**
+   * 根据语言筛选片段
+   * @param language 语言标识符，'*' 返回所有片段
+   */
+  getByLanguage(language: string): SnippetData[] {
+    if (language === '*') {
+      return this.getAll();
+    }
+    return this.snippets.filter((s) => s.language === language || s.language === '*');
   }
 
   /** 创建新片段，自动生成唯一 ID 并持久化 */
@@ -72,6 +137,7 @@ export class SnippetService {
     };
     this.snippets.push(snippet);
     this.save();
+    this.notifyChange('create', snippet);
     return snippet;
   }
 
@@ -83,6 +149,7 @@ export class SnippetService {
     }
     this.snippets[idx] = { id, ...data };
     this.save();
+    this.notifyChange('update', this.snippets[idx]);
     return this.snippets[idx];
   }
 
@@ -92,8 +159,10 @@ export class SnippetService {
     if (idx === -1) {
       return false;
     }
+    const deleted = this.snippets[idx];
     this.snippets.splice(idx, 1);
     this.save();
+    this.notifyChange('delete', deleted);
     return true;
   }
 

@@ -30,6 +30,8 @@ const saving = ref(false)
 const isEditing = ref(false)
 // 校验错误信息
 const errors = ref<Record<string, string>>({})
+// 后端返回的错误提示
+const serverError = ref('')
 
 // 语言下拉选项，包含图标信息
 const languageOptions = SUPPORTED_LANGUAGES.map((l) => ({
@@ -86,6 +88,7 @@ function clearError(field: string) {
 function handleSave() {
   if (!validate()) return
   saving.value = true
+  serverError.value = ''
   if (editingSnippet.value) {
     // 编辑模式：发送更新消息
     postToExt('updateSnippet', { id: editingSnippet.value.id, ...form.value })
@@ -115,6 +118,12 @@ onExtMessage('snippetCreated', () => {
 // 更新成功后关闭面板
 onExtMessage('snippetUpdated', () => {
   handleClose()
+})
+
+// 监听后端返回的错误消息
+onExtMessage('error', (payload) => {
+  serverError.value = payload as string
+  saving.value = false
 })
 
 // 组件挂载时通知后端编辑器已就绪
@@ -235,14 +244,20 @@ onMounted(() => {
 
     <!-- 底部操作栏 -->
     <div class="editor-footer">
-      <button class="btn btn-secondary" @click="handleClose">
-        {{ t('form.cancel') }}
-      </button>
-      <button class="btn btn-primary" :disabled="saving" @click="handleSave">
-        <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span v-else class="spinner"></span>
-        {{ t('form.save') }}
-      </button>
+      <!-- 服务器错误提示 -->
+      <transition name="slide-fade">
+        <span v-if="serverError" class="server-error">{{ serverError }}</span>
+      </transition>
+      <div class="footer-actions">
+        <button class="btn btn-secondary" @click="handleClose">
+          {{ t('form.cancel') }}
+        </button>
+        <button class="btn btn-primary" :disabled="saving" @click="handleSave">
+          <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span v-else class="spinner"></span>
+          {{ t('form.save') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -504,11 +519,29 @@ onMounted(() => {
 /* ===== 底部操作栏 ===== */
 .editor-footer {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
   padding: 14px 28px;
   border-top: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
   background: var(--vscode-editor-background);
+}
+
+/* 服务器错误提示 */
+.server-error {
+  font-size: 12px;
+  color: var(--vscode-errorForeground, #f48771);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 操作按钮组 */
+.footer-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 /* 按钮基础样式 */
