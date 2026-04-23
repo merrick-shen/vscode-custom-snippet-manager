@@ -3,12 +3,14 @@
 /**
  * 编辑器视图组件
  * 支持新建和编辑两种模式，通过后端 setSnippet 消息切换
+ * 使用原生 HTML 表单元素替代 Naive UI，确保 webview 中交互可靠
  */
 import { ref, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Snippet } from '../types'
 import { SUPPORTED_LANGUAGES } from '../types'
 import { postToExt, onExtMessage } from '../composables/useMessage'
+import LanguageSelect from '../components/LanguageSelect.vue'
 
 const { t } = useI18n()
 
@@ -22,19 +24,19 @@ const form = ref({
   description: '',
   language: '*',
 })
-// Naive UI 表单引用，用于触发表单校验
-const formRef = ref()
 // 保存中状态，防止重复提交
 const saving = ref(false)
+// 是否为编辑模式
+const isEditing = ref(false)
+// 校验错误信息
+const errors = ref<Record<string, string>>({})
 
-// 语言下拉选项
+// 语言下拉选项，包含图标信息
 const languageOptions = SUPPORTED_LANGUAGES.map((l) => ({
   label: l.value === '*' ? t('form.allLanguages') : l.label,
   value: l.value,
+  icon: l.icon,
 }))
-
-// 是否为编辑模式
-const isEditing = ref(false)
 
 // 监听编辑片段变化，回填或清空表单
 watch(
@@ -55,34 +57,44 @@ watch(
       isEditing.value = false
       form.value = { name: '', prefix: '', body: '', description: '', language: '*' }
     }
+    // 切换模式时清除校验错误
+    errors.value = {}
   },
   { immediate: true }
 )
 
-// 表单校验规则：名称、前缀、代码内容为必填
-const rules = {
-  name: { required: true, message: () => t('form.nameRequired'), trigger: 'blur' },
-  prefix: { required: true, message: () => t('form.prefixRequired'), trigger: 'blur' },
-  body: { required: true, message: () => t('form.bodyRequired'), trigger: 'blur' },
+/** 校验表单，返回是否通过 */
+function validate(): boolean {
+  const e: Record<string, string> = {}
+  if (!form.value.name.trim()) e.name = t('form.nameRequired')
+  if (!form.value.prefix.trim()) e.prefix = t('form.prefixRequired')
+  if (!form.value.body.trim()) e.body = t('form.bodyRequired')
+  errors.value = e
+  return Object.keys(e).length === 0
+}
+
+/** 清除指定字段的校验错误 */
+function clearError(field: string) {
+  if (errors.value[field]) {
+    const next = { ...errors.value }
+    delete next[field]
+    errors.value = next
+  }
 }
 
 /** 保存片段：校验通过后发送创建或更新消息 */
-async function handleSave() {
-  try {
-    await formRef.value?.validate()
-    saving.value = true
-    if (editingSnippet.value) {
-      // 编辑模式：发送更新消息
-      postToExt('updateSnippet', { id: editingSnippet.value.id, ...form.value })
-    } else {
-      // 新建模式：发送创建消息
-      postToExt('createSnippet', { ...form.value })
-    }
-  } catch {
-    // 校验未通过，不执行保存
-  } finally {
-    saving.value = false
+function handleSave() {
+  if (!validate()) return
+  saving.value = true
+  if (editingSnippet.value) {
+    // 编辑模式：发送更新消息
+    postToExt('updateSnippet', { id: editingSnippet.value.id, ...form.value })
+  } else {
+    // 新建模式：发送创建消息
+    postToExt('createSnippet', { ...form.value })
   }
+  // 延迟重置保存状态，等待后端响应
+  setTimeout(() => { saving.value = false }, 1000)
 }
 
 /** 关闭编辑器面板 */
@@ -113,150 +125,452 @@ onMounted(() => {
 
 <template>
   <div class="editor-view">
-    <!-- 顶部标题栏：图标 + 标题 -->
+    <!-- 顶部标题栏：渐变背景 + 模式标识 -->
     <div class="editor-header">
-      <div class="header-left">
-        <!-- 编辑图标，使用 VS Code 按钮色作为背景 -->
-        <div class="header-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <div class="header-content">
+        <!-- 模式图标 -->
+        <div class="header-icon" :class="{ 'header-icon--edit': isEditing }">
+          <svg v-if="isEditing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
           </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
         </div>
-        <!-- 根据模式显示不同标题 -->
-        <h3 class="header-title">
-          {{ isEditing ? t('form.editTitle') : t('form.createTitle') }}
-        </h3>
+        <!-- 标题和副标题 -->
+        <div class="header-text">
+          <h2 class="header-title">{{ isEditing ? t('form.editTitle') : t('form.createTitle') }}</h2>
+          <p class="header-subtitle">{{ isEditing ? t('form.editSubtitle') : t('form.createSubtitle') }}</p>
+        </div>
       </div>
     </div>
 
-    <!-- 表单主体区域，可滚动 -->
+    <!-- 表单主体区域 -->
     <div class="editor-body">
-      <n-form ref="formRef" :model="form" :rules="rules" label-placement="top" size="medium">
-        <!-- 名称和前缀并排显示 -->
+      <!-- 名称和前缀并排 -->
+      <div class="form-section">
         <div class="form-row">
-          <n-form-item :label="t('form.name')" path="name" class="form-item-flex">
-            <n-input v-model:value="form.name" :placeholder="t('form.namePlaceholder')" />
-          </n-form-item>
+          <div class="form-group" :class="{ 'has-error': errors.name }">
+            <label class="form-label">
+              {{ t('form.name') }}
+              <span class="required-dot">*</span>
+            </label>
+            <input
+              v-model="form.name"
+              class="form-input"
+              :placeholder="t('form.namePlaceholder')"
+              @input="clearError('name')"
+            />
+            <transition name="slide-fade">
+              <span v-if="errors.name" class="form-error">{{ errors.name }}</span>
+            </transition>
+          </div>
 
-          <n-form-item :label="t('form.prefix')" path="prefix" class="form-item-flex">
-            <n-input v-model:value="form.prefix" :placeholder="t('form.prefixPlaceholder')" />
-          </n-form-item>
+          <div class="form-group" :class="{ 'has-error': errors.prefix }">
+            <label class="form-label">
+              {{ t('form.prefix') }}
+              <span class="required-dot">*</span>
+            </label>
+            <input
+              v-model="form.prefix"
+              class="form-input"
+              :placeholder="t('form.prefixPlaceholder')"
+              @input="clearError('prefix')"
+            />
+            <transition name="slide-fade">
+              <span v-if="errors.prefix" class="form-error">{{ errors.prefix }}</span>
+            </transition>
+          </div>
         </div>
+      </div>
 
-        <!-- 代码内容，等宽字体多行输入 -->
-        <n-form-item :label="t('form.body')" path="body">
-          <n-input
-            v-model:value="form.body"
-            type="textarea"
-            :placeholder="t('form.bodyPlaceholder')"
-            :rows="10"
-            :autosize="{ minRows: 6, maxRows: 20 }"
-            font="monospace"
-            class="body-input"
-          />
-        </n-form-item>
+      <!-- 代码内容区域 -->
+      <div class="form-section">
+        <div class="form-group" :class="{ 'has-error': errors.body }">
+          <label class="form-label">
+            {{ t('form.body') }}
+            <span class="required-dot">*</span>
+            <span class="form-hint">{{ t('form.bodyHint') }}</span>
+          </label>
+          <div class="code-editor-wrapper">
+            <textarea
+              v-model="form.body"
+              class="code-editor"
+              :placeholder="t('form.bodyPlaceholder')"
+              rows="12"
+              @input="clearError('body')"
+            ></textarea>
+          </div>
+          <transition name="slide-fade">
+            <span v-if="errors.body" class="form-error">{{ errors.body }}</span>
+          </transition>
+        </div>
+      </div>
 
-        <!-- 描述和语言并排显示 -->
+      <!-- 描述和语言并排 -->
+      <div class="form-section">
         <div class="form-row">
-          <n-form-item :label="t('form.description')" path="description" class="form-item-flex">
-            <n-input v-model:value="form.description" :placeholder="t('form.descriptionPlaceholder')" />
-          </n-form-item>
+          <div class="form-group">
+            <label class="form-label">{{ t('form.description') }}</label>
+            <input
+              v-model="form.description"
+              class="form-input"
+              :placeholder="t('form.descriptionPlaceholder')"
+            />
+          </div>
 
-          <n-form-item :label="t('form.language')" path="language" class="form-item-flex">
-            <n-select v-model:value="form.language" :options="languageOptions" />
-          </n-form-item>
+          <div class="form-group">
+            <label class="form-label">{{ t('form.language') }}</label>
+            <LanguageSelect
+              v-model="form.language"
+              :options="languageOptions"
+              :placeholder="t('form.languagePlaceholder')"
+              placement="top"
+            />
+          </div>
         </div>
-      </n-form>
+      </div>
     </div>
 
-    <!-- 底部操作栏：取消和保存按钮 -->
+    <!-- 底部操作栏 -->
     <div class="editor-footer">
-      <n-button @click="handleClose">{{ t('form.cancel') }}</n-button>
-      <n-button type="primary" :loading="saving" @click="handleSave">
-        <template #icon>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </template>
+      <button class="btn btn-secondary" @click="handleClose">
+        {{ t('form.cancel') }}
+      </button>
+      <button class="btn btn-primary" :disabled="saving" @click="handleSave">
+        <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span v-else class="spinner"></span>
         {{ t('form.save') }}
-      </n-button>
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* 编辑器整体布局：纵向三段式（头部 + 主体 + 底部） */
+/* ===== 整体布局 ===== */
 .editor-view {
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  background: var(--vscode-editor-background);
 }
 
-/* 顶部标题栏 */
+/* ===== 顶部标题栏 ===== */
 .editor-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px 12px;
+  padding: 24px 28px 20px;
   border-bottom: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
+  background: linear-gradient(
+    180deg,
+    var(--vscode-editor-background) 0%,
+    var(--vscode-sideBar-background, var(--vscode-editor-background)) 100%
+  );
 }
 
-.header-left {
+.header-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
-/* 编辑图标容器，使用主题按钮色 */
+/* 模式图标：新建为蓝色，编辑为琥珀色 */
 .header-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #fff);
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0e639c, #1177bb);
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(14, 99, 156, 0.3);
+}
+
+.header-icon--edit {
+  background: linear-gradient(135deg, #c77832, #e89b4c);
+  box-shadow: 0 2px 8px rgba(199, 120, 50, 0.3);
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .header-title {
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--vscode-editor-foreground);
+  letter-spacing: -0.3px;
 }
 
-/* 表单主体区域，可滚动 */
+.header-subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  font-weight: 400;
+}
+
+/* ===== 表单主体 ===== */
 .editor-body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* 表单行：两个字段并排显示 */
+/* 表单分区 */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 表单行：两个字段并排 */
 .form-row {
   display: flex;
   gap: 16px;
 }
 
-.form-item-flex {
+.form-row .form-group {
   flex: 1;
+  min-width: 0;
 }
 
-/* 代码输入框：使用等宽字体，适配 VS Code 编辑器风格 */
-.body-input :deep(textarea) {
-  font-family: var(--vscode-editor-font-family, 'Cascadia Code', Consolas, monospace) !important;
-  font-size: var(--vscode-editor-font-size, 13px) !important;
-  line-height: 1.6 !important;
+/* 表单组 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-/* 底部操作栏，固定在底部 */
+/* 表单标签 */
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vscode-editor-foreground);
+  opacity: 0.85;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 必填标记 */
+.required-dot {
+  color: var(--vscode-errorForeground, #f48771);
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* 字段提示 */
+.form-hint {
+  font-weight: 400;
+  text-transform: none;
+  opacity: 0.5;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+/* 输入框 */
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+  border-radius: 6px;
+  background: var(--vscode-input-background, rgba(255,255,255,0.04));
+  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input::placeholder {
+  color: var(--vscode-input-placeholderForeground, rgba(255,255,255,0.3));
+}
+
+.form-input:focus {
+  border-color: var(--vscode-focusBorder, #007fd4);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
+}
+
+/* 校验错误状态 */
+.has-error .form-input,
+.has-error .code-editor {
+  border-color: var(--vscode-errorForeground, #f48771);
+  box-shadow: 0 0 0 1px var(--vscode-errorForeground, #f48771);
+}
+
+/* 错误信息 */
+.form-error {
+  font-size: 11px;
+  color: var(--vscode-errorForeground, #f48771);
+  padding-left: 2px;
+}
+
+/* 错误信息动画 */
+.slide-fade-enter-active {
+  transition: all 0.2s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.15s ease-in;
+}
+
+.slide-fade-enter-from {
+  transform: translateY(-4px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-2px);
+  opacity: 0;
+}
+
+/* ===== 代码编辑器 ===== */
+.code-editor-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.code-editor-wrapper:focus-within {
+  border-color: var(--vscode-focusBorder, #007fd4);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
+}
+
+.has-error .code-editor-wrapper {
+  border-color: var(--vscode-errorForeground, #f48771);
+  box-shadow: 0 0 0 1px var(--vscode-errorForeground, #f48771);
+}
+
+.code-editor {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  background: var(--vscode-input-background, rgba(255,255,255,0.04));
+  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
+  font-family: var(--vscode-editor-font-family, 'Cascadia Code', Consolas, monospace);
+  font-size: var(--vscode-editor-font-size, 13px);
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  min-height: 180px;
+  tab-size: 2;
+}
+
+.code-editor::placeholder {
+  color: var(--vscode-input-placeholderForeground, rgba(255,255,255,0.3));
+}
+
+/* ===== 下拉选择框 ===== */
+.form-select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+  border-radius: 6px;
+  background: var(--vscode-input-background, rgba(255,255,255,0.04));
+  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.form-select:focus {
+  border-color: var(--vscode-focusBorder, #007fd4);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
+}
+
+.form-select option {
+  background: var(--vscode-editorWidget-background, #252526);
+  color: var(--vscode-editor-foreground);
+}
+
+/* ===== 底部操作栏 ===== */
 .editor-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 12px 20px;
+  gap: 10px;
+  padding: 14px 28px;
   border-top: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
   background: var(--vscode-editor-background);
+}
+
+/* 按钮基础样式 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
+  outline: none;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 次要按钮（取消） */
+.btn-secondary {
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  color: var(--vscode-button-secondaryForeground, #fff);
+}
+
+.btn-secondary:hover {
+  background: var(--vscode-button-secondaryHoverBackground, #45494e);
+}
+
+/* 主要按钮（保存） */
+.btn-primary {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #fff);
+  box-shadow: 0 1px 4px rgba(14, 99, 156, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--vscode-button-hoverBackground, #1177bb);
+}
+
+/* 加载旋转动画 */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>

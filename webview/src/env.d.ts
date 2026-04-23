@@ -13,6 +13,8 @@ declare global {
     vscode?: VscodeApi
     /** 视图模式标识，由后端注入，决定渲染侧边栏还是编辑器 */
     __VIEW_MODE?: 'sidebar' | 'editor'
+    /** 语言偏好，由后端从 globalState 注入，确保侧边栏和编辑器语言同步 */
+    __LOCALE?: string
   }
 }
 

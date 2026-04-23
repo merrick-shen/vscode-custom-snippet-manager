@@ -13,32 +13,9 @@ const viewMode = computed(() => window.__VIEW_MODE || 'sidebar')
 </script>
 
 <template>
-  <!-- Naive UI 全局配置，覆盖默认主题变量以适配 VS Code 风格 -->
-  <n-config-provider :theme-overrides="themeOverrides">
-    <!-- 消息提示容器，用于显示操作反馈 -->
-    <n-message-provider>
-      <SidebarView v-if="viewMode === 'sidebar'" />
-      <EditorView v-else />
-    </n-message-provider>
-  </n-config-provider>
+  <SidebarView v-if="viewMode === 'sidebar'" />
+  <EditorView v-else />
 </template>
-
-<script lang="ts">
-export default {
-  data() {
-    return {
-      // Naive UI 主题覆盖：统一圆角、字重和字号
-      themeOverrides: {
-        common: {
-          fontWeightStrong: '600',
-          borderRadius: '6px',
-          fontSize: '13px',
-        },
-      },
-    }
-  },
-}
-</script>
 
 <style>
 /* 全局盒模型重置 */

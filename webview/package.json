@@ -5,12 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "extract-icons": "node scripts/extract-icons.mjs",
+    "build": "node scripts/extract-icons.mjs && vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@iconify-json/carbon": "^1.2.20",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/simple-icons": "^1.2.79",
+    "@iconify/vue": "^5.0.0",
     "fuse.js": "^7.3.0",
-    "naive-ui": "^2.44.1",
     "vue": "^3.5.32",
     "vue-i18n": "^11.3.2"
   },

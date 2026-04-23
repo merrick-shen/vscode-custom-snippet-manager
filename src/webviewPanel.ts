@@ -27,15 +27,19 @@ export class WebviewPanel {
   private disposables: vscode.Disposable[] = [];
   /** 待发送给 webview 的片段数据，等 webview 就绪后发送 */
   private pendingSnippet: SnippetData | null = null;
+  /** 扩展上下文，用于读取 globalState 中的语言偏好 */
+  private readonly context: vscode.ExtensionContext;
 
   private constructor(
     panel: vscode.WebviewPanel,
     extensionUri: vscode.Uri,
-    snippetService: SnippetService
+    snippetService: SnippetService,
+    context: vscode.ExtensionContext
   ) {
     this.panel = panel;
     this.extensionUri = extensionUri;
     this.snippetService = snippetService;
+    this.context = context;
 
     // 加载 webview HTML 内容
     this.panel.webview.html = this.getWebviewHtml(this.panel.webview);
@@ -61,6 +65,7 @@ export class WebviewPanel {
   public static createOrShow(
     extensionUri: vscode.Uri,
     snippetService: SnippetService,
+    context: vscode.ExtensionContext,
     snippet?: SnippetData | null
   ): void {
     // 确定面板显示在哪一列
@@ -93,7 +98,7 @@ export class WebviewPanel {
       }
     );
 
-    WebviewPanel.currentPanel = new WebviewPanel(panel, extensionUri, snippetService);
+    WebviewPanel.currentPanel = new WebviewPanel(panel, extensionUri, snippetService, context);
 
     // 保存待发送的片段数据，等 webview 发送 editorReady 后再回填表单
     // 避免使用 setTimeout 固定延迟，确保 webview 完全加载后再通信
@@ -163,8 +168,9 @@ export class WebviewPanel {
 
     let html = fs.readFileSync(htmlPath, 'utf-8');
 
-    // 注入视图模式标识和 VS Code API，前端根据此值决定渲染侧边栏还是编辑器
-    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'editor'; window.vscode = acquireVsCodeApi()</script>`);
+    // 注入视图模式、语言偏好和 VS Code API，前端根据此值决定渲染侧边栏还是编辑器
+    const locale = this.context.globalState.get<string>('locale', 'zh');
+    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'editor'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`);
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
     html = html.replace(

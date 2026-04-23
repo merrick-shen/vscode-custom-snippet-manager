@@ -2,6 +2,7 @@
  * 侧边栏 Webview 视图提供者
  * 在 VS Code 侧边栏中渲染片段列表，处理列表相关的消息通信
  * 点击新建/编辑时通过命令打开编辑器面板
+ * 管理语言偏好持久化，确保侧边栏和编辑器语言设置同步
  */
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -17,10 +18,23 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   private readonly extensionUri: vscode.Uri;
   /** 片段数据服务 */
   private readonly snippetService: SnippetService;
+  /** 扩展上下文，用于访问 globalState 持久化语言偏好 */
+  private readonly context: vscode.ExtensionContext;
 
-  constructor(extensionUri: vscode.Uri, snippetService: SnippetService) {
+  constructor(extensionUri: vscode.Uri, snippetService: SnippetService, context: vscode.ExtensionContext) {
     this.extensionUri = extensionUri;
     this.snippetService = snippetService;
+    this.context = context;
+  }
+
+  /** 获取当前保存的语言偏好，默认中文 */
+  public getLocale(): string {
+    return this.context.globalState.get<string>('locale', 'zh');
+  }
+
+  /** 保存语言偏好到 globalState */
+  private setLocale(locale: string): void {
+    this.context.globalState.update('locale', locale);
   }
 
   /**
@@ -66,6 +80,13 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
           this.postToView('snippetsList', this.snippetService.getAll());
           break;
         }
+
+        // 前端切换语言，持久化保存到 globalState
+        case 'changeLocale': {
+          const locale = msg.payload as string;
+          this.setLocale(locale);
+          break;
+        }
       }
     });
   }
@@ -85,6 +106,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   /**
    * 生成侧边栏 webview 的 HTML 内容
    * 与编辑器面板共享同一套 Vue 构建产物，通过 __VIEW_MODE 区分渲染
+   * 注入 __LOCALE 确保语言偏好与编辑器面板同步
    */
   private getWebviewHtml(webview: vscode.Webview): string {
     const distUri = vscode.Uri.joinPath(this.extensionUri, 'webview', 'dist');
@@ -97,8 +119,9 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
     let html = fs.readFileSync(htmlPath, 'utf-8');
 
-    // 注入视图模式标识和 VS Code API，前端据此渲染列表视图并与后端通信
-    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'sidebar'; window.vscode = acquireVsCodeApi()</script>`);
+    // 注入视图模式、语言偏好和 VS Code API
+    const locale = this.getLocale();
+    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`);
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
     html = html.replace(
