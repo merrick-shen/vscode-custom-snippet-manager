@@ -154,8 +154,8 @@ export class WebviewPanel {
 
     let html = fs.readFileSync(htmlPath, 'utf-8');
 
-    // 注入视图模式标识，前端根据此值决定渲染侧边栏还是编辑器
-    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'editor'</script>`);
+    // 注入视图模式标识和 VS Code API，前端根据此值决定渲染侧边栏还是编辑器
+    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'editor'; window.vscode = acquireVsCodeApi()</script>`);
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
     html = html.replace(

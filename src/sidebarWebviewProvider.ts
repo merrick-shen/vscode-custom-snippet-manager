@@ -97,8 +97,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
     let html = fs.readFileSync(htmlPath, 'utf-8');
 
-    // 注入视图模式标识为 sidebar，前端据此渲染列表视图
-    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'sidebar'</script>`);
+    // 注入视图模式标识和 VS Code API，前端据此渲染列表视图并与后端通信
+    html = html.replace('<head>', `<head><script>window.__VIEW_MODE = 'sidebar'; window.vscode = acquireVsCodeApi()</script>`);
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
     html = html.replace(
