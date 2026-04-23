@@ -1,13 +1,33 @@
 {
   "name": "custom-snippet-manager",
-  "displayName": "Custom Snippet Manager",
-  "description": "A VS Code extension for managing custom code snippets with a modern webview UI",
-  "version": "0.0.1",
+  "displayName": "Custom Snippet Manager - 自定义片段管理器",
+  "description": "Manage custom code snippets with ease. Create, edit, and organize your snippets with a modern UI, smart autocomplete, and multi-language support. | 轻松管理自定义代码片段，支持创建、编辑和组织片段，提供现代化界面、智能补全和多语言支持。",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.116.0"
   },
   "categories": [
+    "Snippets",
     "Other"
+  ],
+  "keywords": [
+    "snippet",
+    "snippets",
+    "code snippet",
+    "code snippets",
+    "snippet manager",
+    "snippets manager",
+    "snippet library",
+    "code library",
+    "code templates",
+    "template",
+    "autocomplete",
+    "intellisense",
+    "productivity",
+    "developer tools",
+    "代码片段",
+    "代码模板",
+    "代码库"
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",

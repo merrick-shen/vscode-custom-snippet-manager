@@ -137,12 +137,10 @@ export function activate(context: vscode.ExtensionContext): void {
         matchOnDetail: true,
       });
 
-      // 用户取消选择时不执行任何操作
       if (!selected) {
         return;
       }
 
-      // 使用 SnippetString 插入
       const snippetString = new vscode.SnippetString(selected.snippet.body);
       editor.insertSnippet(snippetString);
     })

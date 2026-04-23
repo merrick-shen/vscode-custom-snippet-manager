@@ -1,7 +1,6 @@
 /**
  * 代码补全提供者
  * 根据代码片段的 prefix 属性提供自动补全建议
- * 使用 SnippetString 支持 $1、$2、$0 光标跳转功能
  * 根据当前编辑器语言自动筛选适用的代码片段
  */
 import * as vscode from 'vscode';
@@ -53,7 +52,6 @@ export class SnippetCompletionProvider implements vscode.CompletionItemProvider 
   /**
    * 提供补全项
    * 根据当前文档语言筛选匹配的片段，将 prefix 作为触发关键词
-   * 使用 SnippetString 确保代码片段中的 $1、$2、$0 光标跳转正常工作
    * 通过分析当前行已输入的文本来确定替换范围
    */
   public provideCompletionItems(
@@ -78,7 +76,6 @@ export class SnippetCompletionProvider implements vscode.CompletionItemProvider 
         vscode.CompletionItemKind.Snippet
       );
 
-      // 使用 SnippetString 支持 $1, $2, $0 光标跳转
       item.insertText = new vscode.SnippetString(snippet.body);
       // 补全详情显示片段名称
       item.detail = snippet.name;
