@@ -35,6 +35,14 @@ Manage custom code snippets with ease. Create, edit, and organize your snippets 
 - Dropdown menu for language switching
 - Language preference is persisted across sessions
 
+### 💼 Import & Export
+
+- **Export** snippets to a JSON file with version info and metadata
+- **Import** snippets from a JSON file with data validation and security checks
+- Duplicate handling strategies: **Overwrite**, **Skip**, or **Merge** (keep both)
+- File naming format: `code_snippet_config_YYYYMMDD_HHMMSS.json`
+- Confirmation dialogs before import/export operations
+
 ### ⌨️ Commands & Keybindings
 
 | Command | Keybinding | Description |
@@ -79,6 +87,15 @@ console.log('$1', $2);$0
 - `$1` — First cursor position
 - `$2` — Second cursor position (press Tab to navigate)
 - `$0` — Final cursor position
+
+### Import & Export Snippets
+
+**Export** — Click the **"Export"** button in the sidebar header. Choose a save location in the file dialog. The exported JSON file includes all snippets with version metadata.
+
+**Import** — Click the **"Import"** button in the sidebar header. Select a JSON file to import. If duplicate snippets are found, you can choose to:
+- **Overwrite**: Replace existing snippets with imported ones
+- **Skip**: Keep existing snippets unchanged
+- **Merge**: Keep both (imported snippets get new IDs)
 
 ## 🗂️ Supported Languages
 

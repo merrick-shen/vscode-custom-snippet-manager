@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { SnippetService } from './snippetService';
+import { ImportExportService } from './importExportService';
 
 /** Webview 消息格式 */
 interface WebviewMessage {
@@ -24,12 +25,15 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   private readonly extensionUri: vscode.Uri;
   /** 片段数据服务 */
   private readonly snippetService: SnippetService;
+  /** 导入导出服务 */
+  private readonly importExportService: ImportExportService;
   /** 扩展上下文，用于访问 globalState 持久化语言偏好 */
   private readonly context: vscode.ExtensionContext;
 
   constructor(extensionUri: vscode.Uri, snippetService: SnippetService, context: vscode.ExtensionContext) {
     this.extensionUri = extensionUri;
     this.snippetService = snippetService;
+    this.importExportService = new ImportExportService(snippetService);
     this.context = context;
   }
 
@@ -75,7 +79,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
    * 处理来自 webview 的消息
    * 统一消息分发入口，根据类型执行对应操作
    */
-  private handleMessage(msg: WebviewMessage): void {
+  private async handleMessage(msg: WebviewMessage): Promise<void> {
     switch (msg.type) {
       // 前端请求获取片段列表
       case 'getSnippets':
@@ -111,6 +115,24 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         const validLocales = ['zh', 'zh-TW', 'en', 'ja', 'ko'];
         if (validLocales.includes(locale)) {
           this.setLocale(locale);
+        }
+        break;
+      }
+
+      // 前端请求导出代码片段
+      case 'exportSnippets': {
+        const success = await this.importExportService.exportSnippets();
+        this.postToView('exportResult', { success });
+        break;
+      }
+
+      // 前端请求导入代码片段
+      case 'importSnippets': {
+        const result = await this.importExportService.importSnippets();
+        if (result) {
+          // 导入成功后刷新列表
+          this.postToView('importResult', result);
+          this.postToView('snippetsList', this.snippetService.getAll());
         }
         break;
       }

@@ -16,6 +16,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Editor UI**: Webview-based form with CodeMirror 6 syntax highlighting and input validation
 - **Language Icons**: Iconify-powered language icons in dropdowns and snippet list items
 - **Internationalization**: Full **简体中文 / 繁體中文 / English / 日本語 / 한국어** UI support with dropdown language switcher and preference persistence
+- **Import & Export**: Export snippets to JSON file (`code_snippet_config_YYYYMMDD_HHMMSS.json`) with version metadata; Import from JSON with data validation, security checks, and duplicate handling (Overwrite / Skip / Merge)
 - **Commands**:
   - `New Snippet` — Open editor to create a new snippet
   - `Open Snippet Library` — Focus the sidebar panel

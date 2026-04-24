@@ -40,6 +40,10 @@ export type MessageType =
   | 'editorReady'
   | 'setSnippet'
   | 'changeLocale'
+  | 'exportSnippets'
+  | 'exportResult'
+  | 'importSnippets'
+  | 'importResult'
   | 'error'
 
 /** Webview 发送给扩展的消息格式 */

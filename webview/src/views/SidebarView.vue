@@ -193,6 +193,111 @@ onExtMessage('snippetsList', (payload) => {
 onExtMessage('error', (payload) => {
   showError(payload as string)
 })
+
+// 导入导出确认弹窗状态
+const confirmDialog = ref<{
+  visible: boolean
+  title: string
+  content: string
+  confirmLabel: string
+  danger: boolean
+  onConfirm: () => void
+}>({
+  visible: false,
+  title: '',
+  content: '',
+  confirmLabel: '',
+  danger: false,
+  onConfirm: () => {},
+})
+
+/** 显示确认对话框 */
+function showConfirm(options: {
+  title: string
+  content: string
+  confirmLabel: string
+  danger?: boolean
+  onConfirm: () => void
+}) {
+  confirmDialog.value = {
+    visible: true,
+    title: options.title,
+    content: options.content,
+    confirmLabel: options.confirmLabel,
+    danger: options.danger ?? false,
+    onConfirm: options.onConfirm,
+  }
+}
+
+/** 确认对话框 - 确认 */
+function handleConfirmOk() {
+  confirmDialog.value.onConfirm()
+  confirmDialog.value.visible = false
+}
+
+/** 确认对话框 - 取消 */
+function handleConfirmCancel() {
+  confirmDialog.value.visible = false
+}
+
+/** 点击导出配置按钮 */
+function handleExport() {
+  if (snippets.value.length === 0) {
+    showError(t('importExport.noDataToExport'))
+    return
+  }
+  showConfirm({
+    title: t('importExport.exportConfirmTitle'),
+    content: t('importExport.exportConfirmContent'),
+    confirmLabel: t('importExport.exportConfig'),
+    onConfirm: () => {
+      postToExt('exportSnippets')
+    },
+  })
+}
+
+/** 点击导入配置按钮 */
+function handleImport() {
+  showConfirm({
+    title: t('importExport.importConfirmTitle'),
+    content: t('importExport.importConfirmContent'),
+    confirmLabel: t('importExport.importConfig'),
+    danger: true,
+    onConfirm: () => {
+      postToExt('importSnippets')
+    },
+  })
+}
+
+// 监听后端返回的导出结果
+onExtMessage('exportResult', (payload) => {
+  const result = payload as { success: boolean }
+  if (result.success) {
+    // 导出成功提示由后端 VS Code 原生通知显示
+  } else {
+    showError(t('importExport.exportFailed'))
+  }
+})
+
+// 监听后端返回的导入结果
+onExtMessage('importResult', (payload) => {
+  const result = payload as {
+    imported: number
+    skipped: number
+    overwritten: number
+    merged: number
+    total: number
+    errors: string[]
+  }
+  if (result.errors.length > 0) {
+    showError(
+      t('importExport.importPartial', {
+        imported: result.imported,
+        errors: result.errors.length,
+      })
+    )
+  }
+})
 </script>
 
 <template>
@@ -242,6 +347,17 @@ onExtMessage('error', (payload) => {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         {{ t('actions.create') }}
       </button>
+      <!-- 导入导出按钮行 -->
+      <div class="import-export-row">
+        <button class="btn btn-secondary btn-sm ie-btn" @click="handleExport">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          {{ t('importExport.exportConfig') }}
+        </button>
+        <button class="btn btn-secondary btn-sm ie-btn" @click="handleImport">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          {{ t('importExport.importConfig') }}
+        </button>
+      </div>
     </div>
 
     <!-- 搜索框：列表为空时隐藏，与编辑页 form-input 风格统一 -->
@@ -343,6 +459,22 @@ onExtMessage('error', (payload) => {
         <div class="modal-footer">
           <button class="btn btn-secondary btn-sm" @click="handleDeleteCancel">{{ t('delete.cancel') }}</button>
           <button class="btn btn-danger btn-sm" @click="handleDeleteConfirm">{{ t('delete.confirm') }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 通用确认对话框（导入/导出等操作） -->
+    <div v-if="confirmDialog.visible" class="modal-overlay" @click.self="handleConfirmCancel">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <span class="modal-title">{{ confirmDialog.title }}</span>
+        </div>
+        <div class="modal-body">
+          <p>{{ confirmDialog.content }}</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-sm" @click="handleConfirmCancel">{{ t('form.cancel') }}</button>
+          <button class="btn btn-sm" :class="confirmDialog.danger ? 'btn-danger' : 'btn-primary'" @click="handleConfirmOk">{{ confirmDialog.confirmLabel }}</button>
         </div>
       </div>
     </div>
@@ -573,6 +705,20 @@ onExtMessage('error', (payload) => {
 .create-btn {
   width: 100%;
   justify-content: center;
+}
+
+/* 导入导出按钮行 */
+.import-export-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+/* 导入导出按钮，等分宽度 */
+.ie-btn {
+  flex: 1;
+  justify-content: center;
+  font-size: 11px;
 }
 
 /* ===== 搜索框 ===== */
