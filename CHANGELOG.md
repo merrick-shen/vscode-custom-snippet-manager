@@ -23,7 +23,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - `Open Snippet Library` — Focus the sidebar panel
   - `Insert Snippet` — QuickPick-based snippet insertion (`Ctrl+Alt+I`)
   - `Trigger Snippet Completion` — Trigger autocomplete suggestions (`Ctrl+Alt+Space`)
-- **Context Menu**: "Insert Snippet" option in the editor right-click menu
+  - `Save to Snippet Library` — Save selected code as a snippet via right-click menu (auto-detects language)
+- **Context Menu**: "Insert Snippet" and "Save to Snippet Library" options in the editor right-click menu
 - **Data Storage**: Local JSON file persistence using VS Code's `globalStorageUri`
 - **Delete Confirmation**: Custom modal dialog to prevent accidental deletion
 - **Error Handling**: Animated error bars with auto-dismiss in sidebar and editor views

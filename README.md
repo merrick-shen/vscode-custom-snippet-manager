@@ -52,8 +52,9 @@ Manage custom code snippets with ease. Create, edit, and organize your snippets 
 | `Open Snippet Library` | — | Open the sidebar panel |
 | `Insert Snippet` | `Ctrl+Alt+I` / `Cmd+Alt+I` | Insert via QuickPick |
 | `Trigger Snippet Completion` | `Ctrl+Alt+Space` / `Cmd+Alt+Space` | Trigger autocomplete |
+| `Save to Snippet Library` | — | Save selected code as a snippet |
 
-Right-click context menu also includes "Insert Snippet" when editing text.
+Right-click context menu includes "Insert Snippet" and "Save to Snippet Library" (shown when text is selected).
 
 ## 📖 Usage
 
@@ -76,6 +77,8 @@ Right-click context menu also includes "Insert Snippet" when editing text.
 **QuickPick** — Press `Ctrl+Alt+I` to browse and insert a snippet.
 
 **Context Menu** — Right-click in the editor → "Insert Snippet".
+
+**Save Selection** — Select code in the editor, right-click → "Save to Snippet Library". Enter a prefix and name, and the snippet is saved with the current file's language automatically detected.
 
 ### Snippet Body Syntax
 

@@ -78,6 +78,10 @@
       {
         "command": "custom-snippet-manager.triggerCompletion",
         "title": "Trigger Snippet Completion"
+      },
+      {
+        "command": "custom-snippet-manager.saveSelectionToSnippet",
+        "title": "Save to Snippet Library"
       }
     ],
     "keybindings": [
@@ -100,6 +104,11 @@
           "command": "custom-snippet-manager.insertSnippet",
           "when": "editorTextFocus",
           "group": "snippet@1"
+        },
+        {
+          "command": "custom-snippet-manager.saveSelectionToSnippet",
+          "when": "editorHasSelection",
+          "group": "snippet@2"
         }
       ],
       "commandPalette": [
@@ -118,6 +127,10 @@
         {
           "command": "custom-snippet-manager.triggerCompletion",
           "when": "editorTextFocus"
+        },
+        {
+          "command": "custom-snippet-manager.saveSelectionToSnippet",
+          "when": "editorHasSelection"
         }
       ]
     }

@@ -27,6 +27,13 @@ function getI18n(): Record<string, string> {
       noSnippetsForLang: '当前语言没有可用的代码片段。',
       selectSnippet: '选择要插入的代码片段',
       snippetInserted: '代码片段已插入',
+      noSelection: '请先选中代码再保存到片段库',
+      enterPrefix: '输入代码片段前缀（用于触发补全）',
+      enterName: '输入代码片段名称',
+      prefixRequired: '前缀不能为空',
+      nameRequired: '名称不能为空',
+      snippetSaved: '代码片段「{name}」已保存到片段库',
+      saveFailed: '保存代码片段失败',
     };
   }
 
@@ -36,6 +43,13 @@ function getI18n(): Record<string, string> {
     noSnippetsForLang: 'No snippets available for this language.',
     selectSnippet: 'Select a snippet to insert',
     snippetInserted: 'Snippet inserted',
+    noSelection: 'Please select code before saving to snippet library',
+    enterPrefix: 'Enter snippet prefix (for triggering completion)',
+    enterName: 'Enter snippet name',
+    prefixRequired: 'Prefix is required',
+    nameRequired: 'Name is required',
+    snippetSaved: 'Snippet "{name}" saved to library',
+    saveFailed: 'Failed to save snippet',
   };
 }
 
@@ -161,6 +175,89 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand('custom-snippet-manager.triggerCompletion', () => {
       vscode.commands.executeCommand('editor.action.triggerSuggest');
+    })
+  );
+
+  // 保存选中代码到片段库：右键菜单或命令面板触发
+  context.subscriptions.push(
+    vscode.commands.registerCommand('custom-snippet-manager.saveSelectionToSnippet', async () => {
+      const i18n = getI18n();
+      const editor = vscode.window.activeTextEditor;
+
+      // 没有活动编辑器
+      if (!editor) {
+        vscode.window.showWarningMessage(i18n.noActiveEditor);
+        return;
+      }
+
+      // 获取选中的文本
+      const selection = editor.selection;
+      const selectedText = editor.document.getText(selection);
+
+      // 没有选中内容
+      if (!selectedText.trim()) {
+        vscode.window.showWarningMessage(i18n.noSelection);
+        return;
+      }
+
+      // 自动识别当前文件的语言
+      const currentLang = editor.document.languageId;
+
+      // 第一步：输入前缀
+      const prefix = await vscode.window.showInputBox({
+        prompt: i18n.enterPrefix,
+        placeHolder: 'log',
+        validateInput: (value) => {
+          if (!value.trim()) {
+            return i18n.prefixRequired;
+          }
+          return undefined;
+        },
+      });
+
+      // 用户取消输入
+      if (prefix === undefined) {
+        return;
+      }
+
+      // 第二步：输入名称
+      const name = await vscode.window.showInputBox({
+        prompt: i18n.enterName,
+        placeHolder: 'Console Log',
+        value: prefix,
+        validateInput: (value) => {
+          if (!value.trim()) {
+            return i18n.nameRequired;
+          }
+          return undefined;
+        },
+      });
+
+      // 用户取消输入
+      if (name === undefined) {
+        return;
+      }
+
+      // 创建片段，自动设置语言和代码内容
+      try {
+        snippetService.create({
+          name: name.trim(),
+          prefix: prefix.trim(),
+          body: selectedText,
+          description: '',
+          language: currentLang,
+        });
+
+        // 刷新侧边栏
+        sidebarProvider.refresh();
+
+        // 保存成功提示
+        vscode.window.showInformationMessage(
+          i18n.snippetSaved.replace('{name}', name.trim())
+        );
+      } catch {
+        vscode.window.showErrorMessage(i18n.saveFailed);
+      }
     })
   );
 }
