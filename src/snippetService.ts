@@ -22,6 +22,10 @@ export interface SnippetData {
   description: string;
   /** 适用语言，'*' 表示所有语言 */
   language: string;
+  /** 使用次数，用于按频率排序 */
+  usageCount?: number;
+  /** 创建时间，ISO 8601 格式，用于按日期排序 */
+  createdAt?: string;
 }
 
 /** 数据变更事件类型 */
@@ -60,7 +64,13 @@ export class SnippetService {
     if (fs.existsSync(this.filePath)) {
       try {
         const raw = fs.readFileSync(this.filePath, 'utf-8');
-        this.snippets = JSON.parse(raw) as SnippetData[];
+        const parsed = JSON.parse(raw) as SnippetData[];
+        // 兼容旧数据：为缺少 usageCount/createdAt 的片段补充默认值
+        this.snippets = parsed.map((s) => ({
+          ...s,
+          usageCount: s.usageCount ?? 0,
+          createdAt: s.createdAt ?? new Date(0).toISOString(),
+        }));
       } catch {
         // 文件损坏时重置为空数组，避免阻塞整个扩展
         this.snippets = [];
@@ -110,9 +120,11 @@ export class SnippetService {
   }
 
   /** 创建新片段，自动生成唯一 ID 并持久化 */
-  create(data: Omit<SnippetData, 'id'>): SnippetData {
+  create(data: Omit<SnippetData, 'id' | 'usageCount' | 'createdAt'>): SnippetData {
     const snippet: SnippetData = {
       id: this.generateId(),
+      usageCount: 0,
+      createdAt: new Date().toISOString(),
       ...data,
     };
     this.snippets.push(snippet);
@@ -122,12 +134,14 @@ export class SnippetService {
   }
 
   /** 根据 ID 更新片段，返回更新后的数据，未找到时返回 null */
-  update(id: string, data: Omit<SnippetData, 'id'>): SnippetData | null {
+  update(id: string, data: Omit<SnippetData, 'id' | 'usageCount' | 'createdAt'>): SnippetData | null {
     const idx = this.snippets.findIndex((s) => s.id === id);
     if (idx === -1) {
       return null;
     }
-    this.snippets[idx] = { id, ...data };
+    // 保留原有的 usageCount 和 createdAt
+    const { usageCount, createdAt } = this.snippets[idx];
+    this.snippets[idx] = { id, usageCount, createdAt, ...data };
     this.save();
     this.notifyChange('update', this.snippets[idx]);
     return this.snippets[idx];
@@ -143,6 +157,17 @@ export class SnippetService {
     this.snippets.splice(idx, 1);
     this.save();
     this.notifyChange('delete', deleted);
+    return true;
+  }
+
+  /** 根据 ID 增加片段的使用计数，用于排序和统计 */
+  incrementUsage(id: string): boolean {
+    const idx = this.snippets.findIndex((s) => s.id === id);
+    if (idx === -1) {
+      return false;
+    }
+    this.snippets[idx].usageCount = (this.snippets[idx].usageCount ?? 0) + 1;
+    this.save();
     return true;
   }
 

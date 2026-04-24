@@ -17,6 +17,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Language Icons**: Iconify-powered language icons in dropdowns and snippet list items
 - **Internationalization**: Full **简体中文 / 繁體中文 / English / 日本語 / 한국어** UI support with dropdown language switcher and preference persistence
 - **Import & Export**: Export snippets to JSON file (`code_snippet_config_YYYYMMDD_HHMMSS.json`) with version metadata; Import from JSON with data validation, security checks, and duplicate handling (Overwrite / Skip / Merge)
+- **Sorting**: Sort snippets by date added with ascending/descending toggle; sort fields excluded from export
 - **Commands**:
   - `New Snippet` — Open editor to create a new snippet
   - `Open Snippet Library` — Focus the sidebar panel

@@ -12,7 +12,14 @@ export interface Snippet {
   body: string
   description: string
   language: string
+  /** 使用次数，用于按频率排序 */
+  usageCount?: number
+  /** 创建时间，ISO 8601 格式，用于按日期排序 */
+  createdAt?: string
 }
+
+/** 排序方向类型：desc 为由新至旧，asc 为由旧至新 */
+export type SortOrder = 'desc' | 'asc'
 
 /**
  * 消息类型枚举

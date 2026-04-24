@@ -68,12 +68,15 @@ export class ImportExportService {
   async exportSnippets(): Promise<boolean> {
     const snippets = this.snippetService.getAll();
 
+    // 导出时剔除 usageCount 和 createdAt 字段
+    const exportableSnippets = snippets.map(({ usageCount, createdAt, ...rest }) => rest);
+
     // 构造导出数据
     const exportData: ExportData = {
       version: EXPORT_VERSION,
       exportedAt: new Date().toISOString(),
       appVersion: APP_VERSION,
-      snippets,
+      snippets: exportableSnippets,
     };
 
     // 生成默认文件名
@@ -247,7 +250,8 @@ export class ImportExportService {
     }
 
     const s = snippet as Record<string, unknown>;
-    const requiredFields: (keyof SnippetData)[] = ['id', 'name', 'prefix', 'body', 'description', 'language'];
+    // 必填字段不包含 usageCount 和 createdAt，导入时自动补充
+    const requiredFields = ['id', 'name', 'prefix', 'body', 'description', 'language'];
 
     // 检查必填字段
     for (const field of requiredFields) {
@@ -257,7 +261,7 @@ export class ImportExportService {
     }
 
     // 检查字段长度限制，防止恶意超长内容
-    const stringFields: (keyof SnippetData)[] = ['id', 'name', 'prefix', 'body', 'description', 'language'];
+    const stringFields = ['id', 'name', 'prefix', 'body', 'description', 'language'];
     for (const field of stringFields) {
       if ((s[field] as string).length > MAX_FIELD_LENGTH) {
         return this.getI18nText('validationFieldTooLong', String(index + 1), field);
@@ -270,6 +274,16 @@ export class ImportExportService {
     }
     if (!(s.prefix as string).trim()) {
       return this.getI18nText('validationEmptyPrefix', String(index + 1));
+    }
+
+    // 如果存在 usageCount，必须为非负数字
+    if (s.usageCount !== undefined && (typeof s.usageCount !== 'number' || s.usageCount < 0)) {
+      return this.getI18nText('validationInvalidUsageCount', String(index + 1));
+    }
+
+    // 如果存在 createdAt，必须为有效字符串
+    if (s.createdAt !== undefined && typeof s.createdAt !== 'string') {
+      return this.getI18nText('validationInvalidCreatedAt', String(index + 1));
     }
 
     return null;
@@ -348,16 +362,19 @@ export class ImportExportService {
       try {
         const isDuplicate = existingIds.has(snippet.id);
 
+        // 导入时过滤掉 usageCount 和 createdAt，由 create 方法自动补充
+        const { usageCount, createdAt, ...snippetData } = snippet;
+
         if (isDuplicate) {
           switch (strategy) {
             case 'overwrite':
-              // 覆盖：更新现有片段
+              // 覆盖：更新现有片段（保留原有的 usageCount 和 createdAt）
               this.snippetService.update(snippet.id, {
-                name: snippet.name,
-                prefix: snippet.prefix,
-                body: snippet.body,
-                description: snippet.description,
-                language: snippet.language,
+                name: snippetData.name,
+                prefix: snippetData.prefix,
+                body: snippetData.body,
+                description: snippetData.description,
+                language: snippetData.language,
               });
               result.overwritten++;
               result.imported++;
@@ -371,11 +388,11 @@ export class ImportExportService {
             case 'merge':
               // 合并：生成新 ID 保留两者
               this.snippetService.create({
-                name: snippet.name,
-                prefix: snippet.prefix,
-                body: snippet.body,
-                description: snippet.description,
-                language: snippet.language,
+                name: snippetData.name,
+                prefix: snippetData.prefix,
+                body: snippetData.body,
+                description: snippetData.description,
+                language: snippetData.language,
               });
               result.merged++;
               result.imported++;
@@ -384,11 +401,11 @@ export class ImportExportService {
         } else {
           // 非重复：直接创建
           this.snippetService.create({
-            name: snippet.name,
-            prefix: snippet.prefix,
-            body: snippet.body,
-            description: snippet.description,
-            language: snippet.language,
+            name: snippetData.name,
+            prefix: snippetData.prefix,
+            body: snippetData.body,
+            description: snippetData.description,
+            language: snippetData.language,
           });
           result.imported++;
         }
@@ -499,6 +516,14 @@ export class ImportExportService {
       validationEmptyPrefix: {
         zh: '第 {0} 个片段前缀为空',
         en: 'Snippet #{0} has empty prefix',
+      },
+      validationInvalidUsageCount: {
+        zh: '第 {0} 个片段的使用次数字段无效',
+        en: 'Snippet #{0} has invalid usageCount',
+      },
+      validationInvalidCreatedAt: {
+        zh: '第 {0} 个片段的创建时间字段无效',
+        en: 'Snippet #{0} has invalid createdAt',
       },
     };
 

@@ -63,6 +63,10 @@ export default {
     importPartial: 'Imported {imported} snippet(s) with {errors} error(s).',
     noDataToExport: 'No data to export',
   },
+  sort: {
+    newestFirst: 'Newest First',
+    oldestFirst: 'Oldest First',
+  },
   lang: {
     name: 'English',
   },

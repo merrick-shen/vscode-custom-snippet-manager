@@ -25,6 +25,7 @@ Manage custom code snippets with ease. Create, edit, and organize your snippets 
 - **Sidebar panel** with snippet list, search, and language filtering
 - **Editor panel** with form validation and code highlighting (CodeMirror 6)
 - **Fuzzy search** powered by Fuse.js
+- **Sorting** by date added with ascending/descending toggle
 - **Language icons** for better visual identification
 - **Delete confirmation** dialog to prevent accidental deletion
 - Consistent styling that blends with VS Code's theme

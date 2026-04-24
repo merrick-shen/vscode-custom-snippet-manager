@@ -72,6 +72,15 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // ===== 命令注册 =====
 
+  // 增加片段使用计数：补全项被接受时自动调用
+  context.subscriptions.push(
+    vscode.commands.registerCommand('custom-snippet-manager.incrementUsage', (snippetId: string) => {
+      if (snippetId) {
+        snippetService.incrementUsage(snippetId);
+      }
+    })
+  );
+
   // 打开编辑器面板：从侧边栏打开，可传入片段数据进行编辑
   context.subscriptions.push(
     vscode.commands.registerCommand('custom-snippet-manager.openEditor', (snippet) => {
@@ -143,6 +152,8 @@ export function activate(context: vscode.ExtensionContext): void {
 
       const snippetString = new vscode.SnippetString(selected.snippet.body);
       editor.insertSnippet(snippetString);
+      // 插入成功后增加使用计数
+      snippetService.incrementUsage(selected.snippet.id);
     })
   );
 

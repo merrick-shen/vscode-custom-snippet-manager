@@ -63,6 +63,10 @@ export default {
     importPartial: '{imported}개를 가져왔고, {errors}개에서 오류가 발생했습니다.',
     noDataToExport: '내보낼 데이터가 없습니다',
   },
+  sort: {
+    newestFirst: '최신순',
+    oldestFirst: '오래된순',
+  },
   lang: {
     name: '한국어',
   },

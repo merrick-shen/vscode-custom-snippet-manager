@@ -10,7 +10,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import Fuse from 'fuse.js'
-import type { Snippet } from '../types'
+import type { Snippet, SortOrder } from '../types'
 import { SUPPORTED_LANGUAGES } from '../types'
 import { postToExt, onExtMessage } from '../composables/useMessage'
 import LanguageSelect from '../components/LanguageSelect.vue'
@@ -24,6 +24,13 @@ const snippets = ref<Snippet[]>([])
 const searchQuery = ref('')
 // 语言筛选值，'*' 表示全部
 const languageFilter = ref('*')
+// 排序方向，默认倒序（由新至旧）
+const sortOrder = ref<SortOrder>('desc')
+
+// 当前排序方向的显示文本
+const currentSortLabel = computed(() => {
+  return sortOrder.value === 'desc' ? t('sort.newestFirst') : t('sort.oldestFirst')
+})
 // 当前待删除的片段，用于弹窗确认
 const deletingSnippet = ref<Snippet | null>(null)
 // 错误提示信息
@@ -62,6 +69,11 @@ function toggleLocaleMenu() {
   localeMenuOpen.value = !localeMenuOpen.value
 }
 
+/** 切换排序方向（正序/倒序） */
+function toggleSortOrder() {
+  sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
+}
+
 /** 点击外部关闭语言下拉菜单 */
 function handleLocaleClickOutside(e: MouseEvent) {
   if (localeMenuRef.value && !localeMenuRef.value.contains(e.target as Node)) {
@@ -89,7 +101,7 @@ const languageOptions = computed(() => [
   })),
 ])
 
-// 根据 Fuse.js 模糊搜索 + 语言筛选过滤片段列表
+// 根据 Fuse.js 模糊搜索 + 语言筛选 + 排序过滤片段列表
 const filteredSnippets = computed(() => {
   let result = snippets.value
 
@@ -106,10 +118,18 @@ const filteredSnippets = computed(() => {
       keys: ['name', 'prefix', 'description'],
       threshold: 0.4,
     })
-    return fuse.search(searchQuery.value).map((r) => r.item)
+    result = fuse.search(searchQuery.value).map((r) => r.item)
   }
 
-  return result
+  // 排序：按添加日期，支持正序（由旧至新）和倒序（由新至旧）
+  const sorted = [...result]
+  sorted.sort((a, b) => {
+    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+    return sortOrder.value === 'desc' ? timeB - timeA : timeA - timeB
+  })
+
+  return sorted
 })
 
 /** 根据 language value 获取对应的 Iconify 图标名，用于列表项的语言标签 */
@@ -383,6 +403,15 @@ onExtMessage('importResult', (payload) => {
         :options="languageOptions"
         :placeholder="t('form.languagePlaceholder')"
       />
+    </div>
+
+    <!-- 排序切换按钮：列表为空时隐藏 -->
+    <div v-if="snippets.length > 0" class="sidebar-sort">
+      <button class="sort-toggle-btn" @click="toggleSortOrder" :title="currentSortLabel">
+        <svg v-if="sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12l7-7 7 7"/></svg>
+        {{ currentSortLabel }}
+      </button>
     </div>
 
     <!-- 片段列表区域 -->
@@ -770,6 +799,32 @@ onExtMessage('importResult', (payload) => {
 /* ===== 语言筛选下拉 ===== */
 .sidebar-filter {
   padding: 4px 14px 8px;
+}
+
+/* ===== 排序切换按钮 ===== */
+.sidebar-sort {
+  padding: 0 14px 8px;
+}
+
+.sort-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--vscode-dropdown-border, #3c3c3c);
+  border-radius: 3px;
+  background: var(--vscode-dropdown-background, #3c3c3c);
+  color: var(--vscode-dropdown-foreground, #cccccc);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: background 0.15s;
+}
+
+.sort-toggle-btn:hover {
+  background: var(--vscode-list-hoverBackground, #2a2d2e);
 }
 
 /* ===== 片段列表 ===== */

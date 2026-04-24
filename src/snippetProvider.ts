@@ -87,6 +87,13 @@ export class SnippetCompletionProvider implements vscode.CompletionItemProvider 
       item.filterText = snippet.prefix;
       item.sortText = snippet.prefix;
 
+      // 补全项被接受时，执行命令增加使用计数
+      item.command = {
+        command: 'custom-snippet-manager.incrementUsage',
+        title: 'Increment Usage',
+        arguments: [snippet.id],
+      };
+
       // 计算替换范围：从当前行中与 prefix 匹配的起始位置到光标位置
       // 这样用户输入部分 prefix 时，补全会替换已输入的部分
       const replaceRange = this.getReplaceRange(linePrefix, snippet.prefix, position);

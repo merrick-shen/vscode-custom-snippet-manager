@@ -63,6 +63,10 @@ export default {
     importPartial: '{imported} 件をインポート、{errors} 件でエラーが発生しました。',
     noDataToExport: 'エクスポートするデータがありません',
   },
+  sort: {
+    newestFirst: '新しい順',
+    oldestFirst: '古い順',
+  },
   lang: {
     name: '日本語',
   },

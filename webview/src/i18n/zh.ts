@@ -63,6 +63,10 @@ export default {
     importPartial: '导入了 {imported} 个片段，{errors} 个出错。',
     noDataToExport: '暂无数据可导出',
   },
+  sort: {
+    newestFirst: '由新至旧',
+    oldestFirst: '由旧至新',
+  },
   lang: {
     name: '简体中文',
   },
