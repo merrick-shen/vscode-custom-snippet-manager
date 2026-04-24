@@ -7,7 +7,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { SnippetService, SnippetData } from './snippetService';
+import { SnippetService } from './snippetService';
 
 /** Webview 消息格式 */
 interface WebviewMessage {

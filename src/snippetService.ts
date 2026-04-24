@@ -109,26 +109,6 @@ export class SnippetService {
     return [...this.snippets];
   }
 
-  /**
-   * 根据 ID 获取单个片段
-   * @param id 片段唯一标识符
-   * @returns 片段数据，未找到时返回 undefined
-   */
-  getById(id: string): SnippetData | undefined {
-    return this.snippets.find((s) => s.id === id);
-  }
-
-  /**
-   * 根据语言筛选片段
-   * @param language 语言标识符，'*' 返回所有片段
-   */
-  getByLanguage(language: string): SnippetData[] {
-    if (language === '*') {
-      return this.getAll();
-    }
-    return this.snippets.filter((s) => s.language === language || s.language === '*');
-  }
-
   /** 创建新片段，自动生成唯一 ID 并持久化 */
   create(data: Omit<SnippetData, 'id'>): SnippetData {
     const snippet: SnippetData = {

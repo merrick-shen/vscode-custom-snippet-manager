@@ -43,18 +43,3 @@ export function onExtMessage(type: MessageType, handler: MessageHandler): void {
   existing.push(handler)
   handlers.set(type, existing)
 }
-
-/**
- * 移除指定消息类型的某个回调
- * @param type 消息类型
- * @param handler 要移除的回调函数引用
- */
-export function offExtMessage(type: MessageType, handler: MessageHandler): void {
-  const existing = handlers.get(type)
-  if (existing) {
-    handlers.set(
-      type,
-      existing.filter((cb) => cb !== handler)
-    )
-  }
-}

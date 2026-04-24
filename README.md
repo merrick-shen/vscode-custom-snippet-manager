@@ -1,71 +1,108 @@
-# custom-snippet-manager README
+# Custom Snippet Manager
 
-This is the README for your extension "custom-snippet-manager". After writing up a brief description, we recommend including the following sections.
+Manage custom code snippets with ease. Create, edit, and organize your snippets with a modern UI, smart autocomplete, and multi-language support.
 
-## Features
+[中文文档](./README.zh-CN.md)
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## ✨ Features
 
-For example if there is an image subfolder under your extension project workspace:
+### 📝 Snippet Management
 
-\!\[feature X\]\(images/feature-x.png\)
+- **Create, Edit, Delete** snippets through an intuitive webview UI
+- Each snippet contains: **name**, **prefix**, **body**, **description**, **language**
+- Support **"All Languages"** or specify a particular language scope
+- Snippets are persisted locally using VS Code's global storage
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### 🚀 Smart Autocomplete
 
-## Requirements
+- Type a snippet's **prefix** to trigger autocomplete suggestions
+- Full **SnippetString** support — use `$1`, `$2`, `$0` for tabstop cursor jumps
+- Language-aware filtering — only relevant snippets appear for the current file
+- Partial prefix matching — start typing and get suggestions instantly
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+### 🎨 Modern Webview UI
 
-## Extension Settings
+- **Sidebar panel** with snippet list, search, and language filtering
+- **Editor panel** with form validation and code highlighting (CodeMirror 6)
+- **Fuzzy search** powered by Fuse.js
+- **Language icons** for better visual identification
+- **Delete confirmation** dialog to prevent accidental deletion
+- Consistent styling that blends with VS Code's theme
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### 🌐 Internationalization
 
-For example:
+- Full **Chinese / English** UI support
+- One-click language switching
+- Language preference is persisted across sessions
 
-This extension contributes the following settings:
+### ⌨️ Commands & Keybindings
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+| Command | Keybinding | Description |
+|---|---|---|
+| `New Snippet` | — | Create a new snippet |
+| `Open Snippet Library` | — | Open the sidebar panel |
+| `Insert Snippet` | `Ctrl+Alt+I` / `Cmd+Alt+I` | Insert via QuickPick |
+| `Trigger Snippet Completion` | `Ctrl+Alt+Space` / `Cmd+Alt+Space` | Trigger autocomplete |
 
-## Known Issues
+Right-click context menu also includes "Insert Snippet" when editing text.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## 📖 Usage
 
-## Release Notes
+### Create a Snippet
 
-Users appreciate release notes as you update your extension.
+1. Click the **Custom Snippet Manager** icon in the Activity Bar
+2. Click the **"New Snippet"** button
+3. Fill in the form:
+   - **Name**: A descriptive name for your snippet
+   - **Prefix**: The trigger keyword (e.g., `log`, `forof`)
+   - **Body**: The snippet content (supports `$1`, `$2`, `$0` tabstops)
+   - **Description**: Optional description
+   - **Language**: Choose a specific language or "All Languages"
+4. Click **Save**
 
-### 1.0.0
+### Use a Snippet
 
-Initial release of ...
+**Autocomplete** — Type the prefix in an editor and select from suggestions.
 
-### 1.0.1
+**QuickPick** — Press `Ctrl+Alt+I` to browse and insert a snippet.
 
-Fixed issue #.
+**Context Menu** — Right-click in the editor → "Insert Snippet".
 
-### 1.1.0
+### Snippet Body Syntax
 
-Added features X, Y, and Z.
+Use tabstops to define cursor positions:
 
----
+```javascript
+console.log('$1', $2);$0
+```
 
-## Following extension guidelines
+- `$1` — First cursor position
+- `$2` — Second cursor position (press Tab to navigate)
+- `$0` — Final cursor position
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+## 🗂️ Supported Languages
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, Java, C#, C++, C, Go, Rust, PHP, Ruby, Swift, Kotlin, Vue, React JSX, React TSX, SCSS, LESS, Shell, SQL, YAML, XML, Dart, Lua, R, Dockerfile
 
-## Working with Markdown
+## 💾 Data Storage
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+Snippets are stored in a `snippets.json` file under VS Code's global storage directory:
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- **Windows**: `%APPDATA%\Code\User\globalStorage\custom-snippet-manager\`
+- **macOS**: `~/Library/Application Support/Code/User/globalStorage/custom-snippet-manager/`
+- **Linux**: `~/.config/Code/User/globalStorage/custom-snippet-manager/`
 
-## For more information
+## 📦 Installation
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+1. Open VS Code
+2. Press `Ctrl+Shift+X` to open the Extensions panel
+3. Search for **"Custom Snippet Manager"**
+4. Click **Install**
 
-**Enjoy!**
+## 🤝 Contributing
+
+Issues and pull requests are welcome at [GitHub](https://github.com/horyce/vscode-custom-snippet-manager).
+
+## 📄 License
+
+[MIT](https://github.com/horyce/vscode-custom-snippet-manager/blob/main/LICENSE)

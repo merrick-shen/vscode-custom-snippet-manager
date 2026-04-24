@@ -19,7 +19,7 @@ export interface Snippet {
  * - getSnippets / snippetsList: 请求和返回片段列表
  * - createSnippet / snippetCreated: 创建片段及创建成功通知
  * - updateSnippet / snippetUpdated: 更新片段及更新成功通知
- * - deleteSnippet / snippetDeleted: 删除片段及删除成功通知
+ * - deleteSnippet: 删除片段
  * - openEditor: 请求打开编辑器面板
  * - closeEditor: 请求关闭编辑器面板
  * - editorReady: 编辑器 webview 加载完成通知
@@ -35,7 +35,6 @@ export type MessageType =
   | 'deleteSnippet'
   | 'snippetCreated'
   | 'snippetUpdated'
-  | 'snippetDeleted'
   | 'openEditor'
   | 'closeEditor'
   | 'editorReady'
@@ -54,9 +53,6 @@ export interface ExtMessage {
   type: MessageType
   payload?: unknown
 }
-
-/** 视图模式：sidebar 为侧边栏列表，editor 为编辑器表单 */
-export type ViewMode = 'sidebar' | 'editor'
 
 /** 支持的编程语言列表，用于语言筛选下拉和片段语言属性 */
 export const SUPPORTED_LANGUAGES: { label: string; value: string; icon: string }[] = [

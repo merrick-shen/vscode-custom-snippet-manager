@@ -732,36 +732,6 @@ onMounted(() => {
   box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
 }
 
-/* 下拉选择框，与编辑页 form-select 统一 */
-.form-select {
-  width: 100%;
-  padding: 7px 10px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 30px;
-}
-
-.form-select:focus {
-  border-color: var(--vscode-focusBorder, #007fd4);
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
-}
-
-.form-select option {
-  background: var(--vscode-editorWidget-background, #252526);
-  color: var(--vscode-editor-foreground);
-}
-
 /* 按钮基础样式，与编辑页 btn 统一 */
 .btn {
   display: inline-flex;
