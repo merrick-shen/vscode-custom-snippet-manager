@@ -31,7 +31,7 @@ Manage custom code snippets with ease. Create, edit, and organize your snippets 
 
 ### 🌐 Internationalization
 
-- Full **Simplified Chinese / Traditional Chinese / English / Japanese / Korean** UI support
+- Full **简体中文 / 繁體中文 / English / 日本語 / 한국어** UI support
 - Dropdown menu for language switching
 - Language preference is persisted across sessions
 

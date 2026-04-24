@@ -6,7 +6,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
-## [1.0.0] - 2026-04-24
+## [1.0.0] - 2026-05-01
 
 ### Added
 
@@ -15,7 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Sidebar UI**: Webview-based snippet list with fuzzy search (Fuse.js) and language filtering
 - **Editor UI**: Webview-based form with CodeMirror 6 syntax highlighting and input validation
 - **Language Icons**: Iconify-powered language icons in dropdowns and snippet list items
-- **Internationalization**: Full Simplified Chinese / Traditional Chinese / English / Japanese / Korean UI support with dropdown language switcher and preference persistence
+- **Internationalization**: Full **简体中文 / 繁體中文 / English / 日本語 / 한국어** UI support with dropdown language switcher and preference persistence
 - **Commands**:
   - `New Snippet` — Open editor to create a new snippet
   - `Open Snippet Library` — Focus the sidebar panel
