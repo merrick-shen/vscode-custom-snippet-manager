@@ -40,13 +40,14 @@
   ],
   "activationEvents": [],
   "main": "./dist/extension.js",
+  "icon": "resources/logo.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
           "id": "custom-snippet-manager",
           "title": "Custom Snippet Manager",
-          "icon": "media/icon.svg"
+          "icon": "resources/icon.svg"
         }
       ]
     },
@@ -56,7 +57,7 @@
           "type": "webview",
           "id": "custom-snippet-manager.sidebar",
           "name": "Snippets",
-          "icon": "media/icon.svg"
+          "icon": "resources/icon.svg"
         }
       ]
     },

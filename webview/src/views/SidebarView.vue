@@ -172,15 +172,9 @@ onMounted(() => {
     <!-- 顶部标题栏：图标 + 标题 + 语言切换 -->
     <div class="sidebar-header">
       <div class="header-content">
-        <!-- 标题图标，与编辑页风格统一 -->
+        <!-- 标题图标，使用项目 logo -->
         <div class="header-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-          </svg>
+          <img src="../assets/logo.png" alt="logo" class="header-logo" />
         </div>
         <h2 class="header-title">{{ t('app.title') }}</h2>
         <!-- 语言切换按钮 -->
@@ -391,6 +385,14 @@ onMounted(() => {
   background: linear-gradient(135deg, #0e639c, #1177bb);
   color: #fff;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* logo 图片自适应容器 */
+.header-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .header-title {
