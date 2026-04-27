@@ -6,6 +6,11 @@
   "engines": {
     "vscode": "^1.116.0"
   },
+  "publisher": "horyce",
+  "author": {
+    "name": "Horyce",
+    "email": "smh070912@gmail.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -15,11 +20,20 @@
   "bugs": {
     "url": "https://github.com/horyce/vscode-custom-snippet-manager/issues"
   },
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
   "categories": [
-    "Snippets",
-    "Other"
+    "Snippets"
   ],
   "keywords": [
+    "vscode extension",
+    "snippet extension",
+    "vscode snippet",
+    "snippet tool",
+    "code generator",
+    "developer productivity",
     "snippet",
     "snippets",
     "code snippet",
@@ -38,7 +52,14 @@
     "代码模板",
     "代码库"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onView:custom-snippet-manager.sidebar",
+    "onCommand:custom-snippet-manager.openSnippetLibrary",
+    "onCommand:custom-snippet-manager.insertSnippet",
+    "onCommand:custom-snippet-manager.triggerCompletion",
+    "onCommand:custom-snippet-manager.saveSelectionToSnippet",
+    "onCommand:custom-snippet-manager.openEditor"
+  ],
   "main": "./dist/extension.js",
   "icon": "resources/logo.png",
   "contributes": {
@@ -136,7 +157,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
+    "vscode:prepublish": "npm run package:all",
     "compile": "npm run check-types && npm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
     "watch:esbuild": "node esbuild.js --watch",

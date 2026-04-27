@@ -1,129 +1,169 @@
 # Custom Snippet Manager
 
-Manage custom code snippets with ease. Create, edit, and organize your snippets with a modern UI, smart autocomplete, and multi-language support.
+[![VS Code](https://img.shields.io/badge/VSCode-Extension-blue?style=for-the-badge)](https://marketplace.visualstudio.com/)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](https://github.com/horyce/vscode-custom-snippet-manager/blob/main/LICENSE)
 
-[中文文档](./README.zh-CN.md)
+🚀 A powerful snippet manager for VS Code with a modern UI, smart autocomplete, and multi-language support.
+✨ Create, organize, and instantly reuse your code snippets — all in one place.
+
+---
+
+## 🌐 Language
+
+[![English](https://img.shields.io/badge/English-README-blue?style=for-the-badge)](./README.md)
+[![中文](https://img.shields.io/badge/中文-说明-red?style=for-the-badge)](./README.zh-CN.md)
+
+---
 
 ## ✨ Features
 
-### 📝 Snippet Management
+### 🧠 Smart Snippet Management
 
-- **Create, Edit, Delete** snippets through an intuitive webview UI
-- Each snippet contains: **name**, **prefix**, **body**, **description**, **language**
-- Support **"All Languages"** or specify a particular language scope
-- Snippets are persisted locally using VS Code's global storage
+* Create, edit, and delete snippets with an intuitive UI
+* Organize snippets by language or use them globally
+* Automatically saved locally — no manual file handling needed
 
-### 🚀 Smart Autocomplete
+### ⚡ Powerful Autocomplete
 
-- Type a snippet's **prefix** to trigger autocomplete suggestions
-- Full **SnippetString** support — use `$1`, `$2`, `$0` for tabstop cursor jumps
-- Language-aware filtering — only relevant snippets appear for the current file
-- Partial prefix matching — start typing and get suggestions instantly
+* Trigger snippets instantly using prefixes
+* Supports editing multiple positions with Tab navigation (using `$1`, `$2`, `$0` placeholders)
+* Language-aware suggestions
+* Fuzzy matching for faster searching
 
-### 🎨 Modern Webview UI
+### 🎨 Modern UI Experience
 
-- **Sidebar panel** with snippet list, search, and language filtering
-- **Editor panel** with form validation and code highlighting (CodeMirror 6)
-- **Fuzzy search** powered by Fuse.js
-- **Sorting** by date added with ascending/descending toggle
-- **Language icons** for better visual identification
-- **Delete confirmation** dialog to prevent accidental deletion
-- Consistent styling that blends with VS Code's theme
+* Sidebar panel with search, filtering, and sorting
+* Built-in code editor with syntax highlighting (CodeMirror 6)
+* Fast fuzzy search powered by Fuse.js
+* Seamless integration with VS Code theme
 
-### 🌐 Internationalization
+### 🌐 Multi-language Support
 
-- Full **简体中文 / 繁體中文 / English / 日本語 / 한국어** UI support
-- Dropdown menu for language switching
-- Language preference is persisted across sessions
+![language](./resources/SwitchLanguage.gif)
+
+* Supports 简体中文 / 繁體中文 / English / 日本語 / 한국어
+* Easily switch between languages
+* Language preference is saved automatically
 
 ### 💼 Import & Export
 
-- **Export** snippets to a JSON file with version info and metadata
-- **Import** snippets from a JSON file with data validation and security checks
-- Duplicate handling strategies: **Overwrite**, **Skip**, or **Merge** (keep both)
-- File naming format: `code_snippet_config_YYYYMMDD_HHMMSS.json`
-- Confirmation dialogs before import/export operations
+* Export snippets as JSON with metadata
+* Secure import with validation
+* Handle duplicates with:
 
-### ⌨️ Commands & Keybindings
+  * Overwrite
+  * Skip
+  * Merge
 
-| Command | Keybinding | Description |
-|---|---|---|
-| `New Snippet` | — | Create a new snippet |
-| `Open Snippet Library` | — | Open the sidebar panel |
-| `Insert Snippet` | `Ctrl+Alt+I` / `Cmd+Alt+I` | Insert via QuickPick |
-| `Trigger Snippet Completion` | `Ctrl+Alt+Space` / `Cmd+Alt+Space` | Trigger autocomplete |
-| `Save to Snippet Library` | — | Save selected code as a snippet |
+### 🖱️ Save Code as Snippet (Highlight Feature 🔥)
 
-Right-click context menu includes "Insert Snippet" and "Save to Snippet Library" (shown when text is selected).
+* Select any code in the editor
+* Right-click → Save directly to snippet library
+* No need for copy & paste
+
+---
 
 ## 📖 Usage
 
-### Create a Snippet
+### ➕ Create Snippets
 
-1. Click the **Custom Snippet Manager** icon in the Activity Bar
-2. Click the **"New Snippet"** button
-3. Fill in the form:
-   - **Name**: A descriptive name for your snippet
-   - **Prefix**: The trigger keyword (e.g., `log`, `forof`)
-   - **Body**: The snippet content (supports `$1`, `$2`, `$0` tabstops)
-   - **Description**: Optional description
-   - **Language**: Choose a specific language or "All Languages"
-4. Click **Save**
+**Method 1: Right-click**
 
-### Use a Snippet
+![Right-click](./resources/savecode1.gif)
 
-**Autocomplete** — Type the prefix in an editor and select from suggestions.
+**Method 2: UI Panel**
 
-**QuickPick** — Press `Ctrl+Alt+I` to browse and insert a snippet.
+![UI](./resources/savecode2.gif)
 
-**Context Menu** — Right-click in the editor → "Insert Snippet".
+---
 
-**Save Selection** — Select code in the editor, right-click → "Save to Snippet Library". Enter a prefix and name, and the snippet is saved with the current file's language automatically detected.
+### ⚡ Use Snippets
 
-### Snippet Body Syntax
+**Autocomplete**
 
-Use tabstops to define cursor positions:
+![Autocomplete](./resources/usecode1.gif)
+
+**Right-click Menu**
+
+![Context Menu](./resources/usecode2.gif)
+
+**Quick Pick**
+
+![Quick Pick](./resources/usecode3.gif)
+
+---
+
+## ✨ Snippet Syntax
 
 ```javascript
 console.log('$1', $2);$0
 ```
 
-- `$1` — First cursor position
-- `$2` — Second cursor position (press Tab to navigate)
-- `$0` — Final cursor position
+* `$1` First cursor position
+* `$2` Next position (Tab to jump)
+* `$0` Final cursor position
 
-### Import & Export Snippets
+---
 
-**Export** — Click the **"Export"** button in the sidebar header. Choose a save location in the file dialog. The exported JSON file includes all snippets with version metadata.
+## ⌨️ Commands & Shortcuts
 
-**Import** — Click the **"Import"** button in the sidebar header. Select a JSON file to import. If duplicate snippets are found, you can choose to:
-- **Overwrite**: Replace existing snippets with imported ones
-- **Skip**: Keep existing snippets unchanged
-- **Merge**: Keep both (imported snippets get new IDs)
+| Command                 | Shortcut                       | Description                  |
+| ----------------------- | ------------------------------ | ---------------------------- |
+| New Snippet             | —                              | Create a new snippet         |
+| Open Snippet Library    | —                              | Open sidebar panel           |
+| Insert Snippet          | Ctrl+Alt+I / Cmd+Alt+I         | Insert snippet via QuickPick |
+| Trigger Completion      | Ctrl+Alt+Space / Cmd+Alt+Space | Trigger autocomplete         |
+| Save to Snippet Library | —                              | Save selected code           |
+
+---
 
 ## 🗂️ Supported Languages
 
-JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, Java, C#, C++, C, Go, Rust, PHP, Ruby, Swift, Kotlin, Vue, React JSX, React TSX, SCSS, LESS, Shell, SQL, YAML, XML, Dart, Lua, R, Dockerfile
+Supports 50+ popular programming languages and file formats
+
+---
 
 ## 💾 Data Storage
 
-Snippets are stored in a `snippets.json` file under VS Code's global storage directory:
+Snippets are stored in VS Code global storage:
 
-- **Windows**: `%APPDATA%\Code\User\globalStorage\custom-snippet-manager\`
-- **macOS**: `~/Library/Application Support/Code/User/globalStorage/custom-snippet-manager/`
-- **Linux**: `~/.config/Code/User/globalStorage/custom-snippet-manager/`
+* Windows: `%APPDATA%\Code\User\globalStorage\custom-snippet-manager\`
+* macOS: `~/Library/Application Support/Code/User/globalStorage/custom-snippet-manager/`
+* Linux: `~/.config/Code/User/globalStorage/custom-snippet-manager/`
+
+---
 
 ## 📦 Installation
 
 1. Open VS Code
-2. Press `Ctrl+Shift+X` to open the Extensions panel
-3. Search for **"Custom Snippet Manager"**
-4. Click **Install**
+2. Go to Extensions (`Ctrl+Shift+X`)
+3. Search **Custom Snippet Manager**
+4. Click Install
+
+---
 
 ## 🤝 Contributing
 
-Issues and pull requests are welcome at [GitHub](https://github.com/horyce/vscode-custom-snippet-manager).
+Issues and Pull Requests are welcome:
+
+👉 https://github.com/horyce/vscode-custom-snippet-manager
+
+---
+
+## 👥 Team
+
+Horyce (with AI assistance)
+
+---
+
+## 📬 Contact
+
+For feedback, bug reports, or feature requests:
+
+* Email: [smh070912@gmail.com](mailto:smh070912@gmail.com)
+
+---
 
 ## 📄 License
 
-[MIT](https://github.com/horyce/vscode-custom-snippet-manager/blob/main/LICENSE)
+MIT License

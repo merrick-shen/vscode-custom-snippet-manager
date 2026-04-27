@@ -1,129 +1,169 @@
 # Custom Snippet Manager - 自定义片段管理器
 
-轻松管理自定义代码片段，支持创建、编辑和组织片段，提供现代化界面、智能补全和多语言支持。
+[![VS Code](https://img.shields.io/badge/VSCode-Extension-blue?style=for-the-badge)](https://marketplace.visualstudio.com/)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](https://github.com/horyce/vscode-custom-snippet-manager/blob/main/LICENSE)
 
-[English](./README.md)
+🚀 一个强大的 VS Code 代码片段管理插件，提供现代化界面、智能补全和多语言支持。
+✨ 让你轻松创建、管理并快速复用代码片段，大幅提升编码效率。
 
-## ✨ 功能特性
+---
 
-### 📝 片段管理
+## 🌐 语言
 
-- 通过直观的 Webview 界面**创建、编辑、删除**代码片段
-- 每个片段包含：**名称**、**触发前缀**、**代码内容**、**描述**、**适用语言**
-- 支持**"所有语言"**或指定特定语言范围
-- 片段通过 VS Code 全局存储本地持久化保存
+[![English](https://img.shields.io/badge/English-README-blue?style=for-the-badge)](./README.md)
+[![中文](https://img.shields.io/badge/中文-说明-red?style=for-the-badge)](./README.zh-CN.md)
 
-### 🚀 智能补全
+---
 
-- 输入片段的**触发前缀**即可触发自动补全建议
-- 完整支持 **SnippetString** — 使用 `$1`、`$2`、`$0` 实现 Tab 光标跳转
-- 按语言智能筛选 — 仅显示与当前文件相关的片段
-- 部分前缀匹配 — 输入即可获得补全建议
+## ✨ 核心功能
 
-### 🎨 现代化界面
+### 🧠 智能片段管理
 
-- **侧边栏面板**，包含片段列表、搜索和语言筛选
-- **编辑器面板**，支持表单校验和代码高亮（CodeMirror 6）
-- 基于 Fuse.js 的**模糊搜索**
-- **排序功能**，按添加日期排序，支持正序/倒序切换
-- **语言图标**，提升视觉辨识度
-- **删除确认**弹窗，防止误删
-- 与 VS Code 主题融合的统一视觉风格
+* 通过直观的界面创建、编辑、删除代码片段
+* 支持按语言分类或全局使用
+* 自动本地保存，无需手动管理文件
 
-### 🌐 国际化
+### ⚡ 强大的代码补全
 
-- 完整的**简体中文 / 繁體中文 / English / 日本語 / 한국어**界面支持
-- 下拉菜单切换语言
-- 语言偏好跨会话持久保存
+* 输入前缀即可快速触发片段
+* 支持多位置编辑（按 Tab 键切换，基于 `$1`、`$2`、`$0` 占位符）
+* 根据当前文件语言智能筛选
+* 支持模糊匹配，提高查找效率
+
+### 🎨 现代化 UI 体验
+
+* 侧边栏面板：列表、搜索、筛选一体化
+* 内置代码编辑器（支持语法高亮）
+* 模糊搜索（Fuse.js）
+* 界面风格与 VS Code 完美融合
+
+### 🌐 多语言支持
+
+![language](./resources/SwitchLanguage.gif)
+
+* 支持 简体中文 / 繁體中文 / English / 日本語 / 한국어
+* 一键切换语言
+* 自动记住用户语言偏好
 
 ### 💼 导入与导出
 
-- **导出**代码片段为 JSON 文件，包含版本信息和元数据
-- **导入** JSON 文件中的代码片段，带数据验证和安全检查
-- 重复处理策略：**覆盖**、**跳过**或**合并**（保留两者）
-- 文件命名格式：`code_snippet_config_YYYYMMDD_HHMMSS.json`
-- 导入/导出操作前均有确认对话框
+* 一键导出为 JSON（包含元数据）
+* 安全导入并自动校验
+* 重复片段处理方式：
 
-### ⌨️ 命令与快捷键
+  * 覆盖
+  * 跳过
+  * 合并
 
-| 命令 | 快捷键 | 说明 |
-|---|---|---|
-| `新建片段` | — | 创建新的代码片段 |
-| `打开片段库` | — | 打开侧边栏面板 |
-| `插入片段` | `Ctrl+Alt+I` / `Cmd+Alt+I` | 通过 QuickPick 选择并插入片段 |
-| `触发片段补全` | `Ctrl+Alt+Space` / `Cmd+Alt+Space` | 触发代码补全建议 |
-| `保存到片段库` | — | 将选中代码保存为片段 |
+### 🖱️ 一键保存代码（亮点功能🔥）
 
-编辑器右键菜单包含"插入片段"和"保存到片段库"（选中代码后显示）。
+* 在编辑器中选中代码
+* 右键 → 直接保存到片段库
+* 无需手动复制粘贴
+
+---
 
 ## 📖 使用方法
 
-### 创建片段
+### ➕ 创建代码片段
 
-1. 点击活动栏中的 **Custom Snippet Manager** 图标
-2. 点击**"新建片段"**按钮
-3. 填写表单：
-   - **名称**：片段的描述性名称
-   - **前缀**：触发关键词（如 `log`、`forof`）
-   - **代码内容**：片段内容（支持 `$1`、`$2`、`$0` 光标跳转）
-   - **描述**：可选的片段描述
-   - **语言**：选择特定语言或"所有语言"
-4. 点击**保存**
+**方式一：右键创建**
 
-### 使用片段
+![右键创建](./resources/保存代码1.gif)
 
-**自动补全** — 在编辑器中输入前缀，从补全建议中选择。
+**方式二：界面创建**
 
-**快速选择** — 按 `Ctrl+Alt+I` 浏览并插入片段。
+![UI创建](./resources/保存代码2.gif)
 
-**右键菜单** — 在编辑器中右键 → "插入片段"。
+---
 
-**保存选中代码** — 在编辑器中选中代码，右键 → "保存到片段库"。输入前缀和名称即可保存，自动识别当前文件语言。
+### ⚡ 使用代码片段
 
-### 片段体语法
+**自动补全**
 
-使用制表位定义光标位置：
+![自动补全](./resources/使用代码1.gif)
+
+**右键菜单**
+
+![右键菜单](./resources/使用代码2.gif)
+
+**快速选择**
+
+![快速选择](./resources/使用代码3.gif)
+
+---
+
+## ✨ 片段语法
 
 ```javascript
 console.log('$1', $2);$0
 ```
 
-- `$1` — 第一个光标位置
-- `$2` — 第二个光标位置（按 Tab 跳转）
-- `$0` — 最终光标位置
+* `$1`：第一个光标位置
+* `$2`：下一个位置（Tab 跳转）
+* `$0`：最终光标位置
 
-### 导入与导出片段
+---
 
-**导出** — 点击侧边栏标题栏中的**「导出配置」**按钮，在文件对话框中选择保存位置。导出的 JSON 文件包含所有片段及版本元数据。
+## ⌨️ 命令与快捷键
 
-**导入** — 点击侧边栏标题栏中的**「导入配置」**按钮，选择要导入的 JSON 文件。如果发现重复片段，可以选择：
-- **覆盖**：用导入的片段替换现有片段
-- **跳过**：保留现有片段不变
-- **合并**：保留两者（导入的片段会生成新 ID）
+| 命令     | 快捷键                            | 说明       |
+| ------ | ------------------------------ | -------- |
+| 新建片段   | —                              | 创建新的代码片段 |
+| 打开片段库  | —                              | 打开侧边栏    |
+| 插入片段   | Ctrl+Alt+I / Cmd+Alt+I         | 快速插入片段   |
+| 触发补全   | Ctrl+Alt+Space / Cmd+Alt+Space | 触发代码补全   |
+| 保存到片段库 | —                              | 保存选中代码   |
+
+---
 
 ## 🗂️ 支持的语言
 
-JavaScript, TypeScript, Python, HTML, CSS, JSON, Markdown, Java, C#, C++, C, Go, Rust, PHP, Ruby, Swift, Kotlin, Vue, React JSX, React TSX, SCSS, LESS, Shell, SQL, YAML, XML, Dart, Lua, R, Dockerfile
+支持 50+ 常见编程语言与文件格式
+
+---
 
 ## 💾 数据存储
 
-片段存储在 VS Code 全局存储目录下的 `snippets.json` 文件中：
+代码片段保存在 VS Code 全局存储目录：
 
-- **Windows**: `%APPDATA%\Code\User\globalStorage\custom-snippet-manager\`
-- **macOS**: `~/Library/Application Support/Code/User/globalStorage/custom-snippet-manager/`
-- **Linux**: `~/.config/Code/User/globalStorage/custom-snippet-manager/`
+* Windows: `%APPDATA%\Code\User\globalStorage\custom-snippet-manager\`
+* macOS: `~/Library/Application Support/Code/User/globalStorage/custom-snippet-manager/`
+* Linux: `~/.config/Code/User/globalStorage/custom-snippet-manager/`
+
+---
 
 ## 📦 安装
 
 1. 打开 VS Code
-2. 按 `Ctrl+Shift+X` 打开扩展面板
-3. 搜索 **"Custom Snippet Manager"**
-4. 点击**安装**
+2. 进入扩展市场（Ctrl+Shift+X）
+3. 搜索 **Custom Snippet Manager**
+4. 点击安装
+
+---
 
 ## 🤝 贡献
 
-欢迎在 [GitHub](https://github.com/horyce/vscode-custom-snippet-manager) 提交 Issue 和 Pull Request。
+欢迎提交 Issue 或 Pull Request：
+
+👉 https://github.com/horyce/vscode-custom-snippet-manager
+
+---
+
+## 👥 开发团队
+
+Horyce & GLM 5.1（AI 辅助）
+
+---
+
+## 📬 联系方式
+
+如果你有任何建议或问题，欢迎联系：
+
+* 邮箱：[smh070912@gmail.com](mailto:smh070912@gmail.com)
+
+---
 
 ## 📄 许可证
 
-[MIT](https://github.com/horyce/vscode-custom-snippet-manager/blob/main/LICENSE)
+MIT License
