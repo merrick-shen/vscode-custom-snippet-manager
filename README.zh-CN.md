@@ -69,11 +69,11 @@
 
 **方式一：右键创建**
 
-![右键创建](./resources/保存代码1.gif)
+![右键创建](./resources/savecodecn1.gif)
 
 **方式二：界面创建**
 
-![UI创建](./resources/保存代码2.gif)
+![UI创建](./resources/savecodecn2.gif)
 
 ---
 
@@ -81,15 +81,15 @@
 
 **自动补全**
 
-![自动补全](./resources/使用代码1.gif)
+![自动补全](./resources/usecodecn1.gif)
 
 **右键菜单**
 
-![右键菜单](./resources/使用代码2.gif)
+![右键菜单](./resources/usecodecn2.gif)
 
 **快速选择**
 
-![快速选择](./resources/使用代码3.gif)
+![快速选择](./resources/usecodecn3.gif)
 
 ---
 
