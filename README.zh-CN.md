@@ -39,9 +39,9 @@
 
 ### 🌐 多语言支持
 
-![language](./resources/SwitchLanguage.gif)
+![language](./resources/lang.png)
 
-* 支持 简体中文 / 繁體中文 / English / 日本語 / 한국어
+* 支持 简体中文 / 繁體中文 / English / 日本語 / 한국어 
 * 一键切换语言
 * 自动记住用户语言偏好
 

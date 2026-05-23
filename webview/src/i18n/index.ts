@@ -10,6 +10,14 @@ import zhTW from './zh-TW'
 import en from './en'
 import ja from './ja'
 import ko from './ko'
+import ru from './ru'
+import de from './de'
+import fr from './fr'
+import es from './es'
+import pt from './pt'
+import it from './it'
+import pl from './pl'
+import tr from './tr'
 
 /** 支持的语言列表，用于语言切换下拉菜单 */
 export const SUPPORTED_LOCALES = [
@@ -18,6 +26,14 @@ export const SUPPORTED_LOCALES = [
   { value: 'en', label: 'English' },
   { value: 'ja', label: '日本語' },
   { value: 'ko', label: '한국어' },
+  { value: 'ru', label: 'Русский' },
+  { value: 'de', label: 'Deutsch' },
+  { value: 'fr', label: 'Français' },
+  { value: 'es', label: 'Español' },
+  { value: 'pt', label: 'Português' },
+  { value: 'it', label: 'Italiano' },
+  { value: 'pl', label: 'Polski' },
+  { value: 'tr', label: 'Türkçe' },
 ] as const
 
 /** 语言标识符类型 */
@@ -30,7 +46,7 @@ const i18n = createI18n({
   legacy: false,
   locale: savedLocale,
   fallbackLocale: 'en',
-  messages: { zh, 'zh-TW': zhTW, en, ja, ko },
+  messages: { zh, 'zh-TW': zhTW, en, ja, ko, ru, de, fr, es, pt, it, pl, tr },
 })
 
 export default i18n

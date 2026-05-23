@@ -39,7 +39,7 @@
 
 ### 🌐 Multi-language Support
 
-![language](./resources/SwitchLanguage.gif)
+![language](./resources/lang.png)
 
 * Supports 简体中文 / 繁體中文 / English / 日本語 / 한국어
 * Easily switch between languages

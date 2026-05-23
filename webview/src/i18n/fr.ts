@@ -1,0 +1,87 @@
+/**
+ * 法语语言包
+ * 与中文语言包结构一一对应，用于国际化切换
+ */
+export default {
+  app: {
+    title: 'Gestionnaire de snippets',
+  },
+  list: {
+    searchPlaceholder: 'Rechercher des snippets...',
+    empty: 'Aucun snippet',
+    emptyDesc: 'Cliquez sur le bouton ci-dessus pour créer votre premier snippet',
+  },
+  form: {
+    createTitle: 'Créer un snippet',
+    editTitle: 'Modifier le snippet',
+    createSubtitle: 'Remplissez les champs ci-dessous pour créer un nouveau snippet',
+    editSubtitle: 'Modifiez le contenu et les propriétés du snippet',
+    name: 'Nom',
+    namePlaceholder: 'Entrez le nom du snippet',
+    prefix: 'Préfixe',
+    prefixPlaceholder: 'Entrez le préfixe déclencheur, ex. log',
+    prefixNotice: "L'autocomplétion ne prend pas en charge les préfixes commençant par un chiffre. Utilisez une lettre (a-z, A-Z) ou un tiret bas (_) comme premier caractère et évitez les chiffres ou symboles spéciaux au début.",
+    body: 'Corps',
+    bodyPlaceholder: 'Entrez le corps du snippet, prend en charge les tabstopps $1, $2, $0',
+    bodyHint: 'Prend en charge les tabstopps $1, $2, $0',
+    description: 'Description',
+    descriptionPlaceholder: 'Entrez la description du snippet',
+    language: 'Langage',
+    languagePlaceholder: 'Sélectionnez le(s) langage(s) — plusieurs possibles',
+    allLanguages: 'Tous les langages',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
+    nameRequired: 'Le nom est requis',
+    prefixRequired: 'Le préfixe est requis',
+    bodyRequired: 'Le corps est requis',
+  },
+  delete: {
+    title: 'Confirmer la suppression',
+    content: 'Voulez-vous vraiment supprimer le snippet « {name} » ? Cette action est irréversible.',
+    confirm: 'Supprimer',
+    cancel: 'Annuler',
+    success: 'Le snippet « {name} » a été supprimé',
+  },
+  create: {
+    success: 'Le snippet « {name} » a été créé avec succès',
+  },
+  update: {
+    success: 'Le snippet « {name} » a été mis à jour avec succès',
+  },
+  filter: {
+    all: 'Tous',
+  },
+  actions: {
+    create: 'Nouveau snippet',
+    edit: 'Modifier',
+    delete: 'Supprimer',
+  },
+  importExport: {
+    exportConfig: 'Exporter',
+    importConfig: 'Importer',
+    exportConfirmTitle: "Confirmer l'export",
+    exportConfirmContent: 'Voulez-vous vraiment exporter tous les snippets ?',
+    importConfirmTitle: "Confirmer l'import",
+    importConfirmContent: 'Voulez-vous vraiment importer des snippets ? Cette action est irréversible.',
+    exportFailed: "Échec de l'export",
+    noDataToExport: 'Aucune donnée à exporter',
+    duplicateTitle: 'Snippets en double trouvés',
+    duplicateContent: '{count} snippet(s) dans le fichier importé existent déjà. Comment souhaitez-vous les traiter ?',
+    overwrite: 'Écraser',
+    overwriteDesc: 'Remplacer les snippets existants par ceux importés',
+    skip: 'Ignorer',
+    skipDesc: 'Conserver les snippets existants, ignorer les doublons',
+    merge: 'Fusionner',
+    mergeDesc: 'Conserver les deux, les snippets importés seront créés comme copies',
+    exportSuccessDetail: '{count} snippet(s) exporté(s) avec succès',
+    importFileReadError: 'Impossible de lire le fichier : {error}',
+    importInvalidJson: "Le contenu du fichier n'est pas un JSON valide",
+    importValidationError: 'Échec de la validation des données : {error}',
+    importSuccessDetail: '{count} snippet(s) importé(s) avec succès',
+    importPartialDetail: '{imported} snippet(s) importé(s), {errors} erreur(s)',
+  },
+  sort: {
+    newestFirst: 'Plus récents d\'abord',
+    oldestFirst: 'Plus anciens d\'abord',
+  },
+}

@@ -1,0 +1,87 @@
+/**
+ * 土耳其语语言包
+ * 与中文语言包结构一一对应，用于国际化切换
+ */
+export default {
+  app: {
+    title: 'Snippet Yöneticisi',
+  },
+  list: {
+    searchPlaceholder: 'Snippet ara...',
+    empty: 'Henüz snippet yok',
+    emptyDesc: 'İlk snippet\'inizi oluşturmak için yukarıdaki düğmeye tıklayın',
+  },
+  form: {
+    createTitle: 'Snippet oluştur',
+    editTitle: 'Snippet düzenle',
+    createSubtitle: 'Yeni bir snippet oluşturmak için aşağıdaki alanları doldurun',
+    editSubtitle: 'Snippet içeriğini ve özelliklerini değiştirin',
+    name: 'Ad',
+    namePlaceholder: 'Snippet adını girin',
+    prefix: 'Önek',
+    prefixPlaceholder: 'Tetikleyici öneki girin, örn. log',
+    prefixNotice: 'Otomatik tamamlama, rakamla başlayan önekleri desteklemez. İlk karakter olarak bir harf (a-z, A-Z) veya alt çizgi (_) kullanın ve başta rakam veya özel simgelerden kaçının.',
+    body: 'Gövde',
+    bodyPlaceholder: 'Snippet gövdesini girin, $1, $2, $0 sekme duraklarını destekler',
+    bodyHint: '$1, $2, $0 sekme duraklarını destekler',
+    description: 'Açıklama',
+    descriptionPlaceholder: 'Snippet açıklamasını girin',
+    language: 'Dil',
+    languagePlaceholder: 'Dil(ler)i seçin — birden fazla seçilebilir',
+    allLanguages: 'Tüm diller',
+    save: 'Kaydet',
+    cancel: 'İptal',
+    nameRequired: 'Ad zorunludur',
+    prefixRequired: 'Önek zorunludur',
+    bodyRequired: 'Gövde zorunludur',
+  },
+  delete: {
+    title: 'Silmeyi onayla',
+    content: '«{name}» snippet\'ini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    confirm: 'Sil',
+    cancel: 'İptal',
+    success: '«{name}» snippet\'i silindi',
+  },
+  create: {
+    success: '«{name}» snippet\'i başarıyla oluşturuldu',
+  },
+  update: {
+    success: '«{name}» snippet\'i başarıyla güncellendi',
+  },
+  filter: {
+    all: 'Tümü',
+  },
+  actions: {
+    create: 'Yeni snippet',
+    edit: 'Düzenle',
+    delete: 'Sil',
+  },
+  importExport: {
+    exportConfig: 'Dışa aktar',
+    importConfig: 'İçe aktar',
+    exportConfirmTitle: 'Dışa aktarmayı onayla',
+    exportConfirmContent: 'Tüm snippet\'leri dışa aktarmak istediğinizden emin misiniz?',
+    importConfirmTitle: 'İçe aktarmayı onayla',
+    importConfirmContent: 'Snippet\'leri içe aktarmak istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+    exportFailed: 'Dışa aktarma başarısız',
+    noDataToExport: 'Dışa aktarılacak veri yok',
+    duplicateTitle: 'Yinelenen snippet\'ler bulundu',
+    duplicateContent: 'İçe aktarılan dosyada {count} snippet zaten mevcut. Bunları nasıl işlemek istersiniz?',
+    overwrite: 'Üzerine yaz',
+    overwriteDesc: 'Mevcut snippet\'leri içe aktarılanlarla değiştir',
+    skip: 'Atla',
+    skipDesc: 'Mevcut snippet\'leri koru, yinelenenleri atla',
+    merge: 'Birleştir',
+    mergeDesc: 'İkisini de koru, içe aktarılan snippet\'ler kopya olarak oluşturulacak',
+    exportSuccessDetail: '{count} snippet başarıyla dışa aktarıldı',
+    importFileReadError: 'Dosya okunamıyor: {error}',
+    importInvalidJson: 'Dosya içeriği geçerli bir JSON değil',
+    importValidationError: 'Veri doğrulaması başarısız: {error}',
+    importSuccessDetail: '{count} snippet başarıyla içe aktarıldı',
+    importPartialDetail: '{imported} snippet içe aktarıldı, {errors} hata oluştu',
+  },
+  sort: {
+    newestFirst: 'Önce en yeni',
+    oldestFirst: 'Önce en eski',
+  },
+}
