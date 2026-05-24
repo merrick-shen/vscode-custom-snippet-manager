@@ -146,8 +146,8 @@ export class SnippetCompletionProvider implements vscode.CompletionItemProvider 
    */
   private filterByLanguage(snippets: SnippetData[], currentLang: string): SnippetData[] {
     return snippets.filter((snippet) => {
-      // 拆分多语言字段
-      const langs = snippet.language.split(',');
+      // 拆分多语言字段，去除前后空格
+      const langs = snippet.language.split(',').map((l) => l.trim());
       for (const lang of langs) {
         // 所有语言都匹配
         if (lang === '*') {
@@ -177,7 +177,7 @@ export class SnippetCompletionProvider implements vscode.CompletionItemProvider 
       doc += snippet.description + '\n\n';
     }
     // 代码预览使用对应语言的语法高亮（多语言时取第一个）
-    const primaryLang = snippet.language.split(',')[0];
+    const primaryLang = snippet.language.split(',')[0].trim();
     doc += '```' + (primaryLang === '*' ? '' : primaryLang) + '\n';
     doc += snippet.body;
     doc += '\n```';

@@ -117,7 +117,7 @@ const filteredSnippets = computed(() => {
   if (languageFilter.value && languageFilter.value !== '*') {
     result = result.filter(
       (s) => {
-        const langs = s.language.split(',')
+        const langs = s.language.split(',').map((l: string) => l.trim())
         return langs.includes('*') || langs.includes(languageFilter.value)
       }
     )
@@ -534,7 +534,7 @@ function handleDuplicateCancel() {
               <span class="item-name">{{ snippet.name }}</span>
               <!-- 语言标签，使用 Iconify 图标 + 品牌色 -->
               <span
-                v-for="lang in snippet.language.split(',')"
+                v-for="lang in snippet.language.split(',').map((l: string) => l.trim())"
                 :key="lang"
                 class="lang-badge"
                 :style="{ backgroundColor: getLanguageColor(lang) + '22', color: getLanguageColor(lang), borderColor: getLanguageColor(lang) + '44' }"

@@ -108,7 +108,7 @@ export function activate(context: vscode.ExtensionContext): void {
       // 筛选适用于当前语言的片段（language 字段支持逗号分隔的多语言）
       const currentLang = editor.document.languageId;
       const matchedSnippets = allSnippets.filter((s) => {
-        const langs = s.language.split(',');
+        const langs = s.language.split(',').map((l) => l.trim());
         return langs.includes('*') || langs.includes(currentLang);
       });
 

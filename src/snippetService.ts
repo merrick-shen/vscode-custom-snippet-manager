@@ -130,6 +130,11 @@ export class SnippetService {
     fs.writeFileSync(this.filePath, JSON.stringify(this.snippets, null, 2), 'utf-8');
   }
 
+  /** 规范化 language 字段：去除每项前后空格，确保逗号分隔格式一致 */
+  private normalizeLanguage(language: string): string {
+    return language.split(',').map((l) => l.trim()).filter(Boolean).join(',');
+  }
+
   /** 获取所有片段的浅拷贝 */
   getAll(): SnippetData[] {
     return [...this.snippets];
@@ -142,6 +147,8 @@ export class SnippetService {
       usageCount: 0,
       createdAt: new Date().toISOString(),
       ...data,
+      // 规范化 language 字段，去除多余空格
+      language: this.normalizeLanguage(data.language),
     };
     this.snippets.push(snippet);
     this.save();
@@ -156,7 +163,7 @@ export class SnippetService {
     }
     // 保留原有的 usageCount 和 createdAt
     const { usageCount, createdAt } = this.snippets[idx];
-    this.snippets[idx] = { id, usageCount, createdAt, ...data };
+    this.snippets[idx] = { id, usageCount, createdAt, ...data, language: this.normalizeLanguage(data.language) };
     this.save();
     return this.snippets[idx];
   }
@@ -196,6 +203,8 @@ export class SnippetService {
           usageCount: 0,
           createdAt: new Date().toISOString(),
           ...op.data,
+          // 规范化 language 字段，去除多余空格
+          language: this.normalizeLanguage(op.data.language),
         };
         this.snippets.push(snippet);
       } else if (op.type === 'update' && op.id) {
@@ -203,7 +212,7 @@ export class SnippetService {
         if (idx !== -1) {
           // 保留原有的 usageCount 和 createdAt
           const { usageCount, createdAt } = this.snippets[idx];
-          this.snippets[idx] = { id: op.id, usageCount, createdAt, ...op.data };
+          this.snippets[idx] = { id: op.id, usageCount, createdAt, ...op.data, language: this.normalizeLanguage(op.data.language) };
         }
       }
     }
