@@ -18,26 +18,13 @@ import pt from './pt'
 import it from './it'
 import pl from './pl'
 import tr from './tr'
+import localesData from '../../../locales.json'
 
-/** 支持的语言列表，用于语言切换下拉菜单 */
-export const SUPPORTED_LOCALES = [
-  { value: 'zh', label: '简体中文' },
-  { value: 'zh-TW', label: '繁體中文' },
-  { value: 'en', label: 'English' },
-  { value: 'ja', label: '日本語' },
-  { value: 'ko', label: '한국어' },
-  { value: 'ru', label: 'Русский' },
-  { value: 'de', label: 'Deutsch' },
-  { value: 'fr', label: 'Français' },
-  { value: 'es', label: 'Español' },
-  { value: 'pt', label: 'Português' },
-  { value: 'it', label: 'Italiano' },
-  { value: 'pl', label: 'Polski' },
-  { value: 'tr', label: 'Türkçe' },
-] as const
+/** 支持的语言列表，用于语言切换下拉菜单（数据来源：locales.json） */
+export const SUPPORTED_LOCALES = localesData.locales
 
 /** 语言标识符类型 */
-export type LocaleValue = typeof SUPPORTED_LOCALES[number]['value']
+export type LocaleValue = (typeof SUPPORTED_LOCALES)[number]['value']
 
 // 读取后端注入的语言偏好，默认简体中文
 const savedLocale = window.__LOCALE || 'zh'

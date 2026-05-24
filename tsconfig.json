@@ -7,8 +7,10 @@
 		],
 		"sourceMap": true,
 		"rootDir": "src",
-		"strict": true
+		"strict": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*", "locales.json"],
 	"exclude": ["webview", "node_modules", "out", "dist"]
 }

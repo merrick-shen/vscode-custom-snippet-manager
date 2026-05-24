@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import { SnippetService } from './snippetService';
 import { ImportExportService } from './importExportService';
 import { WebviewPanel } from './webviewPanel';
+import localesData from '../locales.json';
 
 /** Webview 消息格式 */
 interface WebviewMessage {
@@ -142,8 +143,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
       // 前端切换语言，持久化保存到 globalState
       case 'changeLocale': {
         const locale = msg.payload as string;
-        // 支持所有已注册的语言标识
-        const validLocales = ['zh', 'zh-TW', 'en', 'ja', 'ko', 'ru', 'de', 'fr', 'es', 'pt', 'it', 'pl', 'tr'];
+        // 从共享的 locales.json 获取有效语言列表，避免与前端重复维护
+        const validLocales = localesData.locales.map(l => l.value);
         if (validLocales.includes(locale)) {
           this.setLocale(locale);
           // 同步语言设置到编辑器面板
