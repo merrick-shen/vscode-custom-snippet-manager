@@ -355,8 +355,8 @@ export class ImportExportService {
       try {
         const isDuplicate = existingIds.has(snippet.id);
 
-        // 导入时过滤掉 usageCount 和 createdAt，由 create 方法自动补充
-        const { usageCount, createdAt, ...snippetData } = snippet;
+        // 导入时过滤掉 id、usageCount 和 createdAt，由 create 方法自动补充新 id 和默认值
+        const { id, usageCount, createdAt, ...snippetData } = snippet;
 
         if (isDuplicate) {
           switch (strategy) {

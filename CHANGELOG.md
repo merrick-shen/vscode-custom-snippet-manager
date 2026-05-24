@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [1.1.3] - 2026-05-25
+
+### Fixed
+
+- **Import ID Overwrite**: Fixed imported snippets keeping their original `id` instead of generating new ones, which caused duplicate IDs when using the merge strategy and incorrect IDs for non-duplicate imports
+
 ## [1.1.2] - 2026-05-24
 
 ### Fixed
