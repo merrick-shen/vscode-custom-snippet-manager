@@ -5,6 +5,7 @@ node_modules
 .vscode-test/
 *.vsix
 开发要求.md
+PROJECT_STATE.md
 
 # Logs
 logs

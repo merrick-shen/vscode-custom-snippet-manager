@@ -36,6 +36,16 @@ export interface LoadError {
   errorParams?: Record<string, string>;
 }
 
+/** 批量导入操作类型 */
+export interface ImportOperation {
+  /** 操作类型：创建或更新 */
+  type: 'create' | 'update';
+  /** 更新操作的目标片段 ID */
+  id?: string;
+  /** 片段数据（不含 id、usageCount、createdAt） */
+  data: Omit<SnippetData, 'id' | 'usageCount' | 'createdAt'>;
+}
+
 export class SnippetService {
   /** VS Code 全局存储 URI */
   private readonly storageUri: vscode.Uri;
@@ -162,7 +172,7 @@ export class SnippetService {
     return true;
   }
 
-  /** 根据 ID 增加片段的使用计数，用于排序和统计 */
+  /** 基于 ID 增加片段的使用计数，用于排序和统计 */
   incrementUsage(id: string): boolean {
     const idx = this.snippets.findIndex((s) => s.id === id);
     if (idx === -1) {
@@ -171,6 +181,34 @@ export class SnippetService {
     this.snippets[idx].usageCount = (this.snippets[idx].usageCount ?? 0) + 1;
     this.save();
     return true;
+  }
+
+  /**
+   * 批量导入片段，所有操作在内存中完成后只写一次文件
+   * 用于导入大量片段时避免逐条写文件导致的性能问题
+   * @param operations 导入操作列表
+   */
+  batchImport(operations: ImportOperation[]): void {
+    for (const op of operations) {
+      if (op.type === 'create') {
+        const snippet: SnippetData = {
+          id: this.generateId(),
+          usageCount: 0,
+          createdAt: new Date().toISOString(),
+          ...op.data,
+        };
+        this.snippets.push(snippet);
+      } else if (op.type === 'update' && op.id) {
+        const idx = this.snippets.findIndex((s) => s.id === op.id);
+        if (idx !== -1) {
+          // 保留原有的 usageCount 和 createdAt
+          const { usageCount, createdAt } = this.snippets[idx];
+          this.snippets[idx] = { id: op.id, usageCount, createdAt, ...op.data };
+        }
+      }
+    }
+    // 所有操作完成后只写一次文件
+    this.save();
   }
 
   /** 基于时间戳和随机数生成唯一 ID */

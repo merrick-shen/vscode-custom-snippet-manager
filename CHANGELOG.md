@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **App Version in Export**: Fixed `APP_VERSION` being hardcoded as `'1.0.0'` in `importExportService.ts`, now dynamically reads version from `package.json` so exported files always contain the correct `appVersion`
 - **C/C++ Completion**: Fixed `LANGUAGE_ALIASES` mapping overlap where `cpp` snippets incorrectly triggered in `c` files; `cpp` now only matches `cpp` language
 - **Data Safety**: Fixed `SnippetService.load()` silently resetting to empty array on JSON parse failure; now backs up the corrupted file and shows a notification
+- **Import Performance**: Fixed import writing file on every snippet, now batches all operations and writes once
 
 ## [1.1.1] - 2026-05-24
 

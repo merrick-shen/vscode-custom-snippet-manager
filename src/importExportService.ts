@@ -8,7 +8,7 @@
  */
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { SnippetService, SnippetData } from './snippetService';
+import { SnippetService, SnippetData, ImportOperation } from './snippetService';
 
 /** 导出文件的顶层结构 */
 interface ExportData {
@@ -327,6 +327,7 @@ export class ImportExportService {
 
   /**
    * 执行导入操作，根据策略处理重复数据
+   * 所有操作在内存中完成后只写一次文件，避免大量片段导入时的性能问题
    * @param incoming 导入的片段列表
    * @param existing 现有的片段列表
    * @param strategy 重复处理策略
@@ -347,6 +348,8 @@ export class ImportExportService {
     };
 
     const existingIds = new Set(existing.map((s) => s.id));
+    // 收集所有导入操作，最后一次性写入文件
+    const operations: ImportOperation[] = [];
 
     for (const snippet of incoming) {
       try {
@@ -359,13 +362,7 @@ export class ImportExportService {
           switch (strategy) {
             case 'overwrite':
               // 覆盖：更新现有片段（保留原有的 usageCount 和 createdAt）
-              this.snippetService.update(snippet.id, {
-                name: snippetData.name,
-                prefix: snippetData.prefix,
-                body: snippetData.body,
-                description: snippetData.description,
-                language: snippetData.language,
-              });
+              operations.push({ type: 'update', id: snippet.id, data: snippetData });
               result.overwritten++;
               result.imported++;
               break;
@@ -377,26 +374,14 @@ export class ImportExportService {
 
             case 'merge':
               // 合并：生成新 ID 保留两者
-              this.snippetService.create({
-                name: snippetData.name,
-                prefix: snippetData.prefix,
-                body: snippetData.body,
-                description: snippetData.description,
-                language: snippetData.language,
-              });
+              operations.push({ type: 'create', data: snippetData });
               result.merged++;
               result.imported++;
               break;
           }
         } else {
           // 非重复：直接创建
-          this.snippetService.create({
-            name: snippetData.name,
-            prefix: snippetData.prefix,
-            body: snippetData.body,
-            description: snippetData.description,
-            language: snippetData.language,
-          });
+          operations.push({ type: 'create', data: snippetData });
           result.imported++;
         }
       } catch (err) {
@@ -404,6 +389,11 @@ export class ImportExportService {
           `Snippet "${snippet.name}": ${err}`
         );
       }
+    }
+
+    // 批量执行所有操作，只写一次文件
+    if (operations.length > 0) {
+      this.snippetService.batchImport(operations);
     }
 
     return result;
