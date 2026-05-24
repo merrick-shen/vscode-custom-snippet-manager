@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [1.1.1] - 2026-05-24
+
+### Fixed
+
+- **Package Size**: Fixed `.vscodeignore` not excluding `webview/node_modules/`, reducing VSIX from ~29 MB to ~3.9 MB
+- **Package Cleanup**: Excluded webview source files, build scripts, and config files from the packaged extension
+
 ## [1.1.0] - 2026-05-24
 
 ### Added

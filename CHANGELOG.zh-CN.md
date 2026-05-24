@@ -6,6 +6,13 @@
 
 [English Changelog](./CHANGELOG.md)
 
+## [1.1.1] - 2026-05-24
+
+### 修复
+
+- **包体积**：修复 `.vscodeignore` 未排除 `webview/node_modules/` 的问题，VSIX 从 ~29 MB 减小至 ~3.9 MB
+- **包清理**：从打包文件中排除 webview 源码、构建脚本和配置文件
+
 ## [1.1.0] - 2026-05-24
 
 ### 新增
