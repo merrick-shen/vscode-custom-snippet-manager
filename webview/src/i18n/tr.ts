@@ -52,6 +52,11 @@ export default {
     corrupted: 'Veri dosyası bozuk, {path} konumuna yedeklendi. Lütfen manuel olarak kontrol edin ve kurtarın',
     backupFailed: 'Veri dosyası bozuk ve yedekleme başarısız oldu. Lütfen veri dosyasını manuel olarak kontrol edin',
   },
+  error: {
+    invalidSnippetId: 'Geçersiz snippet ID',
+    snippetNotFound: 'Snippet bulunamadı',
+    missingRequiredFields: 'Lütfen tüm zorunlu alanları doldurun',
+  },
   filter: {
     all: 'Tümü',
   },

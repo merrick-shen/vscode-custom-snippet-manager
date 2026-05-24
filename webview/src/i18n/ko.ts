@@ -52,6 +52,11 @@ export default {
     corrupted: '데이터 파일이 손상되었습니다. {path}에 백업되었으니 수동으로 확인하고 복구하세요',
     backupFailed: '데이터 파일이 손상되었고 백업도 실패했습니다. 수동으로 데이터 파일을 확인하세요',
   },
+  error: {
+    invalidSnippetId: '잘못된 스니펫 ID',
+    snippetNotFound: '스니펫을 찾을 수 없습니다',
+    missingRequiredFields: '모든 필수 항목을 입력하세요',
+  },
   filter: {
     all: '전체',
   },

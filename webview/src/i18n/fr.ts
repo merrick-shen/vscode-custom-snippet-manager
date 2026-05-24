@@ -52,6 +52,11 @@ export default {
     corrupted: 'Fichier de données corrompu, sauvegardé sous {path}. Veuillez vérifier et récupérer manuellement',
     backupFailed: 'Fichier de données corrompu et la sauvegarde a échoué. Veuillez vérifier le fichier manuellement',
   },
+  error: {
+    invalidSnippetId: 'ID de snippet invalide',
+    snippetNotFound: 'Snippet introuvable',
+    missingRequiredFields: 'Veuillez remplir tous les champs obligatoires',
+  },
   filter: {
     all: 'Tous',
   },

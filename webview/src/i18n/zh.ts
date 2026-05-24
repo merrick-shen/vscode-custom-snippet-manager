@@ -52,6 +52,11 @@ export default {
     corrupted: '数据文件损坏，已备份至 {path}，请手动检查并恢复数据',
     backupFailed: '数据文件损坏，且备份失败，请手动检查数据文件',
   },
+  error: {
+    invalidSnippetId: '无效的片段 ID',
+    snippetNotFound: '片段不存在',
+    missingRequiredFields: '请填写所有必填字段',
+  },
   filter: {
     all: '全部',
   },

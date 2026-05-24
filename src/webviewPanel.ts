@@ -141,7 +141,7 @@ export class WebviewPanel {
         const data = msg.payload as Omit<SnippetData, 'id'>;
         // 校验必填字段
         if (!data.name?.trim() || !data.prefix?.trim() || !data.body?.trim()) {
-          this.postToWebview('error', 'Missing required fields');
+          this.postToWebview('error', { errorKey: 'error.missingRequiredFields' });
           return;
         }
         const created = this.snippetService.create(data);
@@ -157,7 +157,7 @@ export class WebviewPanel {
         const { id, ...data } = payload;
         // 校验必填字段
         if (!id || !data.name?.trim() || !data.prefix?.trim() || !data.body?.trim()) {
-          this.postToWebview('error', 'Missing required fields');
+          this.postToWebview('error', { errorKey: 'error.missingRequiredFields' });
           return;
         }
         const updated = this.snippetService.update(id, data);
@@ -166,7 +166,7 @@ export class WebviewPanel {
           // 通知侧边栏刷新列表并显示成功通知
           vscode.commands.executeCommand('custom-snippet-manager.updateSnippetSuccess', updated.name);
         } else {
-          this.postToWebview('error', 'Snippet not found');
+          this.postToWebview('error', { errorKey: 'error.snippetNotFound' });
         }
         break;
       }

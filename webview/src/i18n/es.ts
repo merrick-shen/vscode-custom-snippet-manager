@@ -52,6 +52,11 @@ export default {
     corrupted: 'Archivo de datos dañado, copia de seguridad en {path}. Verifique y recupere manualmente',
     backupFailed: 'Archivo de datos dañado y la copia de seguridad falló. Verifique el archivo manualmente',
   },
+  error: {
+    invalidSnippetId: 'ID de snippet no válido',
+    snippetNotFound: 'Snippet no encontrado',
+    missingRequiredFields: 'Por favor, complete todos los campos obligatorios',
+  },
   filter: {
     all: 'Todos',
   },

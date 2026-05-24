@@ -52,6 +52,11 @@ export default {
     corrupted: 'Datendatei beschädigt, Backup unter {path}. Bitte manuell prüfen und wiederherstellen',
     backupFailed: 'Datendatei beschädigt und Backup fehlgeschlagen. Bitte Datendatei manuell prüfen',
   },
+  error: {
+    invalidSnippetId: 'Ungültige Snippet-ID',
+    snippetNotFound: 'Snippet nicht gefunden',
+    missingRequiredFields: 'Bitte füllen Sie alle Pflichtfelder aus',
+  },
   filter: {
     all: 'Alle',
   },

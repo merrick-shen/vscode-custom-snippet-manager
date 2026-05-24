@@ -239,9 +239,10 @@ onExtMessage('snippetsList', (payload) => {
   snippets.value = payload as Snippet[]
 })
 
-// 监听后端返回的错误消息
+// 监听后端返回的错误消息（使用 i18n 渲染）
 onExtMessage('error', (payload) => {
-  showError(payload as string)
+  const data = payload as { errorKey: string; errorParams?: Record<string, string> }
+  showError(t(data.errorKey, data.errorParams ?? {}))
 })
 
 // 导入导出确认弹窗状态

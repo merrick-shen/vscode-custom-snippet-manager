@@ -52,6 +52,11 @@ export default {
     corrupted: 'データファイルが破損しています。{path} にバックアップしました。手動で確認・復元してください',
     backupFailed: 'データファイルが破損し、バックアップにも失敗しました。手動でデータファイルを確認してください',
   },
+  error: {
+    invalidSnippetId: '無効なスニペット ID',
+    snippetNotFound: 'スニペットが見つかりません',
+    missingRequiredFields: 'すべての必須項目を入力してください',
+  },
   filter: {
     all: 'すべて',
   },

@@ -52,6 +52,11 @@ export default {
     corrupted: 'Arquivo de dados corrompido, backup em {path}. Verifique e recupere manualmente',
     backupFailed: 'Arquivo de dados corrompido e o backup falhou. Verifique o arquivo manualmente',
   },
+  error: {
+    invalidSnippetId: 'ID de snippet inválido',
+    snippetNotFound: 'Snippet não encontrado',
+    missingRequiredFields: 'Por favor, preencha todos os campos obrigatórios',
+  },
   filter: {
     all: 'Todos',
   },

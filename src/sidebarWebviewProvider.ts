@@ -122,7 +122,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
       case 'deleteSnippet': {
         const { id } = msg.payload as { id: string };
         if (!id) {
-          this.postToView('error', 'Invalid snippet ID');
+          this.postToView('error', { errorKey: 'error.invalidSnippetId' });
           return;
         }
         // 删除前获取片段名称，用于通知
@@ -134,7 +134,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
           this.postToView('snippetsList', this.snippetService.getAll());
           this.showNotification('success', 'delete.success', { name: snippetToDelete?.name ?? '' });
         } else {
-          this.postToView('error', 'Snippet not found');
+          this.postToView('error', { errorKey: 'error.snippetNotFound' });
         }
         break;
       }

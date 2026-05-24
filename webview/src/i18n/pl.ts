@@ -52,6 +52,11 @@ export default {
     corrupted: 'Plik danych uszkodzony, kopia zapasowa w {path}. Sprawdź i odzyskaj ręcznie',
     backupFailed: 'Plik danych uszkodzony i kopia zapasowa nie powiodła się. Sprawdź plik ręcznie',
   },
+  error: {
+    invalidSnippetId: 'Nieprawidłowy ID snippetu',
+    snippetNotFound: 'Snippet nie znaleziony',
+    missingRequiredFields: 'Proszę wypełnić wszystkie wymagane pola',
+  },
   filter: {
     all: 'Wszystkie',
   },

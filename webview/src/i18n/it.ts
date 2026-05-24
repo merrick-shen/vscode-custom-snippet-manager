@@ -52,6 +52,11 @@ export default {
     corrupted: 'File dati danneggiato, backup in {path}. Verificare e ripristinare manualmente',
     backupFailed: 'File dati danneggiato e backup non riuscito. Verificare il file manualmente',
   },
+  error: {
+    invalidSnippetId: 'ID snippet non valido',
+    snippetNotFound: 'Snippet non trovato',
+    missingRequiredFields: 'Compilare tutti i campi obbligatori',
+  },
   filter: {
     all: 'Tutti',
   },

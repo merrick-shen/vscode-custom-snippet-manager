@@ -52,6 +52,11 @@ export default {
     corrupted: '資料檔案損壞，已備份至 {path}，請手動檢查並復原資料',
     backupFailed: '資料檔案損壞，且備份失敗，請手動檢查資料檔案',
   },
+  error: {
+    invalidSnippetId: '無效的片段 ID',
+    snippetNotFound: '片段不存在',
+    missingRequiredFields: '請填寫所有必填欄位',
+  },
   filter: {
     all: '全部',
   },

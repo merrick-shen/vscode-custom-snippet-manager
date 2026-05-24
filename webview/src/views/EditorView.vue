@@ -111,6 +111,8 @@ function handleClose() {
 // 监听后端发送的片段数据，进入编辑模式
 onExtMessage('setSnippet', (payload) => {
   editingSnippet.value = payload as Snippet
+  // 切换片段时清除残留的后端错误提示
+  serverError.value = ''
 })
 
 // 创建成功后关闭面板
@@ -123,9 +125,10 @@ onExtMessage('snippetUpdated', () => {
   handleClose()
 })
 
-// 监听后端返回的错误消息
+// 监听后端返回的错误消息（使用 i18n 渲染）
 onExtMessage('error', (payload) => {
-  serverError.value = payload as string
+  const data = payload as { errorKey: string; errorParams?: Record<string, string> }
+  serverError.value = t(data.errorKey, data.errorParams ?? {})
   saving.value = false
 })
 
