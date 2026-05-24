@@ -60,9 +60,6 @@ interface ImportError {
 /** 当前导出格式版本 */
 const EXPORT_VERSION = '1.0';
 
-/** 应用版本，从 package.json 读取 */
-const APP_VERSION = '1.0.0';
-
 /** 允许导入的最大片段数量，防止恶意大文件 */
 const MAX_IMPORT_SNIPPETS = 10000;
 
@@ -71,9 +68,12 @@ const MAX_FIELD_LENGTH = 100000;
 
 export class ImportExportService {
   private readonly snippetService: SnippetService;
+  /** 应用版本号，从 package.json 动态读取 */
+  private readonly appVersion: string;
 
-  constructor(snippetService: SnippetService) {
+  constructor(snippetService: SnippetService, appVersion: string) {
     this.snippetService = snippetService;
+    this.appVersion = appVersion;
   }
 
   /**
@@ -92,7 +92,7 @@ export class ImportExportService {
     const exportData: ExportData = {
       version: EXPORT_VERSION,
       exportedAt: new Date().toISOString(),
-      appVersion: APP_VERSION,
+      appVersion: this.appVersion,
       snippets: exportableSnippets,
     };
 

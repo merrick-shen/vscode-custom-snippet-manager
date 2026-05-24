@@ -35,8 +35,21 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   constructor(extensionUri: vscode.Uri, snippetService: SnippetService, context: vscode.ExtensionContext) {
     this.extensionUri = extensionUri;
     this.snippetService = snippetService;
-    this.importExportService = new ImportExportService(snippetService);
+    // 从扩展目录的 package.json 动态读取版本号，避免硬编码
+    const appVersion = this.readAppVersion(context.extensionPath);
+    this.importExportService = new ImportExportService(snippetService, appVersion);
     this.context = context;
+  }
+
+  /** 从扩展目录的 package.json 读取版本号 */
+  private readAppVersion(extensionPath: string): string {
+    try {
+      const pkgPath = path.join(extensionPath, 'package.json');
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+      return pkg.version || '0.0.0';
+    } catch {
+      return '0.0.0';
+    }
   }
 
   /** 获取当前保存的语言偏好，默认中文 */

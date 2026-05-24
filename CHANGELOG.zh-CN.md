@@ -6,6 +6,12 @@
 
 [English Changelog](./CHANGELOG.md)
 
+## [1.1.2] - 2026-05-24
+
+### 修复
+
+- **导出版本号**：修复 `importExportService.ts` 中 `APP_VERSION` 硬编码为 `'1.0.0'` 的问题，改为从 `package.json` 动态读取版本号，确保导出文件中的 `appVersion` 字段始终准确
+
 ## [1.1.1] - 2026-05-24
 
 ### 修复
