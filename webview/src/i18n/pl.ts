@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'Snippet „{name}" został zaktualizowany pomyślnie',
   },
+  loadError: {
+    corrupted: 'Plik danych uszkodzony, kopia zapasowa w {path}. Sprawdź i odzyskaj ręcznie',
+    backupFailed: 'Plik danych uszkodzony i kopia zapasowa nie powiodła się. Sprawdź plik ręcznie',
+  },
   filter: {
     all: 'Wszystkie',
   },

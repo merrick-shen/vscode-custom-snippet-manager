@@ -48,6 +48,10 @@ export default {
   update: {
     success: '스니펫 "{name}"이(가) 업데이트되었습니다',
   },
+  loadError: {
+    corrupted: '데이터 파일이 손상되었습니다. {path}에 백업되었으니 수동으로 확인하고 복구하세요',
+    backupFailed: '데이터 파일이 손상되었고 백업도 실패했습니다. 수동으로 데이터 파일을 확인하세요',
+  },
   filter: {
     all: '전체',
   },

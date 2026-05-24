@@ -88,6 +88,12 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage((msg: WebviewMessage) => {
       this.handleMessage(msg);
     });
+
+    // 检查片段数据加载时是否有错误，通过 Webview 通知显示
+    const loadError = this.snippetService.consumeLoadError();
+    if (loadError) {
+      this.showNotification('error', loadError.errorKey, loadError.errorParams);
+    }
   }
 
   /**

@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'El snippet «{name}» se ha actualizado correctamente',
   },
+  loadError: {
+    corrupted: 'Archivo de datos dañado, copia de seguridad en {path}. Verifique y recupere manualmente',
+    backupFailed: 'Archivo de datos dañado y la copia de seguridad falló. Verifique el archivo manualmente',
+  },
   filter: {
     all: 'Todos',
   },

@@ -4,9 +4,9 @@
  * 数据存储在 VS Code 全局存储目录下的 snippets.json 文件中
  * 支持数据变更事件通知，便于补全提供者等模块响应数据变化
  */
-import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as vscode from 'vscode';
 
 /** 片段数据结构 */
 export interface SnippetData {
@@ -28,6 +28,14 @@ export interface SnippetData {
   createdAt?: string;
 }
 
+/** 加载错误信息，供 Webview 端用 i18n 渲染 */
+export interface LoadError {
+  /** i18n 键名 */
+  errorKey: string;
+  /** i18n 插值参数 */
+  errorParams?: Record<string, string>;
+}
+
 export class SnippetService {
   /** VS Code 全局存储 URI */
   private readonly storageUri: vscode.Uri;
@@ -35,6 +43,8 @@ export class SnippetService {
   private readonly filePath: string;
   /** 内存中的片段数据缓存 */
   private snippets: SnippetData[] = [];
+  /** 加载时的错误信息，供侧边栏 Webview 显示通知 */
+  private _loadError: LoadError | null = null;
 
   constructor(context: vscode.ExtensionContext) {
     this.storageUri = context.globalStorageUri;
@@ -51,7 +61,7 @@ export class SnippetService {
     }
   }
 
-  /** 从文件加载片段数据到内存，解析失败时重置为空数组 */
+  /** 从文件加载片段数据到内存，解析失败时备份损坏文件并提示用户 */
   private load(): void {
     if (fs.existsSync(this.filePath)) {
       try {
@@ -64,12 +74,45 @@ export class SnippetService {
           createdAt: s.createdAt ?? new Date(0).toISOString(),
         }));
       } catch {
-        // 文件损坏时重置为空数组，避免阻塞整个扩展
+        // 文件损坏时备份原文件，避免数据永久丢失
+        this.backupCorruptedFile();
         this.snippets = [];
       }
     } else {
       this.snippets = [];
     }
+  }
+
+  /** 备份损坏的数据文件，并存储错误信息供 Webview 显示 */
+  private backupCorruptedFile(): void {
+    try {
+      const bakPath = this.filePath + '.bak';
+      // 如果备份文件已存在，添加数字后缀避免覆盖
+      let finalBakPath = bakPath;
+      let counter = 1;
+      while (fs.existsSync(finalBakPath)) {
+        finalBakPath = `${this.filePath}.bak.${counter}`;
+        counter++;
+      }
+      fs.copyFileSync(this.filePath, finalBakPath);
+      // 存储错误信息，供侧边栏 Webview 用 i18n 渲染通知
+      this._loadError = {
+        errorKey: 'loadError.corrupted',
+        errorParams: { path: finalBakPath },
+      };
+    } catch {
+      // 备份也失败时存储另一种错误信息
+      this._loadError = {
+        errorKey: 'loadError.backupFailed',
+      };
+    }
+  }
+
+  /** 获取加载错误信息，调用后自动清除 */
+  consumeLoadError(): LoadError | null {
+    const err = this._loadError;
+    this._loadError = null;
+    return err;
   }
 
   /** 将内存中的片段数据持久化到文件 */

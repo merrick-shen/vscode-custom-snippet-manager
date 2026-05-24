@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'Lo snippet «{name}» è stato aggiornato con successo',
   },
+  loadError: {
+    corrupted: 'File dati danneggiato, backup in {path}. Verificare e ripristinare manualmente',
+    backupFailed: 'File dati danneggiato e backup non riuscito. Verificare il file manualmente',
+  },
   filter: {
     all: 'Tutti',
   },

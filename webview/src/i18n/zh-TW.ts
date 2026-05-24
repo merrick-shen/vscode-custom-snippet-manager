@@ -48,6 +48,10 @@ export default {
   update: {
     success: '程式碼片段「{name}」已更新',
   },
+  loadError: {
+    corrupted: '資料檔案損壞，已備份至 {path}，請手動檢查並復原資料',
+    backupFailed: '資料檔案損壞，且備份失敗，請手動檢查資料檔案',
+  },
   filter: {
     all: '全部',
   },

@@ -196,16 +196,20 @@ function handleDeleteCancel() {
   deletingSnippet.value = null
 }
 
-/** 显示通知提示，3 秒后自动隐藏 */
+/** 显示通知提示，成功/警告3秒后自动隐藏，错误类型需手动关闭 */
 function showNotification(type: 'success' | 'warning' | 'error', msg: string) {
   notification.value = { visible: true, type, message: msg }
   if (notificationTimer) {
     clearTimeout(notificationTimer)
-  }
-  notificationTimer = setTimeout(() => {
-    notification.value.visible = false
     notificationTimer = null
-  }, 3000)
+  }
+  // 错误通知不自动关闭，确保用户能看到完整信息
+  if (type !== 'error') {
+    notificationTimer = setTimeout(() => {
+      notification.value.visible = false
+      notificationTimer = null
+    }, 3000)
+  }
 }
 
 /** 显示错误通知 */
@@ -673,9 +677,10 @@ function handleDuplicateCancel() {
 .notification-text {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* 允许长文本换行显示，避免被截断 */
+  overflow-wrap: break-word;
+  word-break: break-all;
+  line-height: 1.4;
 }
 
 .notification-close {

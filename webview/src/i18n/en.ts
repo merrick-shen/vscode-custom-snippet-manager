@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'Snippet "{name}" updated successfully',
   },
+  loadError: {
+    corrupted: 'Data file corrupted, backed up to {path}. Please check and recover manually',
+    backupFailed: 'Data file corrupted and backup failed. Please check the data file manually',
+  },
   filter: {
     all: 'All',
   },

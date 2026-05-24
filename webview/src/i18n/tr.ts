@@ -48,6 +48,10 @@ export default {
   update: {
     success: '«{name}» snippet\'i başarıyla güncellendi',
   },
+  loadError: {
+    corrupted: 'Veri dosyası bozuk, {path} konumuna yedeklendi. Lütfen manuel olarak kontrol edin ve kurtarın',
+    backupFailed: 'Veri dosyası bozuk ve yedekleme başarısız oldu. Lütfen veri dosyasını manuel olarak kontrol edin',
+  },
   filter: {
     all: 'Tümü',
   },

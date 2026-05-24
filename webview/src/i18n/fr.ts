@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'Le snippet « {name} » a été mis à jour avec succès',
   },
+  loadError: {
+    corrupted: 'Fichier de données corrompu, sauvegardé sous {path}. Veuillez vérifier et récupérer manuellement',
+    backupFailed: 'Fichier de données corrompu et la sauvegarde a échoué. Veuillez vérifier le fichier manuellement',
+  },
   filter: {
     all: 'Tous',
   },

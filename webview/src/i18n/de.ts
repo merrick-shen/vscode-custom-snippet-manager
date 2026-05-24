@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'Snippet „{name}" wurde erfolgreich aktualisiert',
   },
+  loadError: {
+    corrupted: 'Datendatei beschädigt, Backup unter {path}. Bitte manuell prüfen und wiederherstellen',
+    backupFailed: 'Datendatei beschädigt und Backup fehlgeschlagen. Bitte Datendatei manuell prüfen',
+  },
   filter: {
     all: 'Alle',
   },

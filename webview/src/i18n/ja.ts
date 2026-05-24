@@ -48,6 +48,10 @@ export default {
   update: {
     success: 'スニペット「{name}」を更新しました',
   },
+  loadError: {
+    corrupted: 'データファイルが破損しています。{path} にバックアップしました。手動で確認・復元してください',
+    backupFailed: 'データファイルが破損し、バックアップにも失敗しました。手動でデータファイルを確認してください',
+  },
   filter: {
     all: 'すべて',
   },
