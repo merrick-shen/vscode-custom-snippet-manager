@@ -19,3 +19,4 @@ webview/package.json
 webview/package-lock.json
 webview/vite.config.ts
 PROJECT_STATE.md
+BUG_HISTORY.md

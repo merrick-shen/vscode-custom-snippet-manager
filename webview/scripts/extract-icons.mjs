@@ -24,6 +24,7 @@ const NEEDED_ICONS = {
     'file-code-outline',
     'xml',
     'language-java',
+    'translate',
   ],
   'carbon': [
     'code',

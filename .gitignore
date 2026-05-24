@@ -6,6 +6,7 @@ node_modules
 *.vsix
 开发要求.md
 PROJECT_STATE.md
+BUG_HISTORY.md
 
 # Logs
 logs
