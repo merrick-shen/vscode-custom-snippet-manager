@@ -190,7 +190,7 @@ export class WebviewPanel {
   }
 
   /** 向 webview 发送消息 */
-  private postToWebview(type: string, payload?: unknown): void {
+  public postToWebview(type: string, payload?: unknown): void {
     this.panel.webview.postMessage({ type, payload });
   }
 

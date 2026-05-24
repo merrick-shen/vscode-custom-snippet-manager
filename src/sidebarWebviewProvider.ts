@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { SnippetService } from './snippetService';
 import { ImportExportService } from './importExportService';
+import { WebviewPanel } from './webviewPanel';
 
 /** Webview 消息格式 */
 interface WebviewMessage {
@@ -141,6 +142,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         const validLocales = ['zh', 'zh-TW', 'en', 'ja', 'ko', 'ru', 'de', 'fr', 'es', 'pt', 'it', 'pl', 'tr'];
         if (validLocales.includes(locale)) {
           this.setLocale(locale);
+          // 同步语言设置到编辑器面板
+          WebviewPanel.currentPanel?.postToWebview('localeChanged', locale);
         }
         break;
       }

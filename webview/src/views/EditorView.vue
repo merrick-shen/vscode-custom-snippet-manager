@@ -5,7 +5,7 @@
  * 支持新建和编辑两种模式，通过后端 setSnippet 消息切换
  * 使用原生 HTML 表单元素替代 Naive UI，确保 webview 中交互可靠
  */
-import { ref, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Snippet } from '../types'
 import { SUPPORTED_LANGUAGES } from '../types'
@@ -13,7 +13,7 @@ import { postToExt, onExtMessage } from '../composables/useMessage'
 import LanguageSelect from '../components/LanguageSelect.vue'
 import CodeEditor from '../components/CodeEditor.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // 当前编辑的片段数据，为 null 时表示新建模式
 const editingSnippet = ref<Snippet | null>(null)
@@ -34,12 +34,14 @@ const errors = ref<Record<string, string>>({})
 // 后端返回的错误提示
 const serverError = ref('')
 
-// 语言下拉选项，包含图标信息
-const languageOptions = SUPPORTED_LANGUAGES.map((l) => ({
-  label: l.value === '*' ? t('form.allLanguages') : l.label,
-  value: l.value,
-  icon: l.icon,
-}))
+// 语言下拉选项，包含图标信息（computed 确保语言切换时标签更新）
+const languageOptions = computed(() =>
+  SUPPORTED_LANGUAGES.map((l) => ({
+    label: l.value === '*' ? t('form.allLanguages') : l.label,
+    value: l.value,
+    icon: l.icon,
+  }))
+)
 
 // 监听编辑片段变化，回填或清空表单
 watch(
@@ -125,6 +127,11 @@ onExtMessage('snippetUpdated', () => {
 onExtMessage('error', (payload) => {
   serverError.value = payload as string
   saving.value = false
+})
+
+// 监听侧边栏语言切换，同步更新编辑器面板的 locale
+onExtMessage('localeChanged', (payload) => {
+  locale.value = payload as string
 })
 
 // 组件挂载时通知后端编辑器已就绪
