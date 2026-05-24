@@ -18,3 +18,4 @@ webview/index.html
 webview/package.json
 webview/package-lock.json
 webview/vite.config.ts
+PROJECT_STATE.md
