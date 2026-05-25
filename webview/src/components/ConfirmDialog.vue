@@ -52,32 +52,19 @@ const emit = defineEmits<{
 }
 
 .modal-header {
-  padding: $spacing-xl 18px 0;
+  @include modal-header;
 }
 
 .modal-title {
-  font-size: $font-size-lg;
-  font-weight: 700;
-  color: $color-foreground;
+  @include modal-title;
 }
 
 .modal-body {
-  padding: $spacing-md 18px 18px;
-
-  p {
-    margin: 0;
-    font-size: $font-size-base;
-    color: $color-description;
-    line-height: 1.6;
-  }
+  @include modal-body;
 }
 
 .modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: $spacing-sm;
-  padding: 14px 18px;
-  border-top: 1px solid $border-panel;
+  @include modal-footer;
 }
 
 .btn {

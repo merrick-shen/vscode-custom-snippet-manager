@@ -5,13 +5,14 @@
  * 包含关于页面，展示插件名称、版本号、GitHub 地址等基础信息
  * 后续可扩展实际设置功能
  */
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { postToExt } from '../composables/useMessage'
+import { useConfirm } from '../composables/useConfirm'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const { t } = useI18n()
+const { confirmState, showConfirm, handleConfirmOk, handleConfirmCancel } = useConfirm()
 
 // 从后端注入的全局变量读取版本号和存储路径
 const appVersion = window.__APP_VERSION || '0.0.0'
@@ -21,9 +22,6 @@ const storagePath = window.__STORAGE_PATH || ''
 const APP_NAME = 'Custom Snippet Manager'
 const GITHUB_URL = 'https://github.com/horyce/vscode-custom-snippet-manager'
 const LICENSE = 'MIT'
-
-// 清空数据确认弹窗状态
-const clearConfirmVisible = ref(false)
 
 /** 在外部浏览器中打开链接 */
 function openExternal(url: string) {
@@ -41,18 +39,16 @@ function openSnippetsDirectory() {
 
 /** 点击清空数据按钮，弹出二次确认 */
 function handleClearAll() {
-  clearConfirmVisible.value = true
-}
-
-/** 确认清空所有数据 */
-function handleClearConfirm() {
-  postToExt('clearAllSnippets')
-  clearConfirmVisible.value = false
-}
-
-/** 取消清空操作 */
-function handleClearCancel() {
-  clearConfirmVisible.value = false
+  showConfirm({
+    title: t('clearAll.title'),
+    content: t('clearAll.content'),
+    confirmLabel: t('clearAll.confirm'),
+    cancelLabel: t('clearAll.cancel'),
+    danger: true,
+    onConfirm: () => {
+      postToExt('clearAllSnippets')
+    },
+  })
 }
 
 // 定义 emit，用于返回上一页
@@ -137,14 +133,14 @@ const emit = defineEmits<{
 
     <!-- 清空数据二次确认弹窗 -->
     <ConfirmDialog
-      :visible="clearConfirmVisible"
-      :title="t('clearAll.title')"
-      :content="t('clearAll.content')"
-      :confirm-label="t('clearAll.confirm')"
-      :cancel-label="t('clearAll.cancel')"
-      danger
-      @confirm="handleClearConfirm"
-      @cancel="handleClearCancel"
+      :visible="confirmState.visible"
+      :title="confirmState.title"
+      :content="confirmState.content"
+      :confirm-label="confirmState.confirmLabel"
+      :cancel-label="confirmState.cancelLabel"
+      :danger="confirmState.danger"
+      @confirm="handleConfirmOk"
+      @cancel="handleConfirmCancel"
     />
   </div>
 </template>

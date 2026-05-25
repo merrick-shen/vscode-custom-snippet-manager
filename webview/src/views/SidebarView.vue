@@ -13,13 +13,18 @@ import Fuse from 'fuse.js'
 import type { Snippet, SortOrder } from '../types'
 import { SUPPORTED_LANGUAGES, getLanguageColor, getLanguageIcon } from '../utils/languages'
 import { postToExt, onExtMessage } from '../composables/useMessage'
+import { useNotification } from '../composables/useNotification'
+import { useConfirm } from '../composables/useConfirm'
 import { highlightCodeString } from '../utils/codemirror-langs'
 import LanguageSelect from '../components/LanguageSelect.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+import NotificationBar from '../components/NotificationBar.vue'
 import SettingsView from './SettingsView.vue'
 import { SUPPORTED_LOCALES } from '../i18n'
 
 const { t, locale } = useI18n()
+const { notification, showError, showSuccess, showWarning, clearNotification } = useNotification()
+const { confirmState, showConfirm, handleConfirmOk, handleConfirmCancel } = useConfirm()
 
 // 当前视图：'list' 为片段列表，'settings' 为设置页面
 const currentView = ref<'list' | 'settings'>('list')
@@ -46,68 +51,6 @@ const sortOrder = ref<SortOrder>('desc')
 const currentSortLabel = computed(() => {
   return sortOrder.value === 'desc' ? t('sort.newestFirst') : t('sort.oldestFirst')
 })
-
-// 通用确认弹窗状态（删除、导入、导出等操作共用）
-const confirmState = ref<{
-  visible: boolean
-  title: string
-  content: string
-  confirmLabel: string
-  cancelLabel: string
-  danger: boolean
-  onConfirm: () => void
-}>({
-  visible: false,
-  title: '',
-  content: '',
-  confirmLabel: '',
-  cancelLabel: '',
-  danger: false,
-  onConfirm: () => {},
-})
-
-/** 显示确认弹窗 */
-function showConfirm(options: {
-  title: string
-  content: string
-  confirmLabel: string
-  cancelLabel?: string
-  danger?: boolean
-  onConfirm: () => void
-}) {
-  confirmState.value = {
-    visible: true,
-    title: options.title,
-    content: options.content,
-    confirmLabel: options.confirmLabel,
-    cancelLabel: options.cancelLabel || t('form.cancel'),
-    danger: options.danger ?? false,
-    onConfirm: options.onConfirm,
-  }
-}
-
-/** 确认弹窗 - 确认 */
-function handleConfirmOk() {
-  confirmState.value.onConfirm()
-  confirmState.value.visible = false
-}
-
-/** 确认弹窗 - 取消 */
-function handleConfirmCancel() {
-  confirmState.value.visible = false
-}
-// 通用通知状态
-const notification = ref<{
-  visible: boolean
-  type: 'success' | 'warning' | 'error'
-  message: string
-}>({
-  visible: false,
-  type: 'error',
-  message: '',
-})
-// 通知自动隐藏定时器
-let notificationTimer: ReturnType<typeof setTimeout> | null = null
 
 // 语言切换下拉菜单展开状态
 const localeMenuOpen = ref(false)
@@ -242,46 +185,6 @@ function handleDelete(snippet: Snippet) {
       postToExt('deleteSnippet', { id: snippet.id })
     },
   })
-}
-
-/** 显示通知提示，成功/警告3秒后自动隐藏，错误类型需手动关闭 */
-function showNotification(type: 'success' | 'warning' | 'error', msg: string) {
-  notification.value = { visible: true, type, message: msg }
-  if (notificationTimer) {
-    clearTimeout(notificationTimer)
-    notificationTimer = null
-  }
-  // 错误通知不自动关闭，确保用户能看到完整信息
-  if (type !== 'error') {
-    notificationTimer = setTimeout(() => {
-      notification.value.visible = false
-      notificationTimer = null
-    }, 3000)
-  }
-}
-
-/** 显示错误通知 */
-function showError(msg: string) {
-  showNotification('error', msg)
-}
-
-/** 显示成功通知 */
-function showSuccess(msg: string) {
-  showNotification('success', msg)
-}
-
-/** 显示警告通知 */
-function showWarning(msg: string) {
-  showNotification('warning', msg)
-}
-
-/** 清除通知 */
-function clearNotification() {
-  notification.value.visible = false
-  if (notificationTimer) {
-    clearTimeout(notificationTimer)
-    notificationTimer = null
-  }
 }
 
 // 监听后端返回的片段列表数据（包括删除后自动刷新）
@@ -710,15 +613,13 @@ function handleListScroll() {
       </div>
     </div>
 
-    <!-- 通用通知条（固定在页面底部，不影响内容布局） -->
-    <transition name="slide-up">
-      <div v-if="notification.visible" class="notification-bar" :class="`notification-${notification.type}`">
-        <span class="notification-text">{{ notification.message }}</span>
-        <button class="notification-close" @click="clearNotification">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </transition>
+    <!-- 通用通知条 -->
+    <NotificationBar
+      :visible="notification.visible"
+      :type="notification.type"
+      :message="notification.message"
+      @close="clearNotification"
+    />
     </template>
   </div>
 </template>
@@ -729,75 +630,6 @@ function handleListScroll() {
   height: 100vh;
   overflow: hidden;
   position: relative;
-}
-
-// ===== 通知条 =====
-.notification-bar {
-  @include notification-bar;
-
-  &.notification-error {
-    background: rgba-color(#f48771, 0.15);
-    border-top-color: rgba-color(#f48771, 0.3);
-    color: $color-error;
-  }
-
-  &.notification-warning {
-    background: rgba-color(#eab308, 0.15);
-    border-top-color: rgba-color(#eab308, 0.3);
-    color: $color-warning;
-  }
-
-  &.notification-success {
-    background: rgba-color(#5fbd7e, 0.15);
-    border-top-color: rgba-color(#5fbd7e, 0.3);
-    color: $color-info;
-  }
-}
-
-.notification-text {
-  flex: 1;
-  min-width: 0;
-  overflow-wrap: break-word;
-  word-break: break-all;
-  line-height: 1.4;
-}
-
-.notification-close {
-  @include flex-center;
-  width: 18px;
-  height: 18px;
-  padding: 0;
-  border: none;
-  border-radius: $radius-sm;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  flex-shrink: 0;
-  margin-left: $spacing-sm;
-  opacity: 0.7;
-
-  &:hover {
-    opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
-  }
-}
-
-.slide-up-enter-active {
-  transition: all 0.2s ease-out;
-}
-
-.slide-up-leave-active {
-  transition: all 0.15s ease-in;
-}
-
-.slide-up-enter-from {
-  transform: translateY(4px);
-  opacity: 0;
-}
-
-.slide-up-leave-to {
-  transform: translateY(2px);
-  opacity: 0;
 }
 
 // ===== 顶部标题栏 =====
@@ -1260,7 +1092,7 @@ function handleListScroll() {
   background: rgba-color(#f48771, 0.1);
 }
 
-// ===== 删除确认弹窗 =====
+// ===== 弹窗样式（重复策略弹窗使用） =====
 .modal-overlay {
   @include modal-overlay;
 }
@@ -1270,32 +1102,19 @@ function handleListScroll() {
 }
 
 .modal-header {
-  padding: $spacing-xl 18px 0;
+  @include modal-header;
 }
 
 .modal-title {
-  font-size: $font-size-lg;
-  font-weight: 700;
-  color: $color-foreground;
+  @include modal-title;
 }
 
 .modal-body {
-  padding: $spacing-md 18px 18px;
-
-  p {
-    margin: 0;
-    font-size: $font-size-base;
-    color: $color-description;
-    line-height: 1.6;
-  }
+  @include modal-body;
 }
 
 .modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: $spacing-sm;
-  padding: 14px 18px;
-  border-top: 1px solid $border-panel;
+  @include modal-footer;
 }
 
 .modal-dialog-lg {
