@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [1.1.4] - 2026-05-26
+
+### Changed
+
+- **Notification Position**: Moved sidebar notification toasts from the top to the bottom of the page, preventing layout shifts in the header area when notifications appear
+
 ## [1.1.3] - 2026-05-25
 
 ### Added

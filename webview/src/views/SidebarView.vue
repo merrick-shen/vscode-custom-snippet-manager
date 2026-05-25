@@ -406,16 +406,6 @@ function handleDuplicateCancel() {
 
 <template>
   <div class="sidebar-view">
-    <!-- 通用通知条 -->
-    <transition name="slide-fade">
-      <div v-if="notification.visible" class="notification-bar" :class="`notification-${notification.type}`">
-        <span class="notification-text">{{ notification.message }}</span>
-        <button class="notification-close" @click="clearNotification">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </transition>
-
     <!-- 顶部标题栏：图标 + 标题 + 语言切换 -->
     <div class="sidebar-header">
       <div class="header-content">
@@ -633,6 +623,16 @@ function handleDuplicateCancel() {
         </div>
       </div>
     </div>
+
+    <!-- 通用通知条（固定在页面底部，不影响内容布局） -->
+    <transition name="slide-up">
+      <div v-if="notification.visible" class="notification-bar" :class="`notification-${notification.type}`">
+        <span class="notification-text">{{ notification.message }}</span>
+        <button class="notification-close" @click="clearNotification">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -646,31 +646,36 @@ function handleDuplicateCancel() {
   position: relative;
 }
 
-/* ===== 通用通知条 ===== */
+/* ===== 通用通知条（固定在页面底部） ===== */
 .notification-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 6px 12px;
   font-size: 12px;
-  border-bottom: 1px solid;
+  border-top: 1px solid;
+  z-index: 1000;
 }
 
 .notification-bar.notification-error {
   background: rgba(244, 135, 113, 0.15);
-  border-bottom-color: rgba(244, 135, 113, 0.3);
+  border-top-color: rgba(244, 135, 113, 0.3);
   color: var(--vscode-errorForeground, #f48771);
 }
 
 .notification-bar.notification-warning {
   background: rgba(234, 179, 8, 0.15);
-  border-bottom-color: rgba(234, 179, 8, 0.3);
+  border-top-color: rgba(234, 179, 8, 0.3);
   color: var(--vscode-notificationsWarningIcon-foreground, #cca700);
 }
 
 .notification-bar.notification-success {
   background: rgba(95, 189, 126, 0.15);
-  border-bottom-color: rgba(95, 189, 126, 0.3);
+  border-top-color: rgba(95, 189, 126, 0.3);
   color: var(--vscode-notificationsInfoIcon-foreground, #3794ff);
 }
 
@@ -705,22 +710,22 @@ function handleDuplicateCancel() {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* 错误提示动画 */
-.slide-fade-enter-active {
+/* 通知条从底部滑入动画 */
+.slide-up-enter-active {
   transition: all 0.2s ease-out;
 }
 
-.slide-fade-leave-active {
+.slide-up-leave-active {
   transition: all 0.15s ease-in;
 }
 
-.slide-fade-enter-from {
-  transform: translateY(-4px);
+.slide-up-enter-from {
+  transform: translateY(4px);
   opacity: 0;
 }
 
-.slide-fade-leave-to {
-  transform: translateY(-2px);
+.slide-up-leave-to {
+  transform: translateY(2px);
   opacity: 0;
 }
 
