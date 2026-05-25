@@ -18,6 +18,8 @@ declare global {
     __VIEW_MODE?: 'sidebar' | 'editor'
     /** 语言偏好，由后端从 globalState 注入，确保侧边栏和编辑器语言同步 */
     __LOCALE?: AppLocale
+    /** 排序偏好，由后端从 globalState 注入，'desc' 为由新至旧，'asc' 为由旧至新 */
+    __SORT_ORDER?: 'desc' | 'asc'
     /** 插件版本号，由后端从 package.json 注入 */
     __APP_VERSION?: string
     /** 代码片段存储目录路径，由后端注入 */

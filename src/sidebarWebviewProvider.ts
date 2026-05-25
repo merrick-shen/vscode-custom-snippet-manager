@@ -76,6 +76,16 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
     this.context.globalState.update('locale', locale);
   }
 
+  /** 获取排序偏好，默认倒序（由新至旧） */
+  public getSortOrder(): string {
+    return this.context.globalState.get<string>('sortOrder', 'desc');
+  }
+
+  /** 保存排序偏好到 globalState */
+  private setSortOrder(order: string): void {
+    this.context.globalState.update('sortOrder', order);
+  }
+
   /**
    * VS Code 调用此方法解析 webview 视图
    * 在侧边栏首次展开或视图需要重建时触发
@@ -163,6 +173,15 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
           this.setLocale(locale);
           // 同步语言设置到编辑器面板
           WebviewPanel.currentPanel?.postToWebview('localeChanged', locale);
+        }
+        break;
+      }
+
+      // 前端切换排序方向，持久化保存
+      case 'changeSortOrder': {
+        const order = msg.payload as string;
+        if (order === 'asc' || order === 'desc') {
+          this.setSortOrder(order);
         }
         break;
       }
@@ -321,13 +340,14 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
     let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
-    // 注入视图模式、语言偏好、版本号、存储路径和 VS Code API
+    // 注入视图模式、语言偏好、排序偏好、版本号、存储路径和 VS Code API
     const locale = this.getLocale();
+    const sortOrder = this.getSortOrder();
     const version = this.appVersion;
     const storagePath = this.snippetService.getStoragePath();
     html = html.replace(
       '<head>',
-      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.__APP_VERSION = '${version}'; window.__STORAGE_PATH = '${storagePath.replace(/\\/g, '\\\\')}'; window.vscode = acquireVsCodeApi()</script>`
+      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.__SORT_ORDER = '${sortOrder}'; window.__APP_VERSION = '${version}'; window.__STORAGE_PATH = '${storagePath.replace(/\\/g, '\\\\')}'; window.vscode = acquireVsCodeApi()</script>`
     );
 
     // 替换 CSS 资源路径为 webview 可访问的 URI

@@ -24,6 +24,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Architecture**: Unified language configuration into a single data source
 - **Language Switch Button**: Replaced the translate icon with the current language's flag, and each language option in the dropdown now shows its corresponding flag
 - **Style Architecture**: Refactored frontend styles using Sass for improved maintainability and extensibility
+- **Sort Preference**: Sidebar sort order is now persisted across sessions, no longer resets every time the sidebar is opened
 
 ## [1.1.3] - 2026-05-25
 

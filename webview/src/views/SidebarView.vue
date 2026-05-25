@@ -44,8 +44,8 @@ const snippets = ref<Snippet[]>([])
 const searchQuery = ref('')
 // 语言筛选值，'*' 表示全部，多选时逗号分隔
 const languageFilter = ref('*')
-// 排序方向，默认倒序（由新至旧）
-const sortOrder = ref<SortOrder>('desc')
+// 排序方向，从后端注入的偏好初始化，默认倒序（由新至旧）
+const sortOrder = ref<SortOrder>(window.__SORT_ORDER === 'asc' ? 'asc' : 'desc')
 
 // 当前排序方向的显示文本
 const currentSortLabel = computed(() => {
@@ -90,9 +90,10 @@ function toggleLocaleMenu() {
   localeMenuOpen.value = !localeMenuOpen.value
 }
 
-/** 切换排序方向（正序/倒序） */
+/** 切换排序方向（正序/倒序），并通知后端持久化保存 */
 function toggleSortOrder() {
   sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
+  postToExt('changeSortOrder', sortOrder.value)
 }
 
 /** 点击外部关闭语言下拉菜单 */

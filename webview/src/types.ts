@@ -56,6 +56,7 @@ export type MessageType =
   | 'duplicateStrategyChoice'
   | 'showNotification'
   | 'localeChanged'
+  | 'changeSortOrder'
   | 'clearAllSnippets'
   | 'error'
 
