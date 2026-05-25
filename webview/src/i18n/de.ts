@@ -102,5 +102,6 @@ export default {
     feedback: 'Feedback',
     description: 'Verwalten und verwenden Sie benutzerdefinierte Code-Snippets für mehr Produktivität',
     openDirectory: 'Snippet-Verzeichnis öffnen',
+    storagePath: 'Speicherpfad',
   },
 }

@@ -102,5 +102,6 @@ export default {
     feedback: 'Geri Bildirim',
     description: 'Verimliliği artırmak için özel kod snippetlerini yönetin ve kullanın',
     openDirectory: 'Snippet klasörünü aç',
+    storagePath: 'Depolama yolu',
   },
 }

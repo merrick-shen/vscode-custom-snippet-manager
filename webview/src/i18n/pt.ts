@@ -102,5 +102,6 @@ export default {
     feedback: 'Feedback',
     description: 'Gerencie e use snippets de código personalizados para aumentar a produtividade',
     openDirectory: 'Abrir pasta de snippets',
+    storagePath: 'Caminho de armazenamento',
   },
 }

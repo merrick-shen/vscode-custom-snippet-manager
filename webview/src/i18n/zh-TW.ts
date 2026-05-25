@@ -102,5 +102,6 @@ export default {
     feedback: '問題回饋',
     description: '管理和使用自訂程式碼片段，提升開發效率',
     openDirectory: '打開程式碼片段目錄',
+    storagePath: '儲存路徑',
   },
 }

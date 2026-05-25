@@ -102,5 +102,6 @@ export default {
     feedback: 'Feedback',
     description: 'Manage and use custom code snippets to boost productivity',
     openDirectory: 'Open Snippets Directory',
+    storagePath: 'Storage Path',
   },
 }

@@ -20,6 +20,8 @@ declare global {
     __LOCALE?: AppLocale
     /** 插件版本号，由后端从 package.json 注入 */
     __APP_VERSION?: string
+    /** 代码片段存储目录路径，由后端注入 */
+    __STORAGE_PATH?: string
   }
 }
 

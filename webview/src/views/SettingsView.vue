@@ -10,8 +10,9 @@ import { Icon } from '@iconify/vue'
 
 const { t } = useI18n()
 
-// 从后端注入的全局变量读取版本号
+// 从后端注入的全局变量读取版本号和存储路径
 const appVersion = window.__APP_VERSION || '0.0.0'
+const storagePath = window.__STORAGE_PATH || ''
 
 // 插件信息常量
 const APP_NAME = 'Custom Snippet Manager'
@@ -87,6 +88,12 @@ const emit = defineEmits<{
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </span>
         </div>
+      </div>
+
+      <!-- 存储路径 -->
+      <div v-if="storagePath" class="storage-path-section">
+        <span class="storage-path-label">{{ t('settings.storagePath') }}</span>
+        <span class="storage-path-value" :title="storagePath">{{ storagePath }}</span>
       </div>
 
       <!-- 打开代码片段目录按钮 -->
@@ -262,6 +269,32 @@ const emit = defineEmits<{
 .about-footer {
   width: 100%;
   text-align: center;
+}
+
+/* 存储路径区域 */
+.storage-path-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--vscode-input-background, rgba(255,255,255,0.04));
+  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+}
+
+.storage-path-label {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.storage-path-value {
+  font-size: 12px;
+  font-family: var(--vscode-editor-font-family, 'Cascadia Code', Consolas, monospace);
+  color: var(--vscode-textPreformat-foreground);
+  word-break: break-all;
+  line-height: 1.5;
 }
 
 /* 打开目录按钮 */

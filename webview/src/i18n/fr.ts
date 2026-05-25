@@ -102,5 +102,6 @@ export default {
     feedback: 'Commentaires',
     description: 'Gérez et utilisez des snippets de code personnalisés pour gagner en productivité',
     openDirectory: 'Ouvrir le dossier des snippets',
+    storagePath: 'Chemin de stockage',
   },
 }

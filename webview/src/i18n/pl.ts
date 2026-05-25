@@ -102,5 +102,6 @@ export default {
     feedback: 'Opinia',
     description: 'Zarządzaj i używaj niestandardowych snippetów kodu, aby zwiększyć produktywność',
     openDirectory: 'Otwórz folder snippetów',
+    storagePath: 'Ścieżka zapisu',
   },
 }

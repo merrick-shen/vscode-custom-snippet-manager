@@ -102,5 +102,6 @@ export default {
     feedback: '问题反馈',
     description: '管理和使用自定义代码片段，提升开发效率',
     openDirectory: '打开代码片段目录',
+    storagePath: '存储路径',
   },
 }

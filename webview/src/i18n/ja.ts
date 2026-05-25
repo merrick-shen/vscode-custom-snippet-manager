@@ -102,5 +102,6 @@ export default {
     feedback: 'フィードバック',
     description: 'カスタムコードスニペットを管理・使用して生産性を向上',
     openDirectory: 'スニペット保存先を開く',
+    storagePath: '保存先パス',
   },
 }

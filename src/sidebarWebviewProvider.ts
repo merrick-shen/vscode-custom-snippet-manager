@@ -313,12 +313,13 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
     let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
-    // 注入视图模式、语言偏好、版本号和 VS Code API
+    // 注入视图模式、语言偏好、版本号、存储路径和 VS Code API
     const locale = this.getLocale();
     const version = this.appVersion;
+    const storagePath = this.snippetService.getStoragePath();
     html = html.replace(
       '<head>',
-      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.__APP_VERSION = '${version}'; window.vscode = acquireVsCodeApi()</script>`
+      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.__APP_VERSION = '${version}'; window.__STORAGE_PATH = '${storagePath.replace(/\\/g, '\\\\')}'; window.vscode = acquireVsCodeApi()</script>`
     );
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
