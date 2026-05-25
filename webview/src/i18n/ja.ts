@@ -93,4 +93,13 @@ export default {
     newestFirst: '新しい順',
     oldestFirst: '古い順',
   },
+  settings: {
+    title: '設定',
+    back: '戻る',
+    version: 'バージョン',
+    license: 'ライセンス',
+    repository: 'リポジトリ',
+    feedback: 'フィードバック',
+    description: 'カスタムコードスニペットを管理・使用して生産性を向上',
+  },
 }

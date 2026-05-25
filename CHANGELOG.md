@@ -6,7 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
-## [1.1.4] - 2026-05-26
+## [1.2.0] - 2026-05-26
+
+### Added
+
+- **Settings Entry**: Added a settings button in the sidebar to view plugin version, license, repository link, and other info
 
 ### Changed
 

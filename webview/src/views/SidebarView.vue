@@ -14,9 +14,13 @@ import type { Snippet, SortOrder } from '../types'
 import { SUPPORTED_LANGUAGES, getLanguageColor, getLanguageIcon } from '../utils/languages'
 import { postToExt, onExtMessage } from '../composables/useMessage'
 import LanguageSelect from '../components/LanguageSelect.vue'
+import SettingsView from './SettingsView.vue'
 import { SUPPORTED_LOCALES } from '../i18n'
 
 const { t, locale } = useI18n()
+
+// 当前视图：'list' 为片段列表，'settings' 为设置页面
+const currentView = ref<'list' | 'settings'>('list')
 
 // 片段列表数据
 const snippets = ref<Snippet[]>([])
@@ -386,6 +390,10 @@ function handleDuplicateCancel() {
 
 <template>
   <div class="sidebar-view">
+    <!-- 设置页面视图 -->
+    <SettingsView v-if="currentView === 'settings'" @back="currentView = 'list'" />
+    <!-- 片段列表视图 -->
+    <template v-else>
     <!-- 顶部标题栏：图标 + 标题 + 语言切换 -->
     <div class="sidebar-header">
       <div class="header-content">
@@ -394,6 +402,10 @@ function handleDuplicateCancel() {
           <img src="../assets/logo.png" alt="logo" class="header-logo" />
         </div>
         <h2 class="header-title">{{ t('app.title') }}</h2>
+        <!-- 设置按钮 -->
+        <button class="settings-btn" :title="t('settings.title')" @click="currentView = 'settings'">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
         <!-- 语言切换下拉菜单 -->
         <div ref="localeMenuRef" class="locale-select">
           <button class="locale-btn" @click="toggleLocaleMenu">
@@ -614,6 +626,7 @@ function handleDuplicateCancel() {
         </button>
       </div>
     </transition>
+    </template>
   </div>
 </template>
 
@@ -751,6 +764,28 @@ function handleDuplicateCancel() {
   color: var(--vscode-editor-foreground);
   letter-spacing: -0.2px;
   flex: 1;
+}
+
+/* 设置按钮 */
+.settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.settings-btn:hover {
+  background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,0.08));
+  color: var(--vscode-editor-foreground);
 }
 
 /* 语言切换下拉菜单容器 */

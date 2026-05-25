@@ -93,4 +93,13 @@ export default {
     newestFirst: 'Önce en yeni',
     oldestFirst: 'Önce en eski',
   },
+  settings: {
+    title: 'Ayarlar',
+    back: 'Geri',
+    version: 'Sürüm',
+    license: 'Lisans',
+    repository: 'Depo',
+    feedback: 'Geri Bildirim',
+    description: 'Verimliliği artırmak için özel kod snippetlerini yönetin ve kullanın',
+  },
 }

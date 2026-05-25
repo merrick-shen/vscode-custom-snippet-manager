@@ -93,4 +93,13 @@ export default {
     newestFirst: 'Más recientes primero',
     oldestFirst: 'Más antiguos primero',
   },
+  settings: {
+    title: 'Configuración',
+    back: 'Volver',
+    version: 'Versión',
+    license: 'Licencia',
+    repository: 'Repositorio',
+    feedback: 'Comentarios',
+    description: 'Gestiona y usa snippets de código personalizados para mejorar la productividad',
+  },
 }

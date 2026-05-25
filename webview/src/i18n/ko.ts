@@ -93,4 +93,13 @@ export default {
     newestFirst: '최신순',
     oldestFirst: '오래된순',
   },
+  settings: {
+    title: '설정',
+    back: '뒤로',
+    version: '버전',
+    license: '라이선스',
+    repository: '저장소',
+    feedback: '피드백',
+    description: '커스텀 코드 스니펫을 관리하고 사용하여 생산성 향상',
+  },
 }

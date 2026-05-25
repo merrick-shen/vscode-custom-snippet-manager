@@ -93,4 +93,13 @@ export default {
     newestFirst: '由新至旧',
     oldestFirst: '由旧至新',
   },
+  settings: {
+    title: '设置',
+    back: '返回',
+    version: '版本',
+    license: '开源协议',
+    repository: '源代码',
+    feedback: '问题反馈',
+    description: '管理和使用自定义代码片段，提升开发效率',
+  },
 }

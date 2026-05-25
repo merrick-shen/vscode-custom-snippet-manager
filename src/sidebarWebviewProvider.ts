@@ -37,6 +37,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   private importExportService!: ImportExportService;
   /** 初始化 Promise，确保 ImportExportService 创建完成 */
   private initPromise: Promise<void>;
+  /** 插件版本号，在 init 中从 package.json 读取 */
+  private appVersion = '0.0.0';
 
   constructor(extensionUri: vscode.Uri, snippetService: SnippetService, context: vscode.ExtensionContext) {
     this.extensionUri = extensionUri;
@@ -48,8 +50,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
   /** 异步初始化：读取版本号并创建导入导出服务 */
   private async init(extensionPath: string): Promise<void> {
-    const appVersion = await this.readAppVersion(extensionPath);
-    this.importExportService = new ImportExportService(this.snippetService, appVersion);
+    this.appVersion = await this.readAppVersion(extensionPath);
+    this.importExportService = new ImportExportService(this.snippetService, this.appVersion);
   }
 
   /** 从扩展目录的 package.json 读取版本号 */
@@ -205,6 +207,15 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         }
         break;
       }
+
+      // 前端请求在外部浏览器中打开链接
+      case 'openExternal': {
+        const url = msg.payload as string;
+        if (url && typeof url === 'string') {
+          vscode.env.openExternal(vscode.Uri.parse(url));
+        }
+        break;
+      }
     }
   }
 
@@ -286,11 +297,12 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
 
     let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
-    // 注入视图模式、语言偏好和 VS Code API
+    // 注入视图模式、语言偏好、版本号和 VS Code API
     const locale = this.getLocale();
+    const version = this.appVersion;
     html = html.replace(
       '<head>',
-      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.vscode = acquireVsCodeApi()</script>`
+      `<head><script>window.__VIEW_MODE = 'sidebar'; window.__LOCALE = '${locale}'; window.__APP_VERSION = '${version}'; window.vscode = acquireVsCodeApi()</script>`
     );
 
     // 替换 CSS 资源路径为 webview 可访问的 URI
