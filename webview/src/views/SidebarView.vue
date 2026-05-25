@@ -648,8 +648,6 @@ function handleListScroll() {
         class="preview-card"
         :class="`preview-${previewState.placement}`"
         :style="{ top: previewState.top + 'px', left: previewState.left + 'px', width: previewState.width + 'px' }"
-        @mouseenter="previewState.visible = true"
-        @mouseleave="previewState.visible = false"
       >
         <div class="preview-header">
           <span class="preview-name">{{ previewState.snippet.name }}</span>
@@ -1158,7 +1156,7 @@ function handleListScroll() {
   background: $bg-widget;
   box-shadow: $shadow-dropdown;
   overflow: hidden;
-  pointer-events: auto;
+  pointer-events: none;
 
   // 默认在列表项上方显示
   &.preview-top {
