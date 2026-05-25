@@ -11,7 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - **Settings Entry**: Added a settings button in the sidebar to view plugin version, license, repository link, and other info
-- **Open Directory**: Added an "Open Snippets Directory" button in the settings page to open the data storage location in the system file manager
+- **Open Directory**: Added an "Open Snippets Directory" button in the settings page to open the data storage location in the system file manager, with the storage path displayed
 
 ### Changed
 
@@ -21,6 +21,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Multi-language filter**: Sidebar language filter now supports selecting multiple languages at once, consistent with the editor's language scope selector
 - **Architecture**: Unified language configuration into a single data source
 - **Language Switch Button**: Replaced the translate icon with the current language's flag, and each language option in the dropdown now shows its corresponding flag
+- **Style Architecture**: Refactored frontend styles using Sass for improved maintainability and extensibility
 
 ## [1.1.3] - 2026-05-25
 

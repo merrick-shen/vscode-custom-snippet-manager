@@ -263,138 +263,121 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped>
-/* 选择器容器 */
+<style scoped lang="scss">
 .lang-select {
   position: relative;
   width: 100%;
   outline: none;
 }
 
-/* 触发器按钮 */
 .lang-select-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   padding: 7px 10px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
-  font-size: 13px;
+  border: 1px solid $border-input;
+  border-radius: $radius-md;
+  background: $bg-input;
+  color: var(--vscode-input-foreground, #{$color-foreground});
+  font-size: $font-size-base;
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
+
+  .lang-select.is-open &,
+  &:focus {
+    border-color: $color-focus;
+    box-shadow: 0 0 0 1px $color-focus;
+  }
 }
 
-.lang-select.is-open .lang-select-trigger,
-.lang-select-trigger:focus {
-  border-color: var(--vscode-focusBorder, #007fd4);
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
-}
-
-/* 选中值区域 */
 .lang-select-value {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $spacing-sm;
   min-width: 0;
   flex: 1;
   overflow: hidden;
 }
 
-/* 语言图标通用样式 */
 .lang-icon {
   flex-shrink: 0;
   font-size: 16px;
 }
 
-/* 选项文本 */
 .lang-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @include text-ellipsis;
 }
 
-/* 占位符文本 */
 .lang-placeholder {
-  color: var(--vscode-input-placeholderForeground, rgba(255,255,255,0.3));
+  color: $placeholder-color;
 }
 
-/* 多选标签容器 */
 .multi-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: $spacing-xs;
   overflow: hidden;
 }
 
-/* 多选标签 */
 .multi-tag {
   display: inline-flex;
   align-items: center;
   gap: 3px;
   padding: 1px 6px;
-  border-radius: 3px;
-  background: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #fff);
-  font-size: 11px;
+  border-radius: $radius-sm;
+  background: $btn-primary-bg;
+  color: $btn-primary-fg;
+  font-size: $font-size-xs;
   line-height: 1.4;
   white-space: nowrap;
 }
 
 .tag-icon {
-  font-size: 12px;
+  font-size: $font-size-sm;
 }
 
 .tag-label {
   max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-ellipsis;
 }
 
-/* 复选框样式 */
 .checkbox {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   width: 14px;
   height: 14px;
-  border: 1.5px solid var(--vscode-checkbox-border, rgba(255,255,255,0.3));
-  border-radius: 3px;
+  border: 1.5px solid var(--vscode-checkbox-border, rgba(255, 255, 255, 0.3));
+  border-radius: $radius-sm;
   flex-shrink: 0;
   transition: all 0.15s;
+
+  &.is-checked {
+    background: var(--vscode-checkbox-background, #0e639c);
+    border-color: var(--vscode-checkbox-border, #0e639c);
+    color: var(--vscode-checkbox-foreground, #fff);
+  }
 }
 
-.checkbox.is-checked {
-  background: var(--vscode-checkbox-background, #0e639c);
-  border-color: var(--vscode-checkbox-border, #0e639c);
-  color: var(--vscode-checkbox-foreground, #fff);
-}
-
-/* 下拉箭头 */
 .lang-select-arrow {
   flex-shrink: 0;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.5);
   transition: transform 0.2s;
-  margin-left: 4px;
+  margin-left: $spacing-xs;
+
+  .lang-select.is-open & {
+    transform: rotate(180deg);
+  }
+
+  .lang-select.placement-top & {
+    transform: rotate(180deg);
+  }
+
+  .lang-select.placement-top.is-open & {
+    transform: rotate(0deg);
+  }
 }
 
-.lang-select.is-open .lang-select-arrow {
-  transform: rotate(180deg);
-}
-
-/* 向上展开时箭头默认朝上 */
-.lang-select.placement-top .lang-select-arrow {
-  transform: rotate(180deg);
-}
-
-.lang-select.placement-top.is-open .lang-select-arrow {
-  transform: rotate(0deg);
-}
-
-/* 下拉菜单：默认向下展开 */
 .lang-select-dropdown {
   position: absolute;
   top: calc(100% + 4px);
@@ -403,52 +386,34 @@ onBeforeUnmount(() => {
   z-index: 1000;
   max-height: 240px;
   overflow-y: auto;
-  border: 1px solid var(--vscode-dropdown-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-editorWidget-background, #252526);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  padding: 4px;
+  border: 1px solid $border-dropdown;
+  border-radius: $radius-md;
+  background: $bg-widget;
+  box-shadow: $shadow-dropdown;
+  padding: $spacing-xs;
+
+  .lang-select.placement-top & {
+    top: auto;
+    bottom: calc(100% + 4px);
+  }
 }
 
-/* 向上展开时下拉菜单定位 */
-.lang-select.placement-top .lang-select-dropdown {
-  top: auto;
-  bottom: calc(100% + 4px);
-}
-
-/* 单个选项 */
 .lang-select-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  @include dropdown-option;
   padding: 6px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--vscode-editor-foreground);
-  font-size: 13px;
-  transition: background-color 0.1s;
+  font-size: $font-size-base;
+
+  &.is-highlighted {
+    background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
+  }
 }
 
-/* 悬浮和高亮状态 */
-.lang-select-option:hover,
-.lang-select-option.is-highlighted {
-  background: var(--vscode-list-hoverBackground, rgba(255,255,255,0.08));
-}
-
-/* 已选中状态 */
-.lang-select-option.is-selected {
-  color: var(--vscode-list-activeSelectionForeground, #fff);
-  font-weight: 600;
-}
-
-/* 选中勾号 */
 .lang-check {
   margin-left: auto;
   flex-shrink: 0;
-  color: var(--vscode-button-background, #0e639c);
+  color: $btn-primary-bg;
 }
 
-/* 下拉菜单动画 */
 .dropdown-enter-active {
   transition: all 0.15s ease-out;
 }
@@ -467,7 +432,6 @@ onBeforeUnmount(() => {
   transform: translateY(-2px);
 }
 
-/* 向上展开时的动画方向反转 */
 .lang-select.placement-top .dropdown-enter-from {
   transform: translateY(4px);
 }

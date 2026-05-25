@@ -110,78 +110,68 @@ const emit = defineEmits<{
   </div>
 </template>
 
-<style scoped>
-/* 设置页面整体布局 */
+<style scoped lang="scss">
 .settings-view {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   height: 100vh;
   overflow-y: auto;
 }
 
-/* 顶部导航栏 */
 .settings-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $spacing-sm;
   padding: 14px;
-  border-bottom: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
+  border-bottom: 1px solid $border-panel;
 }
 
-/* 返回按钮 */
 .back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
   border: none;
-  border-radius: 4px;
+  border-radius: $radius-sm;
   background: transparent;
-  color: var(--vscode-descriptionForeground);
-  font-size: 12px;
+  color: $color-description;
+  font-size: $font-size-sm;
   font-family: inherit;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
+
+  &:hover {
+    background: $bg-hover;
+    color: $color-foreground;
+  }
 }
 
-.back-btn:hover {
-  background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,0.08));
-  color: var(--vscode-editor-foreground);
-}
-
-/* 页面标题 */
 .settings-title {
   margin: 0;
-  font-size: 14px;
+  font-size: $font-size-lg;
   font-weight: 700;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
 }
 
-/* 关于区域 */
 .about-section {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   align-items: center;
-  padding: 24px 16px;
+  padding: $spacing-xl $spacing-lg;
 }
 
-/* 品牌：Logo + 名称 + 版本 */
 .about-brand {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xl;
 }
 
-/* Logo 容器 */
 .about-logo {
   width: 56px;
   height: 56px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0e639c, #1177bb);
+  background: $gradient-primary;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(14, 99, 156, 0.3);
+  box-shadow: $shadow-logo;
 }
 
 .about-logo-img {
@@ -190,141 +180,119 @@ const emit = defineEmits<{
   object-fit: contain;
 }
 
-/* 插件名称 */
 .about-name {
   margin: 0;
-  font-size: 16px;
+  font-size: $font-size-lg;
   font-weight: 700;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
 }
 
-/* 版本号标签 */
 .about-version {
-  font-size: 12px;
-  color: var(--vscode-descriptionForeground);
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
+  font-size: $font-size-sm;
+  color: $color-description;
+  background: $bg-input;
   padding: 2px 10px;
   border-radius: 10px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+  border: 1px solid $border-input;
 }
 
-/* 信息列表 */
 .about-info {
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 2px;
-  margin-bottom: 24px;
+  margin-bottom: $spacing-xl;
 }
 
-/* 单条信息 */
 .info-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: $radius-md;
+
+  &.clickable {
+    cursor: pointer;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background: $bg-list-hover;
+
+      .info-link {
+        color: $color-link-active;
+      }
+    }
+  }
 }
 
-/* 可点击的信息行 */
-.info-item.clickable {
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.info-item.clickable:hover {
-  background: var(--vscode-list-hoverBackground, rgba(255,255,255,0.04));
-}
-
-/* 信息标签 */
 .info-label {
-  font-size: 13px;
-  color: var(--vscode-editor-foreground);
+  font-size: $font-size-base;
+  color: $color-foreground;
 }
 
-/* 信息值 */
 .info-value {
-  font-size: 13px;
-  color: var(--vscode-descriptionForeground);
+  font-size: $font-size-base;
+  color: $color-description;
 }
 
-/* 链接样式 */
 .info-link {
   display: flex;
   align-items: center;
   gap: 5px;
-  color: var(--vscode-textLink-foreground, #3794ff);
+  color: $color-link;
 }
 
-.info-item.clickable:hover .info-link {
-  color: var(--vscode-textLink-activeForeground, #4bb0ff);
-}
-
-/* 链接图标 */
 .info-icon {
-  font-size: 14px;
+  font-size: $font-size-lg;
 }
 
-/* 底部说明 */
-.about-footer {
-  width: 100%;
-  text-align: center;
-}
-
-/* 存储路径区域 */
 .storage-path-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+  @include info-panel;
 }
 
 .storage-path-label {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
+  font-size: $font-size-xs;
+  color: $color-description;
 }
 
 .storage-path-value {
-  font-size: 12px;
-  font-family: var(--vscode-editor-font-family, 'Cascadia Code', Consolas, monospace);
-  color: var(--vscode-textPreformat-foreground);
+  font-size: $font-size-sm;
+  @include code-text;
   word-break: break-all;
   line-height: 1.5;
 }
 
-/* 打开目录按钮 */
 .open-dir-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   width: 100%;
-  padding: 8px 16px;
-  margin-bottom: 24px;
-  border: 1px solid var(--vscode-button-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-button-secondaryBackground, #3a3d41);
-  color: var(--vscode-button-secondaryForeground, #fff);
-  font-size: 13px;
+  padding: $spacing-sm $spacing-lg;
+  margin-bottom: $spacing-xl;
+  border: 1px solid $border-button;
+  border-radius: $radius-md;
+  background: $btn-secondary-bg;
+  color: $btn-secondary-fg;
+  font-size: $font-size-base;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: background-color 0.2s;
+
+  &:hover {
+    background: $btn-secondary-hover;
+  }
 }
 
-.open-dir-btn:hover {
-  background: var(--vscode-button-secondaryHoverBackground, #45494e);
+.about-footer {
+  width: 100%;
+  text-align: center;
 }
 
 .about-desc {
   margin: 0;
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
+  font-size: $font-size-xs;
+  color: $color-description;
   opacity: 0.7;
   line-height: 1.6;
 }

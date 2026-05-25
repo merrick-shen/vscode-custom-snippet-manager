@@ -1,0 +1,67 @@
+// VS Code 主题变量映射
+// 使用 CSS 自定义属性实现运行时主题切换，Sass 变量仅作为编写时的快捷引用
+
+// ===== 颜色 =====
+$color-foreground: var(--vscode-editor-foreground);
+$color-description: var(--vscode-descriptionForeground);
+$color-error: var(--vscode-errorForeground, #f48771);
+$color-warning: var(--vscode-notificationsWarningIcon-foreground, #cca700);
+$color-info: var(--vscode-notificationsInfoIcon-foreground, #3794ff);
+$color-link: var(--vscode-textLink-foreground, #3794ff);
+$color-link-active: var(--vscode-textLink-activeForeground, #4bb0ff);
+$color-text-preformat: var(--vscode-textPreformat-foreground);
+$color-focus: var(--vscode-focusBorder, #007fd4);
+
+// ===== 背景 =====
+$bg-input: var(--vscode-input-background, rgba(255, 255, 255, 0.04));
+$bg-hover: var(--vscode-toolbar-hoverBackground, rgba(255, 255, 255, 0.08));
+$bg-list-hover: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.04));
+$bg-widget: var(--vscode-editorWidget-background, #252526);
+$bg-code-block: var(--vscode-textCodeBlock-background, rgba(255, 255, 255, 0.06));
+
+// ===== 按钮 =====
+$btn-primary-bg: var(--vscode-button-background, #0e639c);
+$btn-primary-hover: var(--vscode-button-hoverBackground, #1177bb);
+$btn-primary-fg: var(--vscode-button-foreground, #fff);
+$btn-secondary-bg: var(--vscode-button-secondaryBackground, #3a3d41);
+$btn-secondary-hover: var(--vscode-button-secondaryHoverBackground, #45494e);
+$btn-secondary-fg: var(--vscode-button-secondaryForeground, #fff);
+
+// ===== 边框 =====
+$border-input: var(--vscode-input-border, rgba(255, 255, 255, 0.12));
+$border-panel: var(--vscode-panel-border, rgba(255, 255, 255, 0.06));
+$border-dropdown: var(--vscode-dropdown-border, rgba(255, 255, 255, 0.12));
+$border-button: var(--vscode-button-border, rgba(255, 255, 255, 0.12));
+
+// ===== 字体 =====
+$font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+$font-mono: var(--vscode-editor-font-family, 'Cascadia Code', Consolas, monospace);
+$font-size-base: 13px;
+$font-size-sm: 12px;
+$font-size-xs: 11px;
+$font-size-lg: 14px;
+
+// ===== 占位符 =====
+$placeholder-color: var(--vscode-input-placeholderForeground, rgba(255, 255, 255, 0.3));
+
+// ===== 圆角 =====
+$radius-sm: 3px;
+$radius-md: 6px;
+$radius-lg: 8px;
+
+// ===== 间距 =====
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+// ===== 渐变 =====
+$gradient-primary: linear-gradient(135deg, #0e639c, #1177bb);
+$gradient-edit: linear-gradient(135deg, #c77832, #e89b4c);
+
+// ===== 阴影 =====
+$shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.4);
+$shadow-primary-btn: 0 1px 4px rgba(14, 99, 156, 0.3);
+$shadow-edit-btn: 0 2px 8px rgba(199, 120, 50, 0.3);
+$shadow-logo: 0 4px 12px rgba(14, 99, 156, 0.3);

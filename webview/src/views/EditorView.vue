@@ -279,20 +279,18 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-/* ===== 整体布局 ===== */
+<style scoped lang="scss">
 .editor-view {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   height: 100vh;
   overflow: hidden;
   background: var(--vscode-editor-background);
 }
 
-/* ===== 顶部标题栏 ===== */
+// ===== 顶部标题栏 =====
 .editor-header {
-  padding: 24px 28px 20px;
-  border-bottom: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
+  padding: $spacing-xl 28px 20px;
+  border-bottom: 1px solid $border-panel;
   background: linear-gradient(
     180deg,
     var(--vscode-editor-background) 0%,
@@ -306,28 +304,24 @@ onMounted(() => {
   gap: 14px;
 }
 
-/* 模式图标：新建为蓝色，编辑为琥珀色 */
 .header-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #0e639c, #1177bb);
+  background: $gradient-primary;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(14, 99, 156, 0.3);
+  box-shadow: $shadow-primary-btn;
 }
 
 .header-icon--edit {
-  background: linear-gradient(135deg, #c77832, #e89b4c);
-  box-shadow: 0 2px 8px rgba(199, 120, 50, 0.3);
+  background: $gradient-edit;
+  box-shadow: $shadow-edit-btn;
 }
 
 .header-text {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 2px;
 }
 
@@ -335,138 +329,107 @@ onMounted(() => {
   margin: 0;
   font-size: 18px;
   font-weight: 700;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
   letter-spacing: -0.3px;
 }
 
 .header-subtitle {
   margin: 0;
-  font-size: 12px;
-  color: var(--vscode-descriptionForeground);
+  font-size: $font-size-sm;
+  color: $color-description;
   font-weight: 400;
 }
 
-/* ===== 表单主体 ===== */
+// ===== 表单主体 =====
 .editor-body {
   flex: 1;
   overflow-y: auto;
   padding: 20px 28px;
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 20px;
 }
 
-/* 前缀命名规范提示横幅 */
 .prefix-notice {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 6px;
+  gap: $spacing-sm;
+  padding: 10px $spacing-md;
+  border-radius: $radius-md;
   background: var(--vscode-inputValidation-warningBackground, #352a05);
   border: 1px solid var(--vscode-inputValidation-warningBorder, #cca700);
   color: var(--vscode-editorWarning-foreground, #cca700);
-  font-size: 12px;
+  font-size: $font-size-sm;
   line-height: 1.5;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
 }
 
-.prefix-notice svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* 表单分区 */
 .form-section {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 6px;
 }
 
-/* 表单行：两个字段并排 */
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: $spacing-lg;
+
+  .form-group {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
-.form-row .form-group {
-  flex: 1;
-  min-width: 0;
-}
-
-/* 表单组 */
 .form-group {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 6px;
 }
 
-/* 表单标签 */
 .form-label {
-  font-size: 12px;
+  font-size: $font-size-sm;
   font-weight: 600;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
   opacity: 0.85;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: $spacing-xs;
 }
 
-/* 必填标记 */
 .required-dot {
-  color: var(--vscode-errorForeground, #f48771);
-  font-size: 14px;
+  color: $color-error;
+  font-size: $font-size-lg;
   line-height: 1;
 }
 
-/* 字段提示 */
 .form-hint {
   font-weight: 400;
   text-transform: none;
   opacity: 0.5;
-  font-size: 11px;
+  font-size: $font-size-xs;
   letter-spacing: 0;
 }
 
-/* 输入框 */
 .form-input {
-  width: 100%;
-  padding: 9px 12px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  @include input-base;
+  padding: 9px $spacing-md;
 }
 
-.form-input::placeholder {
-  color: var(--vscode-input-placeholderForeground, rgba(255,255,255,0.3));
-}
-
-.form-input:focus {
-  border-color: var(--vscode-focusBorder, #007fd4);
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
-}
-
-/* 校验错误状态 */
 .has-error .form-input,
 .has-error .code-editor {
-  border-color: var(--vscode-errorForeground, #f48771);
-  box-shadow: 0 0 0 1px var(--vscode-errorForeground, #f48771);
+  border-color: $color-error;
+  box-shadow: 0 0 0 1px $color-error;
 }
 
-/* 错误信息 */
 .form-error {
-  font-size: 11px;
-  color: var(--vscode-errorForeground, #f48771);
+  font-size: $font-size-xs;
+  color: $color-error;
   padding-left: 2px;
 }
 
-/* 错误信息动画 */
 .slide-fade-enter-active {
   transition: all 0.2s ease-out;
 }
@@ -485,107 +448,66 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* ===== 代码编辑器 ===== */
+// ===== 代码编辑器 =====
 .code-editor-wrapper {
-  border-radius: 8px;
+  border-radius: $radius-lg;
   overflow: hidden;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
+  border: 1px solid $border-input;
   transition: border-color 0.2s, box-shadow 0.2s;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-}
+  background: $bg-input;
 
-.code-editor-wrapper:focus-within {
-  border-color: var(--vscode-focusBorder, #007fd4);
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
+  &:focus-within {
+    border-color: $color-focus;
+    box-shadow: 0 0 0 1px $color-focus;
+  }
 }
 
 .has-error .code-editor-wrapper {
-  border-color: var(--vscode-errorForeground, #f48771);
-  box-shadow: 0 0 0 1px var(--vscode-errorForeground, #f48771);
+  border-color: $color-error;
+  box-shadow: 0 0 0 1px $color-error;
 }
 
-/* ===== 底部操作栏 ===== */
+// ===== 底部操作栏 =====
 .editor-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 14px 28px;
-  border-top: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
+  border-top: 1px solid $border-panel;
   background: var(--vscode-editor-background);
 }
 
-/* 服务器错误提示 */
 .server-error {
-  font-size: 12px;
-  color: var(--vscode-errorForeground, #f48771);
+  font-size: $font-size-sm;
+  color: $color-error;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @include text-ellipsis;
 }
 
-/* 操作按钮组 */
 .footer-actions {
   display: flex;
   gap: 10px;
   flex-shrink: 0;
 }
 
-/* 按钮基础样式 */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
-  outline: none;
+  @include btn-base;
 }
 
-.btn:active {
-  transform: scale(0.97);
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* 次要按钮（取消） */
 .btn-secondary {
-  background: var(--vscode-button-secondaryBackground, #3a3d41);
-  color: var(--vscode-button-secondaryForeground, #fff);
+  @include btn-secondary;
 }
 
-.btn-secondary:hover {
-  background: var(--vscode-button-secondaryHoverBackground, #45494e);
-}
-
-/* 主要按钮（保存） */
 .btn-primary {
-  background: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #fff);
-  box-shadow: 0 1px 4px rgba(14, 99, 156, 0.3);
+  @include btn-primary;
 }
 
-.btn-primary:hover {
-  background: var(--vscode-button-hoverBackground, #1177bb);
-}
-
-/* 加载旋转动画 */
 .spinner {
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;

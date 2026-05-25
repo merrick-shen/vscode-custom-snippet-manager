@@ -638,81 +638,65 @@ function handleDuplicateCancel() {
   </div>
 </template>
 
-<style scoped>
-/* ===== 侧边栏整体布局 ===== */
+<style scoped lang="scss">
 .sidebar-view {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   height: 100vh;
   overflow: hidden;
   position: relative;
 }
 
-/* ===== 通用通知条（固定在页面底部） ===== */
+// ===== 通知条 =====
 .notification-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 12px;
-  font-size: 12px;
-  border-top: 1px solid;
-  z-index: 1000;
-}
+  @include notification-bar;
 
-.notification-bar.notification-error {
-  background: rgba(244, 135, 113, 0.15);
-  border-top-color: rgba(244, 135, 113, 0.3);
-  color: var(--vscode-errorForeground, #f48771);
-}
+  &.notification-error {
+    background: rgba-color(#f48771, 0.15);
+    border-top-color: rgba-color(#f48771, 0.3);
+    color: $color-error;
+  }
 
-.notification-bar.notification-warning {
-  background: rgba(234, 179, 8, 0.15);
-  border-top-color: rgba(234, 179, 8, 0.3);
-  color: var(--vscode-notificationsWarningIcon-foreground, #cca700);
-}
+  &.notification-warning {
+    background: rgba-color(#eab308, 0.15);
+    border-top-color: rgba-color(#eab308, 0.3);
+    color: $color-warning;
+  }
 
-.notification-bar.notification-success {
-  background: rgba(95, 189, 126, 0.15);
-  border-top-color: rgba(95, 189, 126, 0.3);
-  color: var(--vscode-notificationsInfoIcon-foreground, #3794ff);
+  &.notification-success {
+    background: rgba-color(#5fbd7e, 0.15);
+    border-top-color: rgba-color(#5fbd7e, 0.3);
+    color: $color-info;
+  }
 }
 
 .notification-text {
   flex: 1;
   min-width: 0;
-  /* 允许长文本换行显示，避免被截断 */
   overflow-wrap: break-word;
   word-break: break-all;
   line-height: 1.4;
 }
 
 .notification-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   width: 18px;
   height: 18px;
   padding: 0;
   border: none;
-  border-radius: 3px;
+  border-radius: $radius-sm;
   background: transparent;
   color: inherit;
   cursor: pointer;
   flex-shrink: 0;
-  margin-left: 8px;
+  margin-left: $spacing-sm;
   opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+  }
 }
 
-.notification-close:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* 通知条从底部滑入动画 */
 .slide-up-enter-active {
   transition: all 0.2s ease-out;
 }
@@ -731,34 +715,30 @@ function handleDuplicateCancel() {
   opacity: 0;
 }
 
-/* ===== 顶部标题栏 ===== */
+// ===== 顶部标题栏 =====
 .sidebar-header {
-  padding: 16px 14px 12px;
-  border-bottom: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
+  padding: $spacing-xl 14px $spacing-md;
+  border-bottom: 1px solid $border-panel;
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $spacing-sm;
   margin-bottom: 10px;
 }
 
-/* 标题图标，与编辑页 header-icon 风格统一 */
 .header-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   width: 28px;
   height: 28px;
   border-radius: 7px;
-  background: linear-gradient(135deg, #0e639c, #1177bb);
+  background: $gradient-primary;
   color: #fff;
   flex-shrink: 0;
   overflow: hidden;
 }
 
-/* logo 图片自适应容器 */
 .header-logo {
   width: 100%;
   height: 100%;
@@ -767,119 +747,68 @@ function handleDuplicateCancel() {
 
 .header-title {
   margin: 0;
-  font-size: 14px;
+  font-size: $font-size-lg;
   font-weight: 700;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
   letter-spacing: -0.2px;
   flex: 1;
 }
 
-/* 设置按钮 */
 .settings-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: none;
-  border-radius: 5px;
-  background: transparent;
-  color: var(--vscode-descriptionForeground);
-  cursor: pointer;
+  @include icon-btn(28px);
   flex-shrink: 0;
-  transition: background-color 0.15s, color 0.15s;
 }
 
-.settings-btn:hover {
-  background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,0.08));
-  color: var(--vscode-editor-foreground);
-}
-
-/* 语言切换下拉菜单容器 */
+// ===== 语言切换 =====
 .locale-select {
   position: relative;
   flex-shrink: 0;
 }
 
-/* 语言切换触发按钮，保持原有尺寸 */
 .locale-btn {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 3px 8px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
-  border-radius: 4px;
+  padding: 3px $spacing-sm;
+  border: 1px solid $border-input;
+  border-radius: $radius-sm;
   background: transparent;
-  color: var(--vscode-descriptionForeground);
+  color: $color-description;
   font-size: 10px;
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
   transition: background-color 0.15s, border-color 0.15s;
   letter-spacing: 0.3px;
+
+  &:hover {
+    background: $bg-hover;
+    border-color: $color-focus;
+  }
 }
 
-/* 语言切换按钮中的国旗图标 */
 .locale-flag {
-  font-size: 14px;
+  font-size: $font-size-lg;
   line-height: 1;
   flex-shrink: 0;
 }
 
-.locale-btn:hover {
-  background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,0.08));
-  border-color: var(--vscode-focusBorder, #007fd4);
-}
-
-/* 下拉箭头 */
 .locale-arrow {
   flex-shrink: 0;
   opacity: 0.6;
   transition: transform 0.2s;
 }
 
-.locale-select .locale-btn:has(~ .locale-dropdown) .locale-arrow,
-.locale-select .locale-arrow {
-  transform: rotate(0deg);
-}
-
-/* 语言下拉菜单面板 */
 .locale-dropdown {
-  position: absolute;
+  @include dropdown-panel;
   top: calc(100% + 4px);
   right: 0;
-  z-index: 1000;
   min-width: 160px;
-  border: 1px solid var(--vscode-dropdown-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-editorWidget-background, #252526);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  padding: 4px;
 }
 
-/* 语言选项 */
 .locale-option {
-  display: flex;
-  align-items: center;
+  @include dropdown-option;
   justify-content: space-between;
-  gap: 8px;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--vscode-editor-foreground);
-  font-size: 12px;
-  transition: background-color 0.1s;
-}
-
-.locale-option:hover {
-  background: var(--vscode-list-hoverBackground, rgba(255,255,255,0.08));
-}
-
-/* 已选中状态 */
-.locale-option.is-selected {
-  color: var(--vscode-list-activeSelectionForeground, #fff);
-  font-weight: 600;
 }
 
 .locale-option-flag {
@@ -892,13 +821,11 @@ function handleDuplicateCancel() {
   flex: 1;
 }
 
-/* 选中勾号 */
 .locale-check {
   flex-shrink: 0;
-  color: var(--vscode-button-background, #0e639c);
+  color: $btn-primary-bg;
 }
 
-/* 下拉菜单动画 */
 .dropdown-enter-active {
   transition: all 0.15s ease-out;
 }
@@ -917,29 +844,26 @@ function handleDuplicateCancel() {
   transform: translateY(-2px);
 }
 
-/* 新建按钮，与编辑页 btn-primary 统一 */
 .create-btn {
   width: 100%;
   justify-content: center;
 }
 
-/* 导入导出按钮行 */
 .import-export-row {
   display: flex;
   gap: 6px;
   margin-top: 6px;
 }
 
-/* 导入导出按钮，等分宽度 */
 .ie-btn {
   flex: 1;
   justify-content: center;
-  font-size: 11px;
+  font-size: $font-size-xs;
 }
 
-/* ===== 搜索框 ===== */
+// ===== 搜索框 =====
 .sidebar-search {
-  padding: 10px 14px 4px;
+  padding: 10px 14px $spacing-xs;
 }
 
 .search-wrapper {
@@ -951,7 +875,7 @@ function handleDuplicateCancel() {
 .search-icon {
   position: absolute;
   left: 10px;
-  color: var(--vscode-descriptionForeground);
+  color: $color-description;
   pointer-events: none;
 }
 
@@ -960,126 +884,120 @@ function handleDuplicateCancel() {
   padding-right: 28px !important;
 }
 
-/* 搜索清除按钮 */
 .search-clear {
+  @include flex-center;
   position: absolute;
   right: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 20px;
   height: 20px;
   padding: 0;
   border: none;
-  border-radius: 3px;
+  border-radius: $radius-sm;
   background: transparent;
-  color: var(--vscode-descriptionForeground);
+  color: $color-description;
   cursor: pointer;
   transition: background-color 0.15s;
+
+  &:hover {
+    background: $bg-hover;
+    color: $color-foreground;
+  }
 }
 
-.search-clear:hover {
-  background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,0.08));
-  color: var(--vscode-editor-foreground);
-}
-
-/* ===== 语言筛选下拉 ===== */
+// ===== 语言筛选 =====
 .sidebar-filter {
-  padding: 4px 14px 8px;
+  padding: $spacing-xs 14px $spacing-sm;
 }
 
-/* ===== 排序切换按钮 ===== */
+// ===== 排序切换 =====
 .sidebar-sort {
-  padding: 0 14px 8px;
+  padding: 0 14px $spacing-sm;
 }
 
 .sort-toggle-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: $spacing-xs;
   width: 100%;
-  padding: 4px 8px;
+  padding: $spacing-xs $spacing-sm;
   border: 1px solid var(--vscode-dropdown-border, #3c3c3c);
-  border-radius: 3px;
+  border-radius: $radius-sm;
   background: var(--vscode-dropdown-background, #3c3c3c);
   color: var(--vscode-dropdown-foreground, #cccccc);
-  font-size: 11px;
+  font-size: $font-size-xs;
   cursor: pointer;
   font-family: inherit;
   line-height: 1.4;
   transition: background 0.15s;
+
+  &:hover {
+    background: var(--vscode-list-hoverBackground, #2a2d2e);
+  }
 }
 
-.sort-toggle-btn:hover {
-  background: var(--vscode-list-hoverBackground, #2a2d2e);
-}
-
-/* ===== 片段列表 ===== */
+// ===== 片段列表 =====
 .sidebar-list {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 8px 8px;
+  padding: $spacing-xs $spacing-sm $spacing-sm;
 }
 
-/* 空状态居中展示 */
 .empty-state {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   align-items: center;
   justify-content: center;
-  padding: 40px 16px;
+  padding: 40px $spacing-lg;
   text-align: center;
 }
 
 .empty-icon {
   margin-bottom: 14px;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
 }
 
 .empty-title {
-  margin: 0 0 4px;
-  font-size: 14px;
+  margin: 0 0 $spacing-xs;
+  font-size: $font-size-lg;
   font-weight: 600;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
   opacity: 0.7;
 }
 
 .empty-desc {
   margin: 0;
-  font-size: 12px;
-  color: var(--vscode-descriptionForeground);
+  font-size: $font-size-sm;
+  color: $color-description;
   line-height: 1.6;
 }
 
-/* 列表项容器 */
 .snippet-items {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
   gap: 2px;
 }
 
-/* 单个片段项 */
 .snippet-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 6px;
+  gap: $spacing-sm;
+  padding: $spacing-sm 10px;
+  border-radius: $radius-md;
   cursor: default;
   transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: $bg-list-hover;
+
+    .item-actions {
+      opacity: 1;
+    }
+  }
 }
 
-.snippet-item:hover {
-  background-color: var(--vscode-list-hoverBackground, rgba(255,255,255,0.04));
-}
-
-/* 片段信息区域 */
 .item-main {
   flex: 1;
   min-width: 0;
 }
 
-/* 名称行 */
 .item-top {
   display: flex;
   align-items: center;
@@ -1088,15 +1006,12 @@ function handleDuplicateCancel() {
 }
 
 .item-name {
-  font-size: 13px;
+  font-size: $font-size-base;
   font-weight: 600;
-  color: var(--vscode-editor-foreground);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: $color-foreground;
+  @include text-ellipsis;
 }
 
-/* 语言标签 */
 .lang-badge {
   flex-shrink: 0;
   display: inline-flex;
@@ -1105,24 +1020,21 @@ function handleDuplicateCancel() {
   font-size: 10px;
   font-weight: 600;
   padding: 0 5px;
-  border-radius: 3px;
+  border-radius: $radius-sm;
   border: 1px solid;
   line-height: 16px;
   letter-spacing: 0.3px;
 }
 
-/* 语言标签内的图标 */
 .lang-badge-icon {
-  font-size: 11px;
+  font-size: $font-size-xs;
 }
 
-/* 语言标签内的文本 */
 .lang-badge-text {
   font-size: 9px;
   text-transform: uppercase;
 }
 
-/* 元信息行 */
 .item-meta {
   display: flex;
   align-items: center;
@@ -1130,27 +1042,22 @@ function handleDuplicateCancel() {
   min-width: 0;
 }
 
-/* 触发前缀 */
 .item-prefix {
   flex-shrink: 0;
-  font-size: 11px;
-  font-family: var(--vscode-editor-font-family, 'Cascadia Code', Consolas, monospace);
-  background-color: var(--vscode-textCodeBlock-background, rgba(255,255,255,0.06));
-  color: var(--vscode-textPreformat-foreground);
+  font-size: $font-size-xs;
+  @include code-text;
+  background-color: $bg-code-block;
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: $radius-sm;
 }
 
-/* 描述文本 */
 .item-desc {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: $font-size-xs;
+  color: $color-description;
+  @include text-ellipsis;
 }
 
-/* ===== 操作按钮区 ===== */
+// ===== 操作按钮 =====
 .item-actions {
   flex-shrink: 0;
   display: flex;
@@ -1159,226 +1066,136 @@ function handleDuplicateCancel() {
   transition: opacity 0.15s ease;
 }
 
-.snippet-item:hover .item-actions {
-  opacity: 1;
-}
-
 .action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   width: 26px;
   height: 26px;
   padding: 0;
   border: none;
   border-radius: 5px;
   background: transparent;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
   opacity: 0.6;
   cursor: pointer;
   transition: background-color 0.15s, opacity 0.15s, color 0.15s;
+
+  &:hover {
+    background: $bg-hover;
+    opacity: 1;
+  }
 }
 
-.action-btn:hover {
-  background: var(--vscode-toolbar-hoverBackground, rgba(255,255,255,0.08));
-  opacity: 1;
-}
-
-/* 删除按钮悬浮变红 */
 .action-btn-danger:hover {
-  color: var(--vscode-errorForeground, #f48771);
-  background: rgba(244, 135, 113, 0.1);
+  color: $color-error;
+  background: rgba-color(#f48771, 0.1);
 }
 
-/* ===== 删除确认弹窗 ===== */
+// ===== 删除确认弹窗 =====
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
+  @include modal-overlay;
 }
 
 .modal-dialog {
-  width: 320px;
-  max-width: 90%;
-  background: var(--vscode-editorWidget-background, #252526);
-  border: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.1));
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
+  @include modal-dialog;
 }
 
 .modal-header {
-  padding: 16px 18px 0;
+  padding: $spacing-xl 18px 0;
 }
 
 .modal-title {
-  font-size: 14px;
+  font-size: $font-size-lg;
   font-weight: 700;
-  color: var(--vscode-editor-foreground);
+  color: $color-foreground;
 }
 
 .modal-body {
-  padding: 12px 18px 18px;
-}
+  padding: $spacing-md 18px 18px;
 
-.modal-body p {
-  margin: 0;
-  font-size: 13px;
-  color: var(--vscode-descriptionForeground);
-  line-height: 1.6;
+  p {
+    margin: 0;
+    font-size: $font-size-base;
+    color: $color-description;
+    line-height: 1.6;
+  }
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: $spacing-sm;
   padding: 14px 18px;
-  border-top: 1px solid var(--vscode-panel-border, rgba(255,255,255,0.06));
+  border-top: 1px solid $border-panel;
 }
 
-/* 重复策略对话框加宽 */
 .modal-dialog-lg {
   width: 400px;
 }
 
-/* 策略选项列表 */
 .strategy-options {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
+  @include flex-column;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
 }
 
-/* 单个策略选项按钮 */
 .strategy-option {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  @include flex-column;
+  gap: $spacing-xs;
   padding: 10px 14px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-  color: var(--vscode-editor-foreground);
+  border: 1px solid $border-input;
+  border-radius: $radius-md;
+  background: $bg-input;
+  color: $color-foreground;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
   transition: background-color 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: $bg-list-hover;
+    border-color: $color-focus;
+  }
 }
 
-.strategy-option:hover {
-  background: var(--vscode-list-hoverBackground, rgba(255,255,255,0.08));
-  border-color: var(--vscode-focusBorder, #007fd4);
-}
-
-/* 策略选项标题行：图标 + 名称 */
 .strategy-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $spacing-sm;
 }
 
 .strategy-name {
-  font-size: 13px;
+  font-size: $font-size-base;
   font-weight: 600;
 }
 
-/* 策略选项描述文字 */
 .strategy-desc {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
+  font-size: $font-size-xs;
+  color: $color-description;
   padding-left: 24px;
 }
 
-/* ===== 共享样式：与编辑页统一 ===== */
-
-/* 输入框，与编辑页 form-input 统一 */
+// ===== 共享样式 =====
 .form-input {
-  width: 100%;
-  padding: 7px 10px;
-  border: 1px solid var(--vscode-input-border, rgba(255,255,255,0.12));
-  border-radius: 6px;
-  background: var(--vscode-input-background, rgba(255,255,255,0.04));
-  color: var(--vscode-input-foreground, var(--vscode-editor-foreground));
-  font-size: 13px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  @include input-base;
 }
 
-.form-input::placeholder {
-  color: var(--vscode-input-placeholderForeground, rgba(255,255,255,0.3));
-}
-
-.form-input:focus {
-  border-color: var(--vscode-focusBorder, #007fd4);
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder, #007fd4);
-}
-
-/* 按钮基础样式，与编辑页 btn 统一 */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
-  outline: none;
+  @include btn-base;
 }
 
-.btn:active {
-  transform: scale(0.97);
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* 小号按钮，用于弹窗 */
 .btn-sm {
-  padding: 5px 14px;
-  font-size: 12px;
+  @include btn-sm;
 }
 
-/* 主要按钮 */
 .btn-primary {
-  background: var(--vscode-button-background, #0e639c);
-  color: var(--vscode-button-foreground, #fff);
-  box-shadow: 0 1px 4px rgba(14, 99, 156, 0.3);
+  @include btn-primary;
 }
 
-.btn-primary:hover {
-  background: var(--vscode-button-hoverBackground, #1177bb);
-}
-
-/* 次要按钮 */
 .btn-secondary {
-  background: var(--vscode-button-secondaryBackground, #3a3d41);
-  color: var(--vscode-button-secondaryForeground, #fff);
+  @include btn-secondary;
 }
 
-.btn-secondary:hover {
-  background: var(--vscode-button-secondaryHoverBackground, #45494e);
-}
-
-/* 危险按钮 */
 .btn-danger {
-  background: rgba(244, 135, 113, 0.15);
-  color: var(--vscode-errorForeground, #f48771);
-}
-
-.btn-danger:hover {
-  background: rgba(244, 135, 113, 0.25);
+  @include btn-danger;
 }
 </style>

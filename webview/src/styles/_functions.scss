@@ -1,0 +1,12 @@
+@use "sass:color";
+
+// SCSS 工具函数
+
+// 将 hex 颜色转为带透明度的 rgba
+// 用法: rgba-color(#f48771, 0.15) → rgba(244, 135, 113, 0.15)
+@function rgba-color($hex, $alpha) {
+  $r: color.channel($hex, "red", $space: rgb);
+  $g: color.channel($hex, "green", $space: rgb);
+  $b: color.channel($hex, "blue", $space: rgb);
+  @return rgba($r, $g, $b, $alpha);
+}

@@ -1,0 +1,215 @@
+@use "variables" as *;
+
+// 可复用的样式混合宏
+
+// ===== 输入框 =====
+@mixin input-base {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid $border-input;
+  border-radius: $radius-md;
+  background: $bg-input;
+  color: var(--vscode-input-foreground, #{$color-foreground});
+  font-size: $font-size-base;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &::placeholder {
+    color: $placeholder-color;
+  }
+
+  &:focus {
+    border-color: $color-focus;
+    box-shadow: 0 0 0 1px $color-focus;
+  }
+}
+
+// ===== 按钮 =====
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
+  outline: none;
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+@mixin btn-primary {
+  background: $btn-primary-bg;
+  color: $btn-primary-fg;
+  box-shadow: $shadow-primary-btn;
+
+  &:hover {
+    background: $btn-primary-hover;
+  }
+}
+
+@mixin btn-secondary {
+  background: $btn-secondary-bg;
+  color: $btn-secondary-fg;
+
+  &:hover {
+    background: $btn-secondary-hover;
+  }
+}
+
+@mixin btn-danger {
+  background: rgba(244, 135, 113, 0.15);
+  color: $color-error;
+
+  &:hover {
+    background: rgba(244, 135, 113, 0.25);
+  }
+}
+
+@mixin btn-sm {
+  padding: 5px 14px;
+  font-size: $font-size-sm;
+}
+
+// ===== 图标按钮 =====
+@mixin icon-btn($size: 28px) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: $color-description;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+
+  &:hover {
+    background: $bg-hover;
+    color: $color-foreground;
+  }
+}
+
+// ===== 下拉菜单 =====
+@mixin dropdown-panel {
+  position: absolute;
+  z-index: 1000;
+  border: 1px solid $border-dropdown;
+  border-radius: $radius-md;
+  background: $bg-widget;
+  box-shadow: $shadow-dropdown;
+  padding: $spacing-xs;
+}
+
+// ===== 下拉选项 =====
+@mixin dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 5px 10px;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: $color-foreground;
+  font-size: $font-size-sm;
+  transition: background-color 0.1s;
+
+  &:hover {
+    background: $bg-list-hover;
+  }
+
+  &.is-selected {
+    color: var(--vscode-list-activeSelectionForeground, #fff);
+    font-weight: 600;
+  }
+}
+
+// ===== 弹窗 =====
+@mixin modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+@mixin modal-dialog {
+  width: 320px;
+  max-width: 90%;
+  background: $bg-widget;
+  border: 1px solid var(--vscode-panel-border, rgba(255, 255, 255, 0.1));
+  border-radius: $radius-lg;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+// ===== 通知条 =====
+@mixin notification-bar($type: 'info') {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px $spacing-md;
+  font-size: $font-size-sm;
+  border-top: 1px solid;
+  z-index: 1000;
+}
+
+// ===== 文本截断 =====
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ===== Flex 居中 =====
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ===== 垂直布局 =====
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// ===== 代码块样式 =====
+@mixin code-text {
+  font-family: $font-mono;
+  color: $color-text-preformat;
+}
+
+// ===== 信息面板（设置页存储路径等） =====
+@mixin info-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  background: $bg-input;
+  border: 1px solid $border-input;
+}

@@ -196,23 +196,21 @@ watch(() => props.placeholder, (newPlaceholder) => {
   <div ref="editorRef" class="code-editor-cm"></div>
 </template>
 
-<style scoped>
-/* CodeMirror 容器样式 */
+<style scoped lang="scss">
 .code-editor-cm {
   width: 100%;
   min-height: 180px;
-  border-radius: 6px;
+  border-radius: $radius-md;
   overflow: hidden;
-}
 
-/* 覆盖 CodeMirror 默认边框和背景，使其融入表单 */
-.code-editor-cm :deep(.cm-editor) {
-  height: 100%;
-  min-height: 180px;
-  border-radius: 6px;
-}
+  :deep(.cm-editor) {
+    height: 100%;
+    min-height: 180px;
+    border-radius: $radius-md;
+  }
 
-.code-editor-cm :deep(.cm-editor.cm-focused) {
-  outline: none;
+  :deep(.cm-editor.cm-focused) {
+    outline: none;
+  }
 }
 </style>

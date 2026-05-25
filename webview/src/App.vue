@@ -17,25 +17,22 @@ const viewMode = computed(() => window.__VIEW_MODE || 'sidebar')
   <EditorView v-else />
 </template>
 
-<style>
-/* 全局盒模型重置 */
+<style lang="scss">
 * {
   box-sizing: border-box;
 }
 
-/* 基础样式：适配 VS Code 主题变量 */
 body {
   margin: 0;
   padding: 0;
   background-color: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground);
-  font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-  font-size: 13px;
+  color: $color-foreground;
+  font-family: $font-family;
+  font-size: $font-size-base;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 自定义滚动条样式，与 VS Code 风格一致 */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
