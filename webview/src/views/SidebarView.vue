@@ -6,13 +6,14 @@
  * 操作按钮使用原生 HTML 确保在 webview 中点击可靠
  * 删除确认弹窗使用自定义浮层替代 n-modal，避免 teleport 兼容问题
  */
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import Fuse from 'fuse.js'
 import type { Snippet, SortOrder } from '../types'
 import { SUPPORTED_LANGUAGES, getLanguageColor, getLanguageIcon } from '../utils/languages'
 import { postToExt, onExtMessage } from '../composables/useMessage'
+import { highlightCodeString } from '../utils/codemirror-langs'
 import LanguageSelect from '../components/LanguageSelect.vue'
 import SettingsView from './SettingsView.vue'
 import { SUPPORTED_LOCALES } from '../i18n'
@@ -21,6 +22,15 @@ const { t, locale } = useI18n()
 
 // 当前视图：'list' 为片段列表，'settings' 为设置页面
 const currentView = ref<'list' | 'settings'>('list')
+
+// 切换视图时清除预览状态
+watch(currentView, () => {
+  previewState.value.visible = false
+  if (previewTimer) {
+    clearTimeout(previewTimer)
+    previewTimer = null
+  }
+})
 
 // 片段列表数据
 const snippets = ref<Snippet[]>([])
@@ -108,6 +118,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleLocaleClickOutside)
+  if (previewTimer) {
+    clearTimeout(previewTimer)
+    previewTimer = null
+  }
 })
 
 // 语言下拉选项，动态生成以支持 i18n，包含图标信息
@@ -393,6 +407,81 @@ function handleDuplicateCancel() {
   duplicateDialog.value.visible = false
   postToExt('duplicateStrategyChoice', null)
 }
+
+// ===== 悬浮预览卡片 =====
+const previewState = ref<{
+  visible: boolean
+  snippet: Snippet | null
+  top: number
+  left: number
+  width: number
+  placement: 'top' | 'bottom'
+  html: string
+}>({
+  visible: false,
+  snippet: null,
+  top: 0,
+  left: 0,
+  width: 0,
+  placement: 'top',
+  html: '',
+})
+
+let previewTimer: ReturnType<typeof setTimeout> | null = null
+// 预览卡片最大显示行数
+const PREVIEW_MAX_LINES = 8
+
+/** 截取代码前 N 行 */
+function getPreviewLines(body: string, maxLines: number): string {
+  const lines = body.split('\n')
+  if (lines.length <= maxLines) return body
+  return lines.slice(0, maxLines).join('\n')
+}
+
+/** 鼠标进入列表项，延迟显示预览 */
+function handleItemMouseEnter(event: MouseEvent, snippet: Snippet) {
+  if (previewTimer) clearTimeout(previewTimer)
+  // 必须在 setTimeout 外捕获元素引用，因为 currentTarget 在异步回调中为 null
+  const el = event.currentTarget as HTMLElement
+  previewTimer = setTimeout(() => {
+    const itemRect = el.getBoundingClientRect()
+    // 使用视口坐标定位，避免被滚动容器裁剪
+    const top = itemRect.top
+    const left = itemRect.left
+    const width = itemRect.width
+    // 上方空间不足 150px 时改为下方显示
+    const placement = top < 150 ? 'bottom' : 'top'
+
+    const previewCode = getPreviewLines(snippet.body, PREVIEW_MAX_LINES)
+    const lang = snippet.language.split(',')[0].trim()
+    const html = highlightCodeString(previewCode, lang)
+    const hasMore = snippet.body.split('\n').length > PREVIEW_MAX_LINES
+
+    previewState.value = {
+      visible: true,
+      snippet,
+      top,
+      left,
+      width,
+      placement,
+      html: hasMore ? html + '<span class="preview-more">...</span>' : html,
+    }
+  }, 400)
+}
+
+/** 鼠标离开列表项，隐藏预览 */
+function handleItemMouseLeave() {
+  if (previewTimer) {
+    clearTimeout(previewTimer)
+    previewTimer = null
+  }
+  previewState.value.visible = false
+}
+
+/** 列表滚动时隐藏预览卡片 */
+function handleListScroll() {
+  previewState.value.visible = false
+}
 </script>
 
 <template>
@@ -487,7 +576,7 @@ function handleDuplicateCancel() {
     </div>
 
     <!-- 片段列表区域 -->
-    <div class="sidebar-list">
+    <div class="sidebar-list" @scroll="handleListScroll">
       <!-- 空状态：没有任何片段 -->
       <div v-if="snippets.length === 0" class="empty-state">
         <div class="empty-icon">
@@ -514,6 +603,8 @@ function handleDuplicateCancel() {
           v-for="snippet in filteredSnippets"
           :key="snippet.id"
           class="snippet-item"
+          @mouseenter="handleItemMouseEnter($event, snippet)"
+          @mouseleave="handleItemMouseLeave"
         >
           <!-- 片段信息：名称、语言标签、前缀、描述 -->
           <div class="item-main">
@@ -549,6 +640,27 @@ function handleDuplicateCancel() {
         </div>
       </div>
     </div>
+
+    <!-- 悬浮预览卡片 -->
+    <transition name="preview-fade">
+      <div
+        v-if="previewState.visible && previewState.snippet"
+        class="preview-card"
+        :class="`preview-${previewState.placement}`"
+        :style="{ top: previewState.top + 'px', left: previewState.left + 'px', width: previewState.width + 'px' }"
+        @mouseenter="previewState.visible = true"
+        @mouseleave="previewState.visible = false"
+      >
+        <div class="preview-header">
+          <span class="preview-name">{{ previewState.snippet.name }}</span>
+          <code class="preview-prefix">{{ previewState.snippet.prefix }}</code>
+        </div>
+        <pre class="preview-code" v-html="previewState.html"></pre>
+        <div v-if="previewState.snippet.description" class="preview-desc">
+          {{ previewState.snippet.description }}
+        </div>
+      </div>
+    </transition>
 
     <!-- 删除确认弹窗：自定义浮层，按钮与编辑页 btn 风格统一 -->
     <div v-if="deletingSnippet" class="modal-overlay" @click.self="handleDeleteCancel">
@@ -1034,6 +1146,108 @@ function handleDuplicateCancel() {
   font-size: $font-size-xs;
   color: $color-description;
   @include text-ellipsis;
+}
+
+// ===== 悬浮预览卡片 =====
+
+.preview-card {
+  position: fixed;
+  z-index: 100;
+  border: 1px solid $border-dropdown;
+  border-radius: $radius-lg;
+  background: $bg-widget;
+  box-shadow: $shadow-dropdown;
+  overflow: hidden;
+  pointer-events: auto;
+
+  // 默认在列表项上方显示
+  &.preview-top {
+    transform: translateY(-100%);
+  }
+
+  // 上方空间不足时在列表项下方显示
+  &.preview-bottom {
+    transform: translateY(4px);
+  }
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-bottom: 1px solid $border-panel;
+}
+
+.preview-name {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-foreground;
+  @include text-ellipsis;
+  flex: 1;
+}
+
+.preview-prefix {
+  font-size: $font-size-xs;
+  @include code-text;
+  background-color: $bg-code-block;
+  padding: 1px 5px;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+}
+
+.preview-code {
+  margin: 0;
+  padding: $spacing-sm $spacing-md;
+  max-height: 200px;
+  overflow: auto;
+  font-family: $font-mono;
+  font-size: $font-size-xs;
+  line-height: 1.5;
+  color: $color-foreground;
+  white-space: pre;
+  tab-size: 2;
+
+  :deep(.tok-keyword) { color: #c678dd; }
+  :deep(.tok-string) { color: #98c379; }
+  :deep(.tok-number) { color: #d19a66; }
+  :deep(.tok-comment) { color: #5c6370; font-style: italic; }
+  :deep(.tok-functionName) { color: #61afef; }
+  :deep(.tok-variableName) { color: #e06c75; }
+  :deep(.tok-typeName) { color: #e5c07b; }
+  :deep(.tok-propertyName) { color: #e06c75; }
+  :deep(.tok-operator) { color: #56b6c2; }
+  :deep(.tok-punctuation) { color: #abb2bf; }
+  :deep(.tok-meta) { color: #abb2bf; }
+  :deep(.tok-atom) { color: #d19a66; }
+
+  :deep(.preview-more) {
+    display: block;
+    padding-top: $spacing-xs;
+    color: $color-description;
+    font-style: italic;
+  }
+}
+
+.preview-desc {
+  padding: $spacing-xs $spacing-md $spacing-sm;
+  font-size: $font-size-xs;
+  color: $color-description;
+  line-height: 1.4;
+  border-top: 1px solid $border-panel;
+}
+
+.preview-fade-enter-active {
+  transition: opacity 0.15s ease-out;
+}
+
+.preview-fade-leave-active {
+  transition: opacity 0.1s ease-in;
+}
+
+.preview-fade-enter-from,
+.preview-fade-leave-to {
+  opacity: 0;
 }
 
 // ===== 操作按钮 =====

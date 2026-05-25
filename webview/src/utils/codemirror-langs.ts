@@ -4,6 +4,7 @@
  * 语言列表从统一配置 languages.ts 获取，此处仅负责 CodeMirror 扩展的工厂函数映射
  */
 import { type LanguageSupport } from '@codemirror/language'
+import { highlightCode, classHighlighter } from '@lezer/highlight'
 import { javascript } from '@codemirror/lang-javascript'
 import { html } from '@codemirror/lang-html'
 import { css } from '@codemirror/lang-css'
@@ -63,4 +64,54 @@ export function getLanguageExtension(languageId: string): LanguageSupport[] {
     return [factory()]
   }
   return []
+}
+
+/** HTML 转义辅助函数 */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+/**
+ * 轻量级语法高亮函数，使用 CodeMirror 的 highlightCode API
+ * 将代码字符串转换为带语法高亮的 HTML
+ * @param code 需要高亮的代码字符串
+ * @param languageId VS Code 的 languageId
+ * @returns 高亮后的 HTML 字符串，无匹配语言时返回转义后的纯文本
+ */
+export function highlightCodeString(code: string, languageId: string): string {
+  const extensions = getLanguageExtension(languageId)
+  if (extensions.length === 0) {
+    return escapeHtml(code)
+  }
+
+  const languageSupport = extensions[0]
+  const parser = languageSupport.language.parser
+  if (!parser) {
+    return escapeHtml(code)
+  }
+
+  const tree = parser.parse(code)
+  const parts: string[] = []
+
+  highlightCode(
+    code,
+    tree,
+    classHighlighter,
+    (text: string, cls: string) => {
+      if (cls) {
+        parts.push(`<span class="${cls}">${escapeHtml(text)}</span>`)
+      } else {
+        parts.push(escapeHtml(text))
+      }
+    },
+    () => {
+      parts.push('\n')
+    }
+  )
+
+  return parts.join('')
 }

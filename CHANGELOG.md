@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - **Settings Entry**: Added a settings button in the sidebar to view plugin version, license, repository link, and other info
 - **Open Directory**: Added an "Open Snippets Directory" button in the settings page to open the data storage location in the system file manager, with the storage path displayed
+- **Snippet Preview**: Hover over a list item to show a preview card with syntax-highlighted code and description, allowing quick inspection without opening the editor
 
 ### Changed
 
