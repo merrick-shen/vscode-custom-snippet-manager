@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Changed
 
 - **Notification Position**: Moved sidebar notification toasts from the top to the bottom of the page, preventing layout shifts in the header area when notifications appear
+- **Performance**: Optimized data storage to prevent editor lag when managing many snippets
 
 ## [1.1.3] - 2026-05-25
 

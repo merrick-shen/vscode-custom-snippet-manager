@@ -117,7 +117,7 @@ export class ImportExportService {
 
     try {
       const jsonStr = JSON.stringify(exportData, null, 2);
-      fs.writeFileSync(uri.fsPath, jsonStr, 'utf-8');
+      await fs.promises.writeFile(uri.fsPath, jsonStr, 'utf-8');
       return { success: true, count: snippets.length };
     } catch {
       return { success: false };
@@ -150,7 +150,7 @@ export class ImportExportService {
     // 读取文件内容
     let rawContent: string;
     try {
-      rawContent = fs.readFileSync(uris[0].fsPath, 'utf-8');
+      rawContent = await fs.promises.readFile(uris[0].fsPath, 'utf-8');
     } catch (err) {
       return {
         errorKey: 'importFileReadError',
@@ -211,7 +211,7 @@ export class ImportExportService {
     }
 
     // 执行导入
-    return this.applyImport(incomingSnippets, existingSnippets, strategy);
+    return await this.applyImport(incomingSnippets, existingSnippets, strategy);
   }
 
   /**
@@ -336,11 +336,11 @@ export class ImportExportService {
    * @param strategy 重复处理策略
    * @returns 导入结果统计
    */
-  private applyImport(
+  private async applyImport(
     incoming: SnippetData[],
     existing: SnippetData[],
     strategy: DuplicateStrategy | null
-  ): ImportResult {
+  ): Promise<ImportResult> {
     const result: ImportResult = {
       imported: 0,
       skipped: 0,
@@ -414,7 +414,7 @@ export class ImportExportService {
 
     // 批量执行所有操作，只写一次文件
     if (operations.length > 0) {
-      this.snippetService.batchImport(operations);
+      await this.snippetService.batchImport(operations);
     }
 
     return result;

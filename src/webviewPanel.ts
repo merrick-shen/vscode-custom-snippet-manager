@@ -44,8 +44,8 @@ export class WebviewPanel {
     this.snippetService = snippetService;
     this.context = context;
 
-    // 加载 webview HTML 内容
-    this.panel.webview.html = this.getWebviewHtml(this.panel.webview);
+    // 异步加载 webview HTML 内容
+    this.loadWebviewHtml();
 
     // 监听来自 webview 的消息
     this.panel.webview.onDidReceiveMessage(
@@ -61,6 +61,11 @@ export class WebviewPanel {
     this.panel.onDidChangeViewState(() => {
       this.updateTitle();
     }, null, this.disposables);
+  }
+
+  /** 异步加载 webview HTML 内容 */
+  private async loadWebviewHtml(): Promise<void> {
+    this.panel.webview.html = await this.getWebviewHtml(this.panel.webview);
   }
 
   /**
@@ -134,7 +139,7 @@ export class WebviewPanel {
    * 处理来自 webview 的消息
    * 根据消息类型执行对应的 CRUD 操作
    */
-  private handleMessage(msg: WebviewMessage): void {
+  private async handleMessage(msg: WebviewMessage): Promise<void> {
     switch (msg.type) {
       // 新建片段
       case 'createSnippet': {
@@ -144,7 +149,7 @@ export class WebviewPanel {
           this.postToWebview('error', { errorKey: 'error.missingRequiredFields' });
           return;
         }
-        const created = this.snippetService.create(data);
+        const created = await this.snippetService.create(data);
         this.postToWebview('snippetCreated', created);
         // 通知侧边栏刷新列表并显示成功通知
         vscode.commands.executeCommand('custom-snippet-manager.createSnippetSuccess', created.name);
@@ -160,7 +165,7 @@ export class WebviewPanel {
           this.postToWebview('error', { errorKey: 'error.missingRequiredFields' });
           return;
         }
-        const updated = this.snippetService.update(id, data);
+        const updated = await this.snippetService.update(id, data);
         if (updated) {
           this.postToWebview('snippetUpdated', updated);
           // 通知侧边栏刷新列表并显示成功通知
@@ -199,17 +204,19 @@ export class WebviewPanel {
    * 读取构建产物 index.html，注入视图模式标识、CSP 策略，并替换资源路径
    * 所有资源路径必须使用 asWebviewUri 处理，确保 webview 安全策略下可访问
    */
-  private getWebviewHtml(webview: vscode.Webview): string {
+  private async getWebviewHtml(webview: vscode.Webview): Promise<string> {
     const distUri = vscode.Uri.joinPath(this.extensionUri, 'webview', 'dist');
     const distPath = distUri.fsPath;
 
     const htmlPath = path.join(distPath, 'index.html');
     // 构建产物不存在时显示错误提示
-    if (!fs.existsSync(htmlPath)) {
+    try {
+      await fs.promises.access(htmlPath);
+    } catch {
       return this.getErrorHtml('Run "npm run build:webview" first.');
     }
 
-    let html = fs.readFileSync(htmlPath, 'utf-8');
+    let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
     // 注入视图模式、语言偏好和 VS Code API
     // 前端根据 __VIEW_MODE 决定渲染侧边栏还是编辑器

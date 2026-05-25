@@ -44,9 +44,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // 增加片段使用计数：补全项被接受时自动调用
   context.subscriptions.push(
-    vscode.commands.registerCommand('custom-snippet-manager.incrementUsage', (snippetId: string) => {
+    vscode.commands.registerCommand('custom-snippet-manager.incrementUsage', async (snippetId: string) => {
       if (snippetId) {
-        snippetService.incrementUsage(snippetId);
+        await snippetService.incrementUsage(snippetId);
       }
     })
   );
@@ -139,7 +139,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const snippetString = new vscode.SnippetString(selected.snippet.body);
       editor.insertSnippet(snippetString);
       // 插入成功后增加使用计数
-      snippetService.incrementUsage(selected.snippet.id);
+      await snippetService.incrementUsage(selected.snippet.id);
     })
   );
 
@@ -211,7 +211,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
       // 创建片段，自动设置语言和代码内容
       try {
-        snippetService.create({
+        await snippetService.create({
           name: name.trim(),
           prefix: prefix.trim(),
           body: selectedText,

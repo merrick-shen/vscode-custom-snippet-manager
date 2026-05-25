@@ -27,29 +27,37 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   private readonly extensionUri: vscode.Uri;
   /** 片段数据服务 */
   private readonly snippetService: SnippetService;
-  /** 导入导出服务 */
-  private readonly importExportService: ImportExportService;
   /** 扩展上下文，用于访问 globalState 持久化语言偏好 */
   private readonly context: vscode.ExtensionContext;
   /** 重复策略选择的 Promise resolve 回调 */
   private pendingStrategyResolve: ((strategy: string | null) => void) | null = null;
   /** 重复策略选择的超时定时器 */
   private pendingStrategyTimer: ReturnType<typeof setTimeout> | null = null;
+  /** 导入导出服务，在 init 中异步初始化 */
+  private importExportService!: ImportExportService;
+  /** 初始化 Promise，确保 ImportExportService 创建完成 */
+  private initPromise: Promise<void>;
 
   constructor(extensionUri: vscode.Uri, snippetService: SnippetService, context: vscode.ExtensionContext) {
     this.extensionUri = extensionUri;
     this.snippetService = snippetService;
-    // 从扩展目录的 package.json 动态读取版本号，避免硬编码
-    const appVersion = this.readAppVersion(context.extensionPath);
-    this.importExportService = new ImportExportService(snippetService, appVersion);
     this.context = context;
+    // 异步初始化：读取版本号并创建 ImportExportService
+    this.initPromise = this.init(context.extensionPath);
+  }
+
+  /** 异步初始化：读取版本号并创建导入导出服务 */
+  private async init(extensionPath: string): Promise<void> {
+    const appVersion = await this.readAppVersion(extensionPath);
+    this.importExportService = new ImportExportService(this.snippetService, appVersion);
   }
 
   /** 从扩展目录的 package.json 读取版本号 */
-  private readAppVersion(extensionPath: string): string {
+  private async readAppVersion(extensionPath: string): Promise<string> {
     try {
       const pkgPath = path.join(extensionPath, 'package.json');
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+      const raw = await fs.promises.readFile(pkgPath, 'utf-8');
+      const pkg = JSON.parse(raw);
       return pkg.version || '0.0.0';
     } catch {
       return '0.0.0';
@@ -70,15 +78,19 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
    * VS Code 调用此方法解析 webview 视图
    * 在侧边栏首次展开或视图需要重建时触发
    */
-  public resolveWebviewView(
+  public async resolveWebviewView(
     webviewView: vscode.WebviewView,
     _context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
-  ): void {
+  ): Promise<void> {
     this.view = webviewView;
 
     // Webview 重新加载时，清理可能残留的重复策略回调
     this.cleanupPendingStrategy();
+
+    // 等待数据加载完成和导入导出服务初始化
+    await this.snippetService.ready();
+    await this.initPromise;
 
     // 配置 webview 选项：启用脚本并限制资源加载范围
     webviewView.webview.options = {
@@ -89,7 +101,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
     };
 
     // 加载 webview HTML 内容
-    webviewView.webview.html = this.getWebviewHtml(webviewView.webview);
+    webviewView.webview.html = await this.getWebviewHtml(webviewView.webview);
 
     // 监听来自侧边栏 webview 的消息
     webviewView.webview.onDidReceiveMessage((msg: WebviewMessage) => {
@@ -129,7 +141,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         // 删除前获取片段名称，用于通知
         const allSnippets = this.snippetService.getAll();
         const snippetToDelete = allSnippets.find(s => s.id === id);
-        const success = this.snippetService.delete(id);
+        const success = await this.snippetService.delete(id);
         if (success) {
           // 删除成功后刷新列表并发送通知
           this.postToView('snippetsList', this.snippetService.getAll());
@@ -261,16 +273,18 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
    * 注入 __LOCALE 确保语言偏好与编辑器面板同步
    * 所有资源路径必须使用 asWebviewUri 处理
    */
-  private getWebviewHtml(webview: vscode.Webview): string {
+  private async getWebviewHtml(webview: vscode.Webview): Promise<string> {
     const distUri = vscode.Uri.joinPath(this.extensionUri, 'webview', 'dist');
     const distPath = distUri.fsPath;
 
     const htmlPath = path.join(distPath, 'index.html');
-    if (!fs.existsSync(htmlPath)) {
+    try {
+      await fs.promises.access(htmlPath);
+    } catch {
       return this.getErrorHtml('Run "npm run build:webview" first.');
     }
 
-    let html = fs.readFileSync(htmlPath, 'utf-8');
+    let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
     // 注入视图模式、语言偏好和 VS Code API
     const locale = this.getLocale();
