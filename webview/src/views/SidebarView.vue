@@ -22,7 +22,7 @@ const { t, locale } = useI18n()
 const snippets = ref<Snippet[]>([])
 // 搜索关键词
 const searchQuery = ref('')
-// 语言筛选值，'*' 表示全部
+// 语言筛选值，'*' 表示全部，多选时逗号分隔
 const languageFilter = ref('*')
 // 排序方向，默认倒序（由新至旧）
 const sortOrder = ref<SortOrder>('desc')
@@ -113,12 +113,14 @@ const languageOptions = computed(() => [
 const filteredSnippets = computed(() => {
   let result = snippets.value
 
-  // 按语言筛选：片段的 language 字段支持逗号分隔的多语言
+  // 按语言筛选：支持多选，片段的 language 字段支持逗号分隔的多语言
   if (languageFilter.value && languageFilter.value !== '*') {
+    const filterLangs = languageFilter.value.split(',').map((l: string) => l.trim())
     result = result.filter(
       (s) => {
         const langs = s.language.split(',').map((l: string) => l.trim())
-        return langs.includes('*') || langs.includes(languageFilter.value)
+        // 片段含通配符 '*' 或与任一筛选语言匹配时显示
+        return langs.includes('*') || filterLangs.some((fl: string) => langs.includes(fl))
       }
     )
   }
@@ -455,6 +457,7 @@ function handleDuplicateCancel() {
         v-model="languageFilter"
         :options="languageOptions"
         :placeholder="t('form.languagePlaceholder')"
+        multiple
       />
     </div>
 

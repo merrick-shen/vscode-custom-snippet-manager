@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Notification Position**: Moved sidebar notification toasts from the top to the bottom of the page, preventing layout shifts in the header area when notifications appear
 - **Performance**: Optimized data storage to prevent editor lag when managing many snippets
 - **Performance**: Reduced unnecessary file writes when using snippet completions, improving responsiveness during frequent use
+- **Multi-language filter**: Sidebar language filter now supports selecting multiple languages at once, consistent with the editor's language scope selector
 - **Architecture**: Unified language configuration into a single data source
 
 ## [1.1.3] - 2026-05-25
