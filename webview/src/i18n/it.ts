@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'Cerca snippet...',
     empty: 'Nessuno snippet',
-    emptyDesc: 'Fai clic sul pulsante sopra per creare il tuo primo snippet',
   },
   form: {
     createTitle: 'Crea snippet',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'Conferma cancellazione',
-    content: 'Sei sicuro di voler cancellare tutti gli snippet? Questa azione non può essere annullata e tutti gli snippet saranno eliminati definitivamente.',
+    content: 'Sei sicuro di voler cancellare tutti i dati? Questa azione non può essere annullata e tutti gli snippet e le cartelle saranno eliminati definitivamente.',
     confirm: 'Cancella',
     cancel: 'Annulla',
     success: '{count} snippet cancellati',

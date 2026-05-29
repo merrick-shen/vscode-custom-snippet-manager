@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'Snippets suchen...',
     empty: 'Noch keine Snippets',
-    emptyDesc: 'Klicken Sie auf die Schaltfläche oben, um Ihr erstes Snippet zu erstellen',
   },
   form: {
     createTitle: 'Snippet erstellen',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'Datenlöschung bestätigen',
-    content: 'Möchten Sie wirklich alle Snippets löschen? Diese Aktion kann nicht rückgängig gemacht werden und alle Snippets werden dauerhaft gelöscht.',
+    content: 'Möchten Sie wirklich alle Daten löschen? Diese Aktion kann nicht rückgängig gemacht werden und alle Snippets und Ordner werden dauerhaft gelöscht.',
     confirm: 'Löschen',
     cancel: 'Abbrechen',
     success: '{count} Snippet(s) gelöscht',

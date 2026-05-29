@@ -328,10 +328,11 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         break;
       }
 
-      // 前端请求清空所有片段数据
+      // 前端请求清空所有数据（删除全部用户文件夹及片段，仅保留默认文件夹）
       case 'clearAllSnippets': {
         const count = await this.snippetService.clearAll();
         this.postSnippetsList();
+        this.postFoldersList();
         this.showNotification('success', 'clearAll.success', { count: String(count) });
         break;
       }

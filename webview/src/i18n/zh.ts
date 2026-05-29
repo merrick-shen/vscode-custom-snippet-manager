@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: '搜索代码片段...',
     empty: '暂无代码片段',
-    emptyDesc: '点击上方按钮创建你的第一个代码片段',
   },
   form: {
     createTitle: '新建代码片段',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: '清空数据确认',
-    content: '确定要清空所有代码片段吗？此操作不可撤销，所有片段将被永久删除。',
+    content: '确定要清空所有数据吗？此操作不可撤销，所有代码片段和文件夹都将被永久删除。',
     confirm: '清空',
     cancel: '取消',
     success: '已清空 {count} 个代码片段',

@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: '스니펫 검색...',
     empty: '스니펫이 없습니다',
-    emptyDesc: '위의 버튼을 클릭하여 첫 번째 스니펫을 만드세요',
   },
   form: {
     createTitle: '스니펫 만들기',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: '데이터 삭제 확인',
-    content: '모든 스니펫을 삭제하시겠습니까? 이 작업은 취소할 수 없으며 모든 스니펫이 영구적으로 삭제됩니다.',
+    content: '모든 데이터를 삭제하시겠습니까? 이 작업은 취소할 수 없으며 모든 스니펫과 폴더가 영구적으로 삭제됩니다.',
     confirm: '삭제',
     cancel: '취소',
     success: '{count}개의 스니펫이 삭제되었습니다',

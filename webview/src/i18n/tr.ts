@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'Snippet ara...',
     empty: 'Henüz snippet yok',
-    emptyDesc: 'İlk snippet\'inizi oluşturmak için yukarıdaki düğmeye tıklayın',
   },
   form: {
     createTitle: 'Snippet oluştur',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'Veri temizleme onayı',
-    content: 'Tüm snippet\'leri temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm snippet\'ler kalıcı olarak silinecektir.',
+    content: 'Tüm verileri temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm snippet\'ler ile klasörler kalıcı olarak silinecektir.',
     confirm: 'Temizle',
     cancel: 'İptal',
     success: '{count} snippet temizlendi',

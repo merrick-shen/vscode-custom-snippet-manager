@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: '搜尋程式碼片段...',
     empty: '暫無程式碼片段',
-    emptyDesc: '點擊上方按鈕建立你的第一個程式碼片段',
   },
   form: {
     createTitle: '新建程式碼片段',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: '清空資料確認',
-    content: '確定要清空所有程式碼片段嗎？此操作無法撤銷，所有片段將被永久刪除。',
+    content: '確定要清空所有資料嗎？此操作無法撤銷，所有程式碼片段與資料夾都將被永久刪除。',
     confirm: '清空',
     cancel: '取消',
     success: '已清空 {count} 個程式碼片段',

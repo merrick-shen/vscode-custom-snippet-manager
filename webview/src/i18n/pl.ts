@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'Szukaj snippetów...',
     empty: 'Brak snippetów',
-    emptyDesc: 'Kliknij przycisk powyżej, aby utworzyć pierwszy snippet',
   },
   form: {
     createTitle: 'Utwórz snippet',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'Potwierdź czyszczenie',
-    content: 'Czy na pewno chcesz wyczyścić wszystkie snippety? Tej operacji nie można cofnąć i wszystkie snippety zostaną trwale usunięte.',
+    content: 'Czy na pewno chcesz wyczyścić wszystkie dane? Tej operacji nie można cofnąć i wszystkie snippety oraz foldery zostaną trwale usunięte.',
     confirm: 'Wyczyść',
     cancel: 'Anuluj',
     success: 'Wyczyszczono {count} snippetów',

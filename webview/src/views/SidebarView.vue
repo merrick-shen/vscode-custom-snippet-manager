@@ -184,6 +184,11 @@ const filteredSnippets = computed(() => {
   return sorted
 })
 
+// 是否处于搜索或语言筛选状态（模板空状态判断与分组过滤共用）
+const isFiltering = computed(
+  () => !!searchQuery.value.trim() || (languageFilter.value !== '*' && !!languageFilter.value)
+)
+
 /**
  * 将筛选后的片段按文件夹分组，用于折叠树渲染
  * 顺序遵循文件夹清单顺序；搜索/筛选时仅显示有匹配片段的文件夹
@@ -202,15 +207,12 @@ const groupedFolders = computed(() => {
     }
   }
 
-  // 是否处于搜索或语言筛选状态
-  const isFiltering = !!searchQuery.value.trim() || (languageFilter.value !== '*' && !!languageFilter.value)
-
   return folders.value.map((folder) => ({
     folder,
     snippets: map.get(folder.id) ?? [],
   })).filter((group) => {
     // 筛选状态下隐藏无匹配片段的文件夹，非筛选状态下全部显示
-    return isFiltering ? group.snippets.length > 0 : true
+    return isFiltering.value ? group.snippets.length > 0 : true
   })
 })
 
@@ -766,23 +768,8 @@ function handleListScroll() {
 
     <!-- 片段列表区域 -->
     <div class="sidebar-list" @scroll="handleListScroll">
-      <!-- 空状态：没有任何片段 -->
-      <div v-if="snippets.length === 0" class="empty-state">
-        <div class="empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-          </svg>
-        </div>
-        <p class="empty-title">{{ t('list.empty') }}</p>
-        <p class="empty-desc">{{ t('list.emptyDesc') }}</p>
-      </div>
-
-      <!-- 筛选无结果 -->
-      <div v-else-if="filteredSnippets.length === 0" class="empty-state">
+      <!-- 筛选无匹配结果时的空状态 -->
+      <div v-if="groupedFolders.length === 0" class="empty-state">
         <p class="empty-desc">{{ t('list.empty') }}</p>
       </div>
 
@@ -1321,19 +1308,6 @@ function handleListScroll() {
   justify-content: center;
   padding: 40px $spacing-lg;
   text-align: center;
-}
-
-.empty-icon {
-  margin-bottom: 14px;
-  color: $color-foreground;
-}
-
-.empty-title {
-  margin: 0 0 $spacing-xs;
-  font-size: $font-size-lg;
-  font-weight: 600;
-  color: $color-foreground;
-  opacity: 0.7;
 }
 
 .empty-desc {

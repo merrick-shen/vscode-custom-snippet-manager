@@ -518,23 +518,31 @@ export class SnippetService {
   }
 
   /**
-   * 清空所有文件夹的全部片段，保留文件夹结构
+   * 清空所有数据：删除全部用户文件夹及其片段，仅保留空的默认文件夹
    * @returns 被清空的片段总数
    */
   async clearAll(): Promise<number> {
     await this.ready();
     let count = 0;
-    const affected: string[] = [];
+    // 待删除磁盘文件的文件夹 id（默认文件夹只清空不删文件）
+    const filesToDelete: string[] = [];
     for (const [folderId, list] of this.snippetsByFolder) {
-      if (list.length > 0) {
-        count += list.length;
-        this.snippetsByFolder.set(folderId, []);
-        affected.push(folderId);
+      count += list.length;
+      if (folderId !== DEFAULT_FOLDER_ID) {
+        filesToDelete.push(folderId);
       }
     }
+    // 仅保留空的默认文件夹，移除其余文件夹的清单与内存缓存
+    this.folders = [this.createDefaultFolderMeta()];
+    this.snippetsByFolder.clear();
+    this.snippetsByFolder.set(DEFAULT_FOLDER_ID, []);
     // 清除脏标记，避免防抖刷盘覆盖空数据后又写回旧计数
     this.dirtyFolders.clear();
-    await Promise.all(affected.map((folderId) => this.saveFolderSnippets(folderId)));
+    await Promise.all([
+      this.saveFoldersMeta(),
+      this.saveFolderSnippets(DEFAULT_FOLDER_ID),
+      ...filesToDelete.map((folderId) => this.deleteFolderFile(folderId)),
+    ]);
     return count;
   }
 

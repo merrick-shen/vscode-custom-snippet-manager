@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'Buscar snippets...',
     empty: 'Sin snippets aún',
-    emptyDesc: 'Haga clic en el botón de arriba para crear su primer snippet',
   },
   form: {
     createTitle: 'Crear snippet',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'Confirmar borrado',
-    content: '¿Está seguro de que desea borrar todos los snippets? Esta acción no se puede deshacer y todos los snippets se eliminarán permanentemente.',
+    content: '¿Está seguro de que desea borrar todos los datos? Esta acción no se puede deshacer y todos los snippets y carpetas se eliminarán permanentemente.',
     confirm: 'Borrar',
     cancel: 'Cancelar',
     success: '{count} snippet(s) borrado(s)',

@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'スニペットを検索...',
     empty: 'スニペットがありません',
-    emptyDesc: '上のボタンをクリックして最初のスニペットを作成してください',
   },
   form: {
     createTitle: 'スニペットを作成',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'データ消去の確認',
-    content: 'すべてのスニペットを消去してよろしいですか？この操作は取り消せず、すべてのスニペットが永久に削除されます。',
+    content: 'すべてのデータを消去してよろしいですか？この操作は取り消せず、すべてのスニペットとフォルダーが永久に削除されます。',
     confirm: '消去',
     cancel: 'キャンセル',
     success: '{count} 件のスニペットを消去しました',

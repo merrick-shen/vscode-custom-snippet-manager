@@ -9,7 +9,6 @@ export default {
   list: {
     searchPlaceholder: 'Search snippets...',
     empty: 'No snippets yet',
-    emptyDesc: 'Click the button above to create your first snippet',
   },
   form: {
     createTitle: 'Create Snippet',
@@ -142,7 +141,7 @@ export default {
   },
   clearAll: {
     title: 'Clear Data Confirmation',
-    content: 'Are you sure you want to clear all snippets? This action cannot be undone and all snippets will be permanently deleted.',
+    content: 'Are you sure you want to clear all data? This action cannot be undone and all snippets and folders will be permanently deleted.',
     confirm: 'Clear',
     cancel: 'Cancel',
     success: '{count} snippet(s) cleared',
