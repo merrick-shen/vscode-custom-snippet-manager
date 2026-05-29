@@ -13,8 +13,8 @@ import { Icon } from '@iconify/vue'
 const props = withDefaults(defineProps<{
   /** 当前选中值（逗号分隔），支持 v-model 双向绑定 */
   modelValue: string
-  /** 下拉选项列表 */
-  options: { label: string; value: string; icon: string }[]
+  /** 下拉选项列表，icon 可选，缺省时不渲染图标占位 */
+  options: { label: string; value: string; icon?: string }[]
   /** 占位文本 */
   placeholder?: string
   /** 下拉展开方向：bottom 向下展开，top 向上展开 */
@@ -74,7 +74,7 @@ function isOptionSelected(opt: { value: string }): boolean {
 }
 
 /** 选择某个选项 */
-function selectOption(opt: { label: string; value: string; icon: string }) {
+function selectOption(opt: { label: string; value: string; icon?: string }) {
   if (props.multiple) {
     // 多选模式
     const vals = [...selectedValues.value]
@@ -196,7 +196,7 @@ onBeforeUnmount(() => {
                 :key="opt.value"
                 class="multi-tag"
               >
-                <Icon :icon="opt.icon" class="lang-icon tag-icon" />
+                <Icon v-if="opt.icon" :icon="opt.icon" class="lang-icon tag-icon" />
                 <span class="tag-label">{{ opt.label }}</span>
               </span>
             </div>
@@ -206,7 +206,7 @@ onBeforeUnmount(() => {
         <!-- 单选模式 -->
         <template v-else>
           <Icon
-            v-if="selectedOption"
+            v-if="selectedOption && selectedOption.icon"
             :icon="selectedOption.icon"
             class="lang-icon"
           />
@@ -239,7 +239,7 @@ onBeforeUnmount(() => {
             <svg v-if="isOptionSelected(opt)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
           </span>
           <!-- 选项图标 -->
-          <Icon :icon="opt.icon" class="lang-icon" />
+          <Icon v-if="opt.icon" :icon="opt.icon" class="lang-icon" />
           <!-- 选项文本 -->
           <span class="lang-label">{{ opt.label }}</span>
           <!-- 单选模式下的选中勾号 -->

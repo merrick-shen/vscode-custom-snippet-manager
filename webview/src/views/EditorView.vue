@@ -47,12 +47,11 @@ const languageOptions = computed(() =>
   }))
 )
 
-/** 文件夹下拉选项，默认文件夹用 i18n 名称，统一加文件夹图标以复用 LanguageSelect */
+/** 文件夹下拉选项，默认文件夹用 i18n 名称（无图标，复用 LanguageSelect） */
 const folderOptions = computed(() =>
   folders.value.map((f) => ({
     value: f.id,
     label: f.id === DEFAULT_FOLDER_ID ? t('folder.defaultName') : f.name,
-    icon: 'carbon:folder',
   }))
 )
 
