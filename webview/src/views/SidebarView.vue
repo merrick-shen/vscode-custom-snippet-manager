@@ -43,8 +43,10 @@ watch(currentView, () => {
 const snippets = ref<Snippet[]>([])
 // 文件夹清单，从后端注入的初始数据初始化
 const folders = ref<Folder[]>(Array.isArray(window.__FOLDERS) ? window.__FOLDERS : [])
-// 已折叠的文件夹 id 集合，默认全部展开
-const collapsedFolders = ref<Set<string>>(new Set())
+// 已折叠的文件夹 id 集合，默认全部折叠（打开插件时所有文件夹为关闭状态）
+const collapsedFolders = ref<Set<string>>(
+  new Set(folders.value.map((f) => f.id))
+)
 
 /** 获取文件夹显示名称，默认文件夹用 i18n，其余用自身名称 */
 function folderDisplayName(folder: Folder): string {
@@ -327,15 +329,15 @@ onExtMessage('snippetsList', (payload) => {
 // 监听后端返回的文件夹清单（创建/重命名/删除后自动刷新）
 onExtMessage('foldersList', (payload) => {
   const list = payload as Folder[]
-  folders.value = list
-  // 清理已不存在文件夹的折叠状态，避免内存残留
-  const validIds = new Set(list.map((f) => f.id))
+  // 保留已存在文件夹的折叠状态，新出现的文件夹默认折叠
   const next = new Set<string>()
-  for (const id of collapsedFolders.value) {
-    if (validIds.has(id)) {
-      next.add(id)
+  for (const f of list) {
+    // 旧文件夹沿用原状态，未记录过的新文件夹默认折叠
+    if (!folders.value.some((old) => old.id === f.id) || collapsedFolders.value.has(f.id)) {
+      next.add(f.id)
     }
   }
+  folders.value = list
   collapsedFolders.value = next
 })
 
