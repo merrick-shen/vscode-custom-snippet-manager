@@ -343,22 +343,58 @@ onExtMessage('error', (payload) => {
   showError(t(data.errorKey, data.errorParams ?? {}))
 })
 
-// 导出文件夹选择对话框状态
-const exportDialog = ref<{ visible: boolean }>({ visible: false })
+// 导出文件夹选择对话框状态，selectedIds 为已勾选的文件夹 id 集合
+const exportDialog = ref<{ visible: boolean; selectedIds: Set<string> }>({
+  visible: false,
+  selectedIds: new Set(),
+})
 
-/** 点击导出配置按钮，打开文件夹选择对话框 */
+/** 点击导出配置按钮，打开文件夹多选对话框（默认全选） */
 function handleExport() {
   if (snippets.value.length === 0) {
     showError(t('importExport.noDataToExport'))
     return
   }
-  exportDialog.value.visible = true
+  // 默认勾选全部文件夹
+  exportDialog.value = {
+    visible: true,
+    selectedIds: new Set(folders.value.map((f) => f.id)),
+  }
 }
 
-/** 选择导出范围：folderId 为 undefined 表示导出全部 */
-function confirmExport(folderId?: string) {
+/** 是否已全选 */
+const exportAllSelected = computed(
+  () => folders.value.length > 0 && exportDialog.value.selectedIds.size === folders.value.length
+)
+
+/** 切换单个文件夹勾选状态 */
+function toggleExportFolder(folderId: string) {
+  const next = new Set(exportDialog.value.selectedIds)
+  if (next.has(folderId)) {
+    next.delete(folderId)
+  } else {
+    next.add(folderId)
+  }
+  exportDialog.value.selectedIds = next
+}
+
+/** 切换全选/全不选 */
+function toggleExportAll() {
+  if (exportAllSelected.value) {
+    exportDialog.value.selectedIds = new Set()
+  } else {
+    exportDialog.value.selectedIds = new Set(folders.value.map((f) => f.id))
+  }
+}
+
+/** 确认导出：将勾选的文件夹 id 列表发送给后端，每个文件夹各导出一个 JSON */
+function confirmExport() {
+  const ids = Array.from(exportDialog.value.selectedIds)
+  if (ids.length === 0) {
+    return
+  }
   exportDialog.value.visible = false
-  postToExt('exportSnippets', folderId ? { folderId } : {})
+  postToExt('exportSnippets', { folderIds: ids })
 }
 
 /** 取消导出 */
@@ -381,9 +417,14 @@ function handleImport() {
 
 // 监听后端返回的导出结果
 onExtMessage('exportResult', (payload) => {
-  const result = payload as { success: boolean; count?: number }
+  const result = payload as { success: boolean; folderCount?: number; count?: number }
   if (result.success) {
-    showSuccess(t('importExport.exportSuccessDetail', { count: result.count ?? 0 }))
+    showSuccess(
+      t('importExport.exportSuccessDetail', {
+        folderCount: result.folderCount ?? 0,
+        count: result.count ?? 0,
+      })
+    )
   } else {
     showError(t('importExport.exportFailed'))
   }
@@ -397,6 +438,7 @@ onExtMessage('importResult', (payload) => {
     overwritten: number
     merged: number
     total: number
+    folderName: string
     errors: string[]
   }
   if (result.errors.length > 0) {
@@ -408,7 +450,10 @@ onExtMessage('importResult', (payload) => {
     )
   } else {
     showSuccess(
-      t('importExport.importSuccessDetail', { count: result.imported })
+      t('importExport.importSuccessDetail', {
+        count: result.imported,
+        folder: result.folderName || t('folder.defaultName'),
+      })
     )
   }
 })
@@ -460,6 +505,91 @@ function handleDuplicateStrategy(strategy: string) {
 function handleDuplicateCancel() {
   duplicateDialog.value.visible = false
   postToExt('duplicateStrategyChoice', null)
+}
+
+// 导入存放方式对话框状态
+const placementDialog = ref<{
+  visible: boolean
+  // 来源文件夹推荐名（来自导入 JSON 的 folder.name）
+  suggestedName: string
+  // 待导入片段数量
+  count: number
+  // 可选的已有文件夹清单
+  folders: Folder[]
+  // 当前选择的存放模式
+  mode: 'new' | 'existing'
+  // 新建文件夹名称输入
+  newName: string
+  // 导入到已有文件夹时选中的文件夹 id
+  targetFolderId: string
+  // 名称校验错误的 i18n key，空表示无错误
+  nameError: string
+}>({
+  visible: false,
+  suggestedName: '',
+  count: 0,
+  folders: [],
+  mode: 'new',
+  newName: '',
+  targetFolderId: DEFAULT_FOLDER_ID,
+  nameError: '',
+})
+
+// 监听后端请求显示导入存放方式对话框
+onExtMessage('showImportPlacementDialog', (payload) => {
+  const data = payload as { suggestedName: string; count: number; folders: Folder[] }
+  const list = Array.isArray(data.folders) ? data.folders : []
+  placementDialog.value = {
+    visible: true,
+    suggestedName: data.suggestedName ?? '',
+    count: data.count ?? 0,
+    folders: list,
+    mode: 'new',
+    // 推荐名为空（来源为默认文件夹）时留空让用户填写
+    newName: data.suggestedName ?? '',
+    targetFolderId: list[0]?.id ?? DEFAULT_FOLDER_ID,
+    nameError: '',
+  }
+})
+
+/** 校验新建文件夹名称：非空且不与现有文件夹重名（忽略大小写、去空格） */
+function validatePlacementName(): boolean {
+  const trimmed = placementDialog.value.newName.trim()
+  if (!trimmed) {
+    placementDialog.value.nameError = 'folder.nameRequired'
+    return false
+  }
+  const lower = trimmed.toLowerCase()
+  const conflict = placementDialog.value.folders.some(
+    (f) => folderDisplayName(f).trim().toLowerCase() === lower
+  )
+  if (conflict) {
+    placementDialog.value.nameError = 'importExport.placementNameConflict'
+    return false
+  }
+  placementDialog.value.nameError = ''
+  return true
+}
+
+/** 确认存放方式，回传后端 */
+function confirmPlacement() {
+  if (placementDialog.value.mode === 'new') {
+    if (!validatePlacementName()) {
+      return
+    }
+    const name = placementDialog.value.newName.trim()
+    placementDialog.value.visible = false
+    postToExt('importPlacementChoice', { mode: 'new', name })
+  } else {
+    placementDialog.value.visible = false
+    postToExt('importPlacementChoice', { mode: 'existing', folderId: placementDialog.value.targetFolderId })
+  }
+}
+
+/** 取消存放方式选择，终止导入 */
+function cancelPlacement() {
+  placementDialog.value.visible = false
+  postToExt('importPlacementChoice', null)
 }
 
 // ===== 悬浮预览卡片 =====
@@ -863,7 +993,7 @@ function handleListScroll() {
       </div>
     </div>
 
-    <!-- 导出范围选择对话框 -->
+    <!-- 导出范围选择对话框（多选文件夹，每个文件夹各导出一个 JSON） -->
     <div v-if="exportDialog.visible" class="modal-overlay" @click.self="cancelExport">
       <div class="modal-dialog modal-dialog-lg">
         <div class="modal-header">
@@ -872,25 +1002,86 @@ function handleListScroll() {
         <div class="modal-body">
           <p>{{ t('folder.exportSelectHint') }}</p>
           <div class="export-options">
-            <!-- 导出全部 -->
-            <button class="export-option" @click="confirmExport()">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <!-- 全选/全不选 -->
+            <label class="export-check-item export-check-all">
+              <input type="checkbox" :checked="exportAllSelected" @change="toggleExportAll" />
               <span class="export-option-label">{{ t('folder.exportAll') }}</span>
-            </button>
-            <!-- 按文件夹导出 -->
-            <button
+            </label>
+            <!-- 各文件夹勾选项 -->
+            <label
               v-for="f in folders"
               :key="f.id"
-              class="export-option"
-              @click="confirmExport(f.id)"
+              class="export-check-item"
             >
+              <input
+                type="checkbox"
+                :checked="exportDialog.selectedIds.has(f.id)"
+                @change="toggleExportFolder(f.id)"
+              />
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
               <span class="export-option-label">{{ folderDisplayName(f) }}</span>
-            </button>
+            </label>
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary btn-sm" @click="cancelExport">{{ t('form.cancel') }}</button>
+          <button
+            class="btn btn-primary btn-sm"
+            :disabled="exportDialog.selectedIds.size === 0"
+            @click="confirmExport"
+          >{{ t('importExport.exportConfig') }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 导入存放方式选择对话框 -->
+    <div v-if="placementDialog.visible" class="modal-overlay" @click.self="cancelPlacement">
+      <div class="modal-dialog modal-dialog-lg">
+        <div class="modal-header">
+          <span class="modal-title">{{ t('importExport.placementTitle') }}</span>
+        </div>
+        <div class="modal-body">
+          <p>{{ t('importExport.placementHint', { count: placementDialog.count }) }}</p>
+          <!-- 模式切换：新建文件夹 / 导入到已有文件夹 -->
+          <div class="placement-modes">
+            <label class="placement-mode">
+              <input type="radio" value="new" v-model="placementDialog.mode" />
+              <span>{{ t('importExport.placementNew') }}</span>
+            </label>
+            <label class="placement-mode">
+              <input type="radio" value="existing" v-model="placementDialog.mode" />
+              <span>{{ t('importExport.placementExisting') }}</span>
+            </label>
+          </div>
+
+          <!-- 新建文件夹：输入名称 -->
+          <div v-if="placementDialog.mode === 'new'" class="placement-field">
+            <input
+              v-model="placementDialog.newName"
+              class="form-input"
+              :placeholder="t('folder.namePlaceholder')"
+              maxlength="50"
+              @input="placementDialog.nameError = ''"
+              @keyup.enter="confirmPlacement"
+            />
+            <span v-if="placementDialog.nameError" class="placement-error">
+              {{ t(placementDialog.nameError) }}
+            </span>
+          </div>
+
+          <!-- 导入到已有文件夹：下拉选择 -->
+          <div v-else class="placement-field">
+            <select v-model="placementDialog.targetFolderId" class="form-input">
+              <option v-for="f in placementDialog.folders" :key="f.id" :value="f.id">
+                {{ folderDisplayName(f) }}
+              </option>
+            </select>
+            <span class="placement-note">{{ t('importExport.placementExistingNote') }}</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-sm" @click="cancelPlacement">{{ t('form.cancel') }}</button>
+          <button class="btn btn-primary btn-sm" @click="confirmPlacement">{{ t('importExport.importConfig') }}</button>
         </div>
       </div>
     </div>
@@ -1281,7 +1472,7 @@ function handleListScroll() {
   overflow-y: auto;
 }
 
-.export-option {
+.export-check-item {
   display: flex;
   align-items: center;
   gap: $spacing-sm;
@@ -1292,19 +1483,68 @@ function handleListScroll() {
   color: $color-foreground;
   cursor: pointer;
   text-align: left;
-  font-family: inherit;
   transition: background-color 0.15s, border-color 0.15s;
 
   &:hover {
     background: $bg-list-hover;
     border-color: $color-focus;
   }
+
+  input[type='checkbox'] {
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+}
+
+.export-check-all {
+  // 全选项与文件夹列表之间用分隔线区分
+  border-style: dashed;
+  margin-bottom: 2px;
 }
 
 .export-option-label {
   flex: 1;
   font-size: $font-size-base;
   @include text-ellipsis;
+}
+
+// ===== 导入存放方式对话框 =====
+.placement-modes {
+  display: flex;
+  gap: $spacing-md;
+  margin: $spacing-md 0;
+}
+
+.placement-mode {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-base;
+  color: $color-foreground;
+  cursor: pointer;
+
+  input[type='radio'] {
+    cursor: pointer;
+  }
+}
+
+.placement-field {
+  @include flex-column;
+  gap: $spacing-xs;
+
+  select.form-input {
+    cursor: pointer;
+  }
+}
+
+.placement-error {
+  font-size: $font-size-xs;
+  color: $color-error;
+}
+
+.placement-note {
+  font-size: $font-size-xs;
+  color: $color-description;
 }
 
 .strategy-option-danger:hover {

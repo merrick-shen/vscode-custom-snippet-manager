@@ -18,6 +18,15 @@ interface WebviewMessage {
   payload?: unknown;
 }
 
+/**
+ * 导入存放方式选择结果
+ * - new：按 name 新建文件夹存放
+ * - existing：导入到 folderId 指定的已有文件夹
+ */
+type ImportPlacementChoice =
+  | { mode: 'new'; name: string }
+  | { mode: 'existing'; folderId: string };
+
 export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   /** 视图标识，需与 package.json 中的 views.id 一致 */
   public static readonly viewType = 'custom-snippet-manager.sidebar';
@@ -33,6 +42,10 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   private pendingStrategyResolve: ((strategy: string | null) => void) | null = null;
   /** 重复策略选择的超时定时器 */
   private pendingStrategyTimer: ReturnType<typeof setTimeout> | null = null;
+  /** 导入存放方式选择的 Promise resolve 回调 */
+  private pendingPlacementResolve: ((placement: ImportPlacementChoice | null) => void) | null = null;
+  /** 导入存放方式选择的超时定时器 */
+  private pendingPlacementTimer: ReturnType<typeof setTimeout> | null = null;
   /** 导入导出服务，在 init 中异步初始化 */
   private importExportService!: ImportExportService;
   /** 初始化 Promise，确保 ImportExportService 创建完成 */
@@ -228,17 +241,22 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         break;
       }
 
-      // 前端请求导出代码片段，payload.folderId 指定时仅导出该文件夹，缺省导出全部
+      // 前端请求导出代码片段，payload.folderIds 指定导出范围，缺省/空表示全部文件夹
       case 'exportSnippets': {
-        const payload = (msg.payload ?? {}) as { folderId?: string };
-        const result = await this.importExportService.exportSnippets(payload.folderId);
-        this.postToView('exportResult', { success: result.success, count: result.count });
+        const payload = (msg.payload ?? {}) as { folderIds?: string[] };
+        const result = await this.importExportService.exportFolders(payload.folderIds);
+        this.postToView('exportResult', {
+          success: result.success,
+          folderCount: result.folderCount,
+          count: result.count,
+        });
         break;
       }
 
-      // 前端请求导入代码片段
+      // 前端请求导入代码片段（先选存放方式，再按需选重复策略）
       case 'importSnippets': {
         const result = await this.importExportService.importSnippets(
+          (info) => this.askPlacementViaWebview(info),
           (count) => this.askDuplicateStrategyViaWebview(count)
         );
         if (result) {
@@ -247,10 +265,25 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
             const err = result as { errorKey: string; errorParams?: Record<string, string | number> };
             this.postToView('importError', { errorKey: err.errorKey, errorParams: err.errorParams });
           } else {
-            // 导入成功后刷新列表
+            // 导入可能新建文件夹，需同时刷新文件夹清单和片段列表
             this.postToView('importResult', result);
+            this.postFoldersList();
             this.postSnippetsList();
           }
+        }
+        break;
+      }
+
+      // 前端返回导入存放方式选择结果
+      case 'importPlacementChoice': {
+        const placement = msg.payload as ImportPlacementChoice | null;
+        if (this.pendingPlacementResolve) {
+          if (this.pendingPlacementTimer) {
+            clearTimeout(this.pendingPlacementTimer);
+            this.pendingPlacementTimer = null;
+          }
+          this.pendingPlacementResolve(placement);
+          this.pendingPlacementResolve = null;
         }
         break;
       }
@@ -357,6 +390,46 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
     });
   }
 
+  /**
+   * 通过 Webview 自定义对话框询问导入存放方式
+   * 发送来源文件夹推荐名与片段数，等待用户选择新建文件夹或并入已有文件夹
+   * 超时 5 分钟自动取消
+   * @param info 来源文件夹推荐名与片段数量
+   * @returns 存放方式选择，null 表示取消或超时
+   */
+  private askPlacementViaWebview(info: {
+    suggestedName: string;
+    count: number;
+  }): Promise<ImportPlacementChoice | null> {
+    return new Promise((resolve) => {
+      this.cleanupPendingPlacement();
+      this.pendingPlacementResolve = resolve;
+      this.pendingPlacementTimer = setTimeout(() => {
+        this.pendingPlacementResolve = null;
+        this.pendingPlacementTimer = null;
+        resolve(null);
+      }, 5 * 60 * 1000);
+      // 下发当前文件夹清单，供前端选择已有文件夹
+      this.postToView('showImportPlacementDialog', {
+        suggestedName: info.suggestedName,
+        count: info.count,
+        folders: this.snippetService.getFolders(),
+      });
+    });
+  }
+
+  /** 清理残留的存放方式回调，用于 Webview 重新加载或关闭时 */
+  private cleanupPendingPlacement(): void {
+    if (this.pendingPlacementTimer) {
+      clearTimeout(this.pendingPlacementTimer);
+      this.pendingPlacementTimer = null;
+    }
+    if (this.pendingPlacementResolve) {
+      this.pendingPlacementResolve(null);
+      this.pendingPlacementResolve = null;
+    }
+  }
+
   /** 清理残留的重复策略回调，用于 Webview 重新加载或关闭时 */
   private cleanupPendingStrategy(): void {
     if (this.pendingStrategyTimer) {
@@ -367,6 +440,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
       this.pendingStrategyResolve(null);
       this.pendingStrategyResolve = null;
     }
+    // 同时清理存放方式回调，避免导入流程中途 Webview 重载导致 Promise 挂起
+    this.cleanupPendingPlacement();
   }
 
   /** 向侧边栏 webview 发送消息 */

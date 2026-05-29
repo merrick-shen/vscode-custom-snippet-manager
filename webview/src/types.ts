@@ -71,6 +71,8 @@ export type MessageType =
   | 'importError'
   | 'showDuplicateDialog'
   | 'duplicateStrategyChoice'
+  | 'showImportPlacementDialog'
+  | 'importPlacementChoice'
   | 'showNotification'
   | 'localeChanged'
   | 'changeSortOrder'

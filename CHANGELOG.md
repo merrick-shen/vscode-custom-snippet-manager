@@ -11,12 +11,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - **Folders**: Added folder support to organize snippets — create, rename, and delete folders, and assign a folder when creating or editing a snippet
-- **Folder Export**: Export now lets you choose a specific folder or all snippets
+- **Folder Export**: Export now lets you select multiple folders, each exported as a separate JSON file
+- **Import Destination**: When importing, you can create a new folder or import into an existing folder
 
 ### Changed
 
 - **Sidebar Layout**: Sidebar now displays snippets as a collapsible folder-grouped tree
 - **Storage Structure**: Snippets are now stored in separate files per folder; existing data is migrated automatically and the original data is backed up
+- **Export Files**: Export files are now organized by folder, with the folder name included in the file name
+- **Duplicate Detection**: When importing into an existing folder, duplicate detection only considers snippets within that folder
 
 ## [1.2.0] - 2026-05-26
 

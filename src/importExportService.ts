@@ -1,29 +1,49 @@
 /**
  * 导入导出服务
- * 负责代码片段配置文件的导入和导出功能
- * 导出格式为 JSON，包含版本号、导出时间和片段数据
- * 导入时支持数据验证、重复处理策略（覆盖/跳过/合并）
- * 文件命名格式：code_snippet_config_YYYYMMDD_HHMMSS.json
- * 所有用户可见的提示信息由 Webview 端根据返回数据用 i18n 显示
+ * 负责代码片段配置文件的导入和导出功能，按文件夹组织
+ *
+ * 导出：
+ *   - 支持一次导出多个文件夹，每个文件夹生成一个独立 JSON 文件
+ *   - 通过目录选择对话框选定输出目录，批量写入
+ *   - 文件命名：{文件夹名}_{YYYYMMDD_HHMMSS}.json，名称冲突时追加序号
+ *
+ * 导入：
+ *   - 一个 JSON 对应一个文件夹
+ *   - 支持导入到已有文件夹（按重复策略处理），或按用户指定名称新建文件夹存放
+ *
+ * 导出 JSON 顶层包含 folder.name，导入据此推荐新建文件夹名称
+ * 所有用户可见提示由 Webview 端根据返回数据用 i18n 显示
  */
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { SnippetService, SnippetData, ImportOperation, DEFAULT_FOLDER_ID } from './snippetService';
+import * as path from 'path';
+import { SnippetService, SnippetData, ImportOperation } from './snippetService';
 
-/** 导出文件的顶层结构 */
-interface ExportData {
-  /** 配置文件格式版本，用于向后兼容 */
+/** 导出文件的顶层结构（按文件夹组织） */
+interface FolderExportData {
+  /** 配置文件格式版本 */
   version: string;
   /** 导出时间，ISO 8601 格式 */
   exportedAt: string;
   /** 导出应用的版本号 */
   appVersion: string;
-  /** 代码片段数据列表 */
+  /** 来源文件夹信息，导入时据此推荐新建文件夹名称 */
+  folder: { name: string };
+  /** 代码片段数据列表（不含 usageCount/createdAt/folderId） */
   snippets: SnippetData[];
 }
 
 /** 导入时的重复处理策略 */
 type DuplicateStrategy = 'overwrite' | 'skip' | 'merge';
+
+/**
+ * 导入存放方式
+ * - new：按 name 新建文件夹存放（名称由前端校验非空且不重名）
+ * - existing：导入到 folderId 指定的已有文件夹，按重复策略处理
+ */
+type ImportPlacement =
+  | { mode: 'new'; name: string }
+  | { mode: 'existing'; folderId: string };
 
 /** 导入结果统计 */
 interface ImportResult {
@@ -37,6 +57,8 @@ interface ImportResult {
   merged: number;
   /** 总数量 */
   total: number;
+  /** 目标文件夹显示名称，供结果提示使用 */
+  folderName: string;
   /** 错误信息列表 */
   errors: string[];
 }
@@ -45,7 +67,9 @@ interface ImportResult {
 interface ExportResult {
   /** 是否导出成功 */
   success: boolean;
-  /** 导出的片段数量（成功时有值） */
+  /** 成功导出的文件夹数量 */
+  folderCount?: number;
+  /** 成功导出的片段总数 */
   count?: number;
 }
 
@@ -57,14 +81,17 @@ interface ImportError {
   errorParams?: Record<string, string | number>;
 }
 
-/** 当前导出格式版本 */
-const EXPORT_VERSION = '1.0';
+/** 当前导出格式版本（按文件夹组织的新格式） */
+const EXPORT_VERSION = '2.0';
 
 /** 允许导入的最大片段数量，防止恶意大文件 */
 const MAX_IMPORT_SNIPPETS = 10000;
 
 /** 允许单个字段的最大长度，防止注入攻击 */
 const MAX_FIELD_LENGTH = 100000;
+
+/** 文件夹名称最大长度，与前端 maxlength 保持一致 */
+const MAX_FOLDER_NAME_LENGTH = 50;
 
 export class ImportExportService {
   private readonly snippetService: SnippetService;
@@ -77,92 +104,142 @@ export class ImportExportService {
   }
 
   /**
-   * 导出代码片段到 JSON 文件
-   * 使用 VS Code 原生文件保存对话框选择保存位置
-   * 文件命名格式：code_snippet_config_YYYYMMDD_HHMMSS.json
-   * @param folderId 指定时仅导出该文件夹的片段，缺省导出全部
-   * @returns 导出结果，Webview 端根据 success 和 count 用 i18n 显示提示
+   * 导出指定文件夹到 JSON 文件
+   * 每个文件夹生成一个独立 JSON，统一写入用户选择的目录
+   * @param folderIds 待导出的文件夹 id 列表（缺省或空视为全部文件夹）
+   * @returns 导出结果，Webview 端据此用 i18n 显示提示
    */
-  async exportSnippets(folderId?: string): Promise<ExportResult> {
-    // 指定文件夹时仅取该文件夹片段，否则取全部
-    const snippets = folderId
-      ? this.snippetService.getSnippetsByFolder(folderId)
-      : this.snippetService.getAll();
+  async exportFolders(folderIds?: string[]): Promise<ExportResult> {
+    const allFolders = this.snippetService.getFolders();
+    // 缺省或空列表导出全部文件夹
+    const targets =
+      folderIds && folderIds.length > 0
+        ? allFolders.filter((f) => folderIds.includes(f.id))
+        : allFolders;
 
-    // 导出时剔除 usageCount、createdAt 和运行时 folderId 字段，保持与旧版扁平格式兼容
-    const exportableSnippets = snippets.map(({ usageCount, createdAt, folderId: _fid, ...rest }) => rest);
+    if (targets.length === 0) {
+      return { success: false };
+    }
 
-    // 构造导出数据
-    const exportData: ExportData = {
-      version: EXPORT_VERSION,
-      exportedAt: new Date().toISOString(),
-      appVersion: this.appVersion,
-      snippets: exportableSnippets,
-    };
-
-    // 生成默认文件名
-    const now = new Date();
-    const timestamp = this.formatTimestamp(now);
-    const defaultFileName = `code_snippet_config_${timestamp}.json`;
-
-    // 打开文件保存对话框
-    const uri = await vscode.window.showSaveDialog({
-      defaultUri: vscode.Uri.file(defaultFileName),
-      filters: {
-        'JSON Files': ['json'],
-      },
-      title: 'Export Snippet Configuration',
+    // 选择输出目录（仅目录，单选）
+    const dirUris = await vscode.window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      title: 'Select Export Directory',
+      openLabel: 'Export Here',
     });
 
-    if (!uri) {
+    if (!dirUris || dirUris.length === 0) {
       // 用户取消
       return { success: false };
     }
 
-    try {
-      const jsonStr = JSON.stringify(exportData, null, 2);
-      await fs.promises.writeFile(uri.fsPath, jsonStr, 'utf-8');
-      return { success: true, count: snippets.length };
-    } catch {
+    const outputDir = dirUris[0].fsPath;
+    const timestamp = this.formatTimestamp(new Date());
+    // 记录本批次已用文件名，避免多个同名文件夹覆盖写入
+    const usedNames = new Set<string>();
+    let folderCount = 0;
+    let snippetCount = 0;
+
+    for (const folder of targets) {
+      const snippets = this.snippetService.getSnippetsByFolder(folder.id);
+      // 剔除运行时与统计字段，仅保留片段本体
+      const exportableSnippets = snippets.map(
+        ({ usageCount, createdAt, folderId: _fid, ...rest }) => rest
+      );
+
+      const exportData: FolderExportData = {
+        version: EXPORT_VERSION,
+        exportedAt: new Date().toISOString(),
+        appVersion: this.appVersion,
+        folder: { name: folder.name },
+        snippets: exportableSnippets,
+      };
+
+      // 生成不冲突的文件名
+      const fileName = this.resolveExportFileName(folder.name, timestamp, usedNames);
+      const filePath = path.join(outputDir, fileName);
+
+      try {
+        await fs.promises.writeFile(filePath, JSON.stringify(exportData, null, 2), 'utf-8');
+        folderCount++;
+        snippetCount += exportableSnippets.length;
+      } catch {
+        // 单个文件写入失败时跳过，继续导出其余文件夹
+      }
+    }
+
+    if (folderCount === 0) {
       return { success: false };
     }
+    return { success: true, folderCount, count: snippetCount };
   }
 
   /**
-   * 从 JSON 文件导入代码片段
-   * 使用 VS Code 原生文件选择对话框，支持数据验证和重复处理
-   * @param askStrategy 重复策略选择回调，用于 Webview 自定义对话框
+   * 生成导出文件名，处理非法字符与同批次重名
+   * @param folderName 文件夹名称，空（默认文件夹）回退为 'default'
+   * @param timestamp 统一时间戳
+   * @param usedNames 本批次已使用的文件名集合
+   */
+  private resolveExportFileName(
+    folderName: string,
+    timestamp: string,
+    usedNames: Set<string>
+  ): string {
+    // 替换文件名非法字符，去除首尾空白
+    const safeBase =
+      this.sanitizeFileName(folderName) || 'default';
+    let candidate = `${safeBase}_${timestamp}.json`;
+    let counter = 1;
+    while (usedNames.has(candidate.toLowerCase())) {
+      candidate = `${safeBase}_${timestamp}_${counter}.json`;
+      counter++;
+    }
+    usedNames.add(candidate.toLowerCase());
+    return candidate;
+  }
+
+  /** 清理文件名中的非法字符，替换为下划线 */
+  private sanitizeFileName(name: string): string {
+    return name
+      .trim()
+      .replace(/[\\/:*?"<>|]/g, '_')
+      .replace(/\s+/g, '_')
+      .slice(0, 80);
+  }
+
+  /**
+   * 从 JSON 文件导入代码片段（一个 JSON 对应一个文件夹）
+   * 流程：选文件 → 校验 → 询问存放方式 → 按方式执行（新建/并入已有）
+   * @param askPlacement 存放方式选择回调（新建文件夹或导入到已有文件夹）
+   * @param askStrategy 重复策略选择回调（仅导入到已有文件夹且存在重复时使用）
    * @returns 导入结果统计、导入错误（含 i18n key）、或 null（用户取消）
    */
   async importSnippets(
-    askStrategy?: (count: number) => Promise<string | null>
+    askPlacement: (info: { suggestedName: string; count: number }) => Promise<ImportPlacement | null>,
+    askStrategy: (count: number) => Promise<string | null>
   ): Promise<ImportResult | ImportError | null> {
-    // 打开文件选择对话框
+    // 选择导入文件（单选）
     const uris = await vscode.window.showOpenDialog({
       canSelectMany: false,
-      filters: {
-        'JSON Files': ['json'],
-      },
+      filters: { 'JSON Files': ['json'] },
       title: 'Import Snippet Configuration',
     });
 
     if (!uris || uris.length === 0) {
-      // 用户取消
       return null;
     }
 
-    // 读取文件内容
+    // 读取文件
     let rawContent: string;
     try {
       rawContent = await fs.promises.readFile(uris[0].fsPath, 'utf-8');
     } catch (err) {
-      return {
-        errorKey: 'importFileReadError',
-        errorParams: { error: String(err) },
-      };
+      return { errorKey: 'importFileReadError', errorParams: { error: String(err) } };
     }
 
-    // 解析并验证 JSON
+    // 解析 JSON
     let parsed: unknown;
     try {
       parsed = JSON.parse(rawContent);
@@ -170,89 +247,140 @@ export class ImportExportService {
       return { errorKey: 'importInvalidJson' };
     }
 
-    // 验证数据格式
+    // 校验新格式
     const validation = this.validateExportData(parsed);
     if (!validation.valid) {
-      return {
-        errorKey: 'importValidationError',
-        errorParams: { error: validation.error || '' },
-      };
+      return { errorKey: 'importValidationError', errorParams: { error: validation.error || '' } };
     }
 
-    const exportData = parsed as ExportData;
+    const exportData = parsed as FolderExportData;
     const incomingSnippets = exportData.snippets;
+    // 来源文件夹名作为新建文件夹的推荐名（默认文件夹为空时前端会要求用户填写）
+    const suggestedName = (exportData.folder?.name ?? '').trim();
 
-    // 导入统一进入默认文件夹，重复检测只比对默认文件夹内的现有片段
-    const existingSnippets = this.snippetService
-      .getAll()
-      .filter((s) => (s.folderId ?? DEFAULT_FOLDER_ID) === DEFAULT_FOLDER_ID);
-    const duplicates = this.findDuplicates(incomingSnippets, existingSnippets);
-
-    // 确定重复处理策略
-    let strategy: DuplicateStrategy | null = 'skip';
-    if (duplicates.length > 0) {
-      // 优先使用外部传入的回调（Webview 自定义对话框），否则使用系统对话框
-      if (askStrategy) {
-        const choice = await askStrategy(duplicates.length);
-        if (!choice) {
-          return null;
-        }
-        strategy = choice as DuplicateStrategy;
-      } else {
-        // 降级：使用 VS Code 原生对话框
-        const result = await vscode.window.showInformationMessage(
-          `Found ${duplicates.length} duplicate snippet(s). How would you like to handle them?`,
-          { modal: true },
-          'Overwrite',
-          'Skip',
-          'Merge'
-        );
-        switch (result) {
-          case 'Overwrite': strategy = 'overwrite'; break;
-          case 'Skip': strategy = 'skip'; break;
-          case 'Merge': strategy = 'merge'; break;
-          default: return null;
-        }
-      }
+    // 询问存放方式
+    const placement = await askPlacement({ suggestedName, count: incomingSnippets.length });
+    if (!placement) {
+      return null;
     }
 
-    // 执行导入
-    return await this.applyImport(incomingSnippets, existingSnippets, strategy);
+    if (placement.mode === 'new') {
+      return await this.importIntoNewFolder(placement.name, incomingSnippets);
+    }
+    return await this.importIntoExistingFolder(placement.folderId, incomingSnippets, askStrategy);
   }
 
   /**
-   * 验证导入数据的格式和内容安全性
-   * 检查顶层结构、字段类型、内容长度和恶意内容
-   * @param data 待验证的数据
-   * @returns 验证结果
+   * 新建文件夹并导入全部片段（全部视为新建，无重复处理）
+   * @param name 文件夹名称（前端已校验非空且不重名，此处做最终保护）
+   * @param incoming 待导入片段
+   */
+  private async importIntoNewFolder(
+    name: string,
+    incoming: SnippetData[]
+  ): Promise<ImportResult | ImportError> {
+    const trimmed = name.trim();
+    if (!trimmed || trimmed.length > MAX_FOLDER_NAME_LENGTH) {
+      return { errorKey: 'importFolderNameInvalid' };
+    }
+
+    const folder = await this.snippetService.createFolder(trimmed);
+    if (!folder) {
+      // 名称为空或重名（前端校验兜底）
+      return { errorKey: 'importFolderNameConflict', errorParams: { name: trimmed } };
+    }
+
+    const operations: ImportOperation[] = incoming.map((snippet) => {
+      const { id, usageCount, createdAt, ...data } = snippet;
+      return { type: 'create', folderId: folder.id, data };
+    });
+
+    if (operations.length > 0) {
+      await this.snippetService.batchImport(operations);
+    }
+
+    return {
+      imported: operations.length,
+      skipped: 0,
+      overwritten: 0,
+      merged: 0,
+      total: incoming.length,
+      folderName: trimmed,
+      errors: [],
+    };
+  }
+
+  /**
+   * 导入到已有文件夹，按重复策略处理与目标文件夹内片段的重复
+   * @param folderId 目标文件夹 id
+   * @param incoming 待导入片段
+   * @param askStrategy 重复策略选择回调
+   */
+  private async importIntoExistingFolder(
+    folderId: string,
+    incoming: SnippetData[],
+    askStrategy: (count: number) => Promise<string | null>
+  ): Promise<ImportResult | ImportError | null> {
+    const targetFolder = this.snippetService.getFolders().find((f) => f.id === folderId);
+    if (!targetFolder) {
+      return { errorKey: 'importFolderNotFound' };
+    }
+    const folderName = targetFolder.name;
+
+    // 仅与目标文件夹内的现有片段比对重复
+    const existing = this.snippetService.getSnippetsByFolder(folderId);
+    const duplicates = this.findDuplicates(incoming, existing);
+
+    // 确定重复策略
+    let strategy: DuplicateStrategy = 'skip';
+    if (duplicates.length > 0) {
+      const choice = await askStrategy(duplicates.length);
+      if (!choice) {
+        return null;
+      }
+      strategy = choice as DuplicateStrategy;
+    }
+
+    return await this.applyImport(incoming, existing, strategy, folderId, folderName);
+  }
+
+  /**
+   * 校验导入数据的格式与安全性（新格式：含 folder 与 snippets）
+   * @param data 待校验数据
    */
   private validateExportData(data: unknown): { valid: boolean; error?: string } {
-    // 必须是对象
     if (!data || typeof data !== 'object') {
       return { valid: false, error: 'File content is not a valid object' };
     }
 
     const obj = data as Record<string, unknown>;
 
-    // 检查 version 字段
     if (typeof obj.version !== 'string' || !obj.version.trim()) {
       return { valid: false, error: 'Missing valid version field' };
     }
 
-    // 检查 snippets 字段
+    // folder 字段必须存在且含 name 字符串（新格式标志）
+    if (!obj.folder || typeof obj.folder !== 'object') {
+      return { valid: false, error: 'Missing folder field' };
+    }
+    const folder = obj.folder as Record<string, unknown>;
+    if (typeof folder.name !== 'string') {
+      return { valid: false, error: 'Missing folder.name field' };
+    }
+    if ((folder.name as string).length > MAX_FOLDER_NAME_LENGTH) {
+      return { valid: false, error: 'Folder name too long' };
+    }
+
     if (!Array.isArray(obj.snippets)) {
       return { valid: false, error: 'Missing snippets array field' };
     }
 
-    // 检查片段数量上限
     if (obj.snippets.length > MAX_IMPORT_SNIPPETS) {
       return { valid: false, error: `Too many snippets (max ${MAX_IMPORT_SNIPPETS})` };
     }
 
-    // 逐条验证片段数据
     for (let i = 0; i < obj.snippets.length; i++) {
-      const snippet = obj.snippets[i];
-      const err = this.validateSnippet(snippet, i);
+      const err = this.validateSnippet(obj.snippets[i], i);
       if (err) {
         return { valid: false, error: err };
       }
@@ -262,10 +390,9 @@ export class ImportExportService {
   }
 
   /**
-   * 验证单条片段数据的格式和安全性
+   * 校验单条片段数据的格式与安全性
    * @param snippet 片段数据
-   * @param index 在数组中的索引，用于错误提示
-   * @returns 错误信息，无错误时返回 null
+   * @param index 数组索引，用于错误提示
    */
   private validateSnippet(snippet: unknown, index: number): string | null {
     if (!snippet || typeof snippet !== 'object') {
@@ -273,25 +400,20 @@ export class ImportExportService {
     }
 
     const s = snippet as Record<string, unknown>;
-    // 必填字段不包含 usageCount 和 createdAt，导入时自动补充
     const requiredFields = ['id', 'name', 'prefix', 'body', 'description', 'language'];
 
-    // 检查必填字段
     for (const field of requiredFields) {
       if (typeof s[field] !== 'string') {
         return `Snippet #${index + 1} missing ${field} field`;
       }
     }
 
-    // 检查字段长度限制，防止恶意超长内容
-    const stringFields = ['id', 'name', 'prefix', 'body', 'description', 'language'];
-    for (const field of stringFields) {
+    for (const field of requiredFields) {
       if ((s[field] as string).length > MAX_FIELD_LENGTH) {
         return `Snippet #${index + 1} has ${field} field too long`;
       }
     }
 
-    // 检查 name 和 prefix 非空
     if (!(s.name as string).trim()) {
       return `Snippet #${index + 1} has empty name`;
     }
@@ -299,19 +421,15 @@ export class ImportExportService {
       return `Snippet #${index + 1} has empty prefix`;
     }
 
-    // 检查 language 字段：支持逗号分隔的多语言，每个值必须非空
-    const langValue = s.language as string;
-    const langParts = langValue.split(',').map((l: string) => l.trim()).filter(Boolean);
+    const langParts = (s.language as string).split(',').map((l) => l.trim()).filter(Boolean);
     if (langParts.length === 0) {
       return `Snippet #${index + 1} has empty language`;
     }
 
-    // 如果存在 usageCount，必须为非负数字
     if (s.usageCount !== undefined && (typeof s.usageCount !== 'number' || s.usageCount < 0)) {
       return `Snippet #${index + 1} has invalid usageCount`;
     }
 
-    // 如果存在 createdAt，必须为有效字符串
     if (s.createdAt !== undefined && typeof s.createdAt !== 'string') {
       return `Snippet #${index + 1} has invalid createdAt`;
     }
@@ -320,11 +438,8 @@ export class ImportExportService {
   }
 
   /**
-   * 查找导入数据与现有数据中的重复片段
+   * 查找导入数据与目标文件夹现有数据中的重复片段
    * 以 id 相同 或 name+prefix 相同判定为重复
-   * @param incoming 导入的片段列表
-   * @param existing 现有的片段列表
-   * @returns 重复的片段列表
    */
   private findDuplicates(incoming: SnippetData[], existing: SnippetData[]): SnippetData[] {
     const existingIds = new Set(existing.map((s) => s.id));
@@ -335,17 +450,19 @@ export class ImportExportService {
   }
 
   /**
-   * 执行导入操作，根据策略处理重复数据
-   * 所有操作在内存中完成后只写一次文件，避免大量片段导入时的性能问题
-   * @param incoming 导入的片段列表
-   * @param existing 现有的片段列表
+   * 执行导入到指定文件夹，按策略处理重复，所有操作合并写入
+   * @param incoming 待导入片段
+   * @param existing 目标文件夹现有片段
    * @param strategy 重复处理策略
-   * @returns 导入结果统计
+   * @param targetFolderId 目标文件夹 id（新建片段归入此处）
+   * @param folderName 目标文件夹显示名，用于结果提示
    */
   private async applyImport(
     incoming: SnippetData[],
     existing: SnippetData[],
-    strategy: DuplicateStrategy | null
+    strategy: DuplicateStrategy,
+    targetFolderId: string,
+    folderName: string
   ): Promise<ImportResult> {
     const result: ImportResult = {
       imported: 0,
@@ -353,11 +470,12 @@ export class ImportExportService {
       overwritten: 0,
       merged: 0,
       total: incoming.length,
+      folderName,
       errors: [],
     };
 
     const existingIds = new Set(existing.map((s) => s.id));
-    // 构建 name+prefix 到现有片段的映射，用于按名称+前缀匹配时的覆盖操作
+    // name+prefix 到现有片段的映射，用于按名称+前缀匹配的覆盖
     const namePrefixMap = new Map<string, SnippetData>();
     for (const s of existing) {
       const key = `${s.name}||${s.prefix}`;
@@ -365,28 +483,24 @@ export class ImportExportService {
         namePrefixMap.set(key, s);
       }
     }
-    // 收集所有导入操作，最后一次性写入文件
     const operations: ImportOperation[] = [];
 
     for (const snippet of incoming) {
       try {
         const isIdDuplicate = existingIds.has(snippet.id);
         const namePrefixKey = `${snippet.name}||${snippet.prefix}`;
-        // 仅在 id 不重复时检查 name+prefix，避免同一条片段被双重判定
         const isNamePrefixDuplicate = !isIdDuplicate && namePrefixMap.has(namePrefixKey);
         const isDuplicate = isIdDuplicate || isNamePrefixDuplicate;
 
-        // 导入时过滤掉 id、usageCount 和 createdAt，由 create 方法自动补充新 id 和默认值
+        // 剔除 id/usageCount/createdAt，由后端补充
         const { id, usageCount, createdAt, ...snippetData } = snippet;
 
         if (isDuplicate) {
           switch (strategy) {
             case 'overwrite':
               if (isIdDuplicate) {
-                // id 重复：按原始 id 更新
                 operations.push({ type: 'update', id: snippet.id, data: snippetData });
               } else {
-                // name+prefix 重复：按现有片段的 id 更新
                 const existingSnippet = namePrefixMap.get(namePrefixKey)!;
                 operations.push({ type: 'update', id: existingSnippet.id, data: snippetData });
               }
@@ -395,30 +509,24 @@ export class ImportExportService {
               break;
 
             case 'skip':
-              // 跳过：不处理
               result.skipped++;
               break;
 
             case 'merge':
-              // 合并：生成新 ID 保留两者
-              operations.push({ type: 'create', folderId: DEFAULT_FOLDER_ID, data: snippetData });
+              operations.push({ type: 'create', folderId: targetFolderId, data: snippetData });
               result.merged++;
               result.imported++;
               break;
           }
         } else {
-          // 非重复：直接创建
-          operations.push({ type: 'create', folderId: DEFAULT_FOLDER_ID, data: snippetData });
+          operations.push({ type: 'create', folderId: targetFolderId, data: snippetData });
           result.imported++;
         }
       } catch (err) {
-        result.errors.push(
-          `Snippet "${snippet.name}": ${err}`
-        );
+        result.errors.push(`Snippet "${snippet.name}": ${err}`);
       }
     }
 
-    // 批量执行所有操作，只写一次文件
     if (operations.length > 0) {
       await this.snippetService.batchImport(operations);
     }
@@ -428,8 +536,6 @@ export class ImportExportService {
 
   /**
    * 格式化时间戳为 YYYYMMDD_HHMMSS
-   * @param date 日期对象
-   * @returns 格式化的时间戳字符串
    */
   private formatTimestamp(date: Date): string {
     const y = date.getFullYear();
