@@ -53,6 +53,14 @@ function folderDisplayName(folder: Folder): string {
   return folder.id === DEFAULT_FOLDER_ID ? t('folder.defaultName') : folder.name
 }
 
+/** 导入存放方式对话框的文件夹下拉选项，默认文件夹用 i18n 名称 */
+const placementFolderOptions = computed(() =>
+  placementDialog.value.folders.map((f) => ({
+    value: f.id,
+    label: f.id === DEFAULT_FOLDER_ID ? t('folder.defaultName') : f.name,
+  }))
+)
+
 /** 切换文件夹折叠/展开状态 */
 function toggleFolder(folderId: string) {
   const next = new Set(collapsedFolders.value)
@@ -1060,11 +1068,11 @@ function handleListScroll() {
 
           <!-- 导入到已有文件夹：下拉选择 -->
           <div v-else class="placement-field">
-            <select v-model="placementDialog.targetFolderId" class="form-input">
-              <option v-for="f in placementDialog.folders" :key="f.id" :value="f.id">
-                {{ folderDisplayName(f) }}
-              </option>
-            </select>
+            <LanguageSelect
+              v-model="placementDialog.targetFolderId"
+              :options="placementFolderOptions"
+              :placeholder="t('folder.namePlaceholder')"
+            />
             <span class="placement-note">{{ t('importExport.placementExistingNote') }}</span>
           </div>
         </div>
