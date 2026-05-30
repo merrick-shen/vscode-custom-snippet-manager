@@ -20,6 +20,7 @@ import { highlightCodeString } from '../utils/codemirror-langs'
 import LanguageSelect from '../components/LanguageSelect.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import NotificationBar from '../components/NotificationBar.vue'
+import StrategyOption from '../components/StrategyOption.vue'
 import SettingsView from './SettingsView.vue'
 import { SUPPORTED_LOCALES } from '../i18n'
 
@@ -904,27 +905,9 @@ function handleListScroll() {
       <template #body>
         <p>{{ t('importExport.duplicateContent', { count: duplicateDialog.count }) }}</p>
         <div class="strategy-options">
-          <button class="strategy-option" @click="handleDuplicateStrategy('overwrite')">
-            <div class="strategy-header">
-              <Icon icon="carbon:edit" width="16" height="16" />
-              <span class="strategy-name">{{ t('importExport.overwrite') }}</span>
-            </div>
-            <span class="strategy-desc">{{ t('importExport.overwriteDesc') }}</span>
-          </button>
-          <button class="strategy-option" @click="handleDuplicateStrategy('skip')">
-            <div class="strategy-header">
-              <Icon icon="carbon:error-outline" width="16" height="16" />
-              <span class="strategy-name">{{ t('importExport.skip') }}</span>
-            </div>
-            <span class="strategy-desc">{{ t('importExport.skipDesc') }}</span>
-          </button>
-          <button class="strategy-option" @click="handleDuplicateStrategy('merge')">
-            <div class="strategy-header">
-              <Icon icon="carbon:link" width="16" height="16" />
-              <span class="strategy-name">{{ t('importExport.merge') }}</span>
-            </div>
-            <span class="strategy-desc">{{ t('importExport.mergeDesc') }}</span>
-          </button>
+          <StrategyOption icon="carbon:edit" :name="t('importExport.overwrite')" :desc="t('importExport.overwriteDesc')" @click="handleDuplicateStrategy('overwrite')" />
+          <StrategyOption icon="carbon:error-outline" :name="t('importExport.skip')" :desc="t('importExport.skipDesc')" @click="handleDuplicateStrategy('skip')" />
+          <StrategyOption icon="carbon:link" :name="t('importExport.merge')" :desc="t('importExport.mergeDesc')" @click="handleDuplicateStrategy('merge')" />
         </div>
       </template>
       <template #footer>
@@ -960,20 +943,8 @@ function handleListScroll() {
       <template #body>
         <p>{{ t('folder.deleteContent', { name: deleteFolderDialog.name, count: deleteFolderDialog.count }) }}</p>
         <div v-if="deleteFolderDialog.count > 0" class="strategy-options">
-          <button class="strategy-option" @click="confirmDeleteFolder('move')">
-            <div class="strategy-header">
-              <Icon icon="carbon:folder" width="16" height="16" />
-              <span class="strategy-name">{{ t('folder.deleteMove') }}</span>
-            </div>
-            <span class="strategy-desc">{{ t('folder.deleteMoveDesc') }}</span>
-          </button>
-          <button class="strategy-option strategy-option-danger" @click="confirmDeleteFolder('delete')">
-            <div class="strategy-header">
-              <Icon icon="carbon:trash-can" width="16" height="16" />
-              <span class="strategy-name">{{ t('folder.deleteWithSnippets') }}</span>
-            </div>
-            <span class="strategy-desc">{{ t('folder.deleteWithSnippetsDesc') }}</span>
-          </button>
+          <StrategyOption icon="carbon:folder" :name="t('folder.deleteMove')" :desc="t('folder.deleteMoveDesc')" @click="confirmDeleteFolder('move')" />
+          <StrategyOption icon="carbon:trash-can" :name="t('folder.deleteWithSnippets')" :desc="t('folder.deleteWithSnippetsDesc')" danger @click="confirmDeleteFolder('delete')" />
         </div>
       </template>
       <template #footer>
@@ -1519,10 +1490,6 @@ function handleListScroll() {
   color: $color-description;
 }
 
-.strategy-option-danger:hover {
-  border-color: $color-error;
-}
-
 .snippet-item {
   display: flex;
   align-items: center;
@@ -1745,42 +1712,6 @@ function handleListScroll() {
   @include flex-column;
   gap: $spacing-sm;
   margin-top: $spacing-md;
-}
-
-.strategy-option {
-  @include flex-column;
-  gap: $spacing-xs;
-  padding: 10px 14px;
-  border: 1px solid $border-input;
-  border-radius: $radius-md;
-  background: $bg-input;
-  color: $color-foreground;
-  cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-  transition: background-color 0.15s, border-color 0.15s;
-
-  &:hover {
-    background: $bg-list-hover;
-    border-color: $color-focus;
-  }
-}
-
-.strategy-header {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-}
-
-.strategy-name {
-  font-size: $font-size-base;
-  font-weight: 600;
-}
-
-.strategy-desc {
-  font-size: $font-size-xs;
-  color: $color-description;
-  padding-left: 24px;
 }
 
 // ===== 共享样式 =====
