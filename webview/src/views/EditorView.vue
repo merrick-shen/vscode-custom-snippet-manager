@@ -12,9 +12,6 @@ import type { Snippet, Folder } from '../types'
 import { DEFAULT_FOLDER_ID } from '../types'
 import { SUPPORTED_LANGUAGES } from '../utils/languages'
 import { postToExt, onExtMessage } from '../composables/useMessage'
-import LanguageSelect from '../components/LanguageSelect.vue'
-import BaseButton from '../components/BaseButton.vue'
-import CodeEditor from '../components/CodeEditor.vue'
 
 const { t, locale } = useI18n()
 

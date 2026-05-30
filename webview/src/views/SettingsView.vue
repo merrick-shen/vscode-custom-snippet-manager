@@ -9,7 +9,6 @@ import { useI18n } from 'vue-i18n'
 import { Icon } from '@iconify/vue'
 import { postToExt } from '../composables/useMessage'
 import { useConfirm } from '../composables/useConfirm'
-import ConfirmDialog from '../components/ConfirmDialog.vue'
 
 const { t } = useI18n()
 const { confirmState, showConfirm, handleConfirmOk, handleConfirmCancel } = useConfirm()

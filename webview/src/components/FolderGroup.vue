@@ -24,7 +24,6 @@
  */
 import { Icon } from '@iconify/vue'
 import type { Snippet, Folder } from '../types'
-import SnippetItem from './SnippetItem.vue'
 
 defineProps<{
   /** 文件夹数据 */

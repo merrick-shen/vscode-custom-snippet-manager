@@ -21,7 +21,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Storage Structure**: Snippets are now stored in separate files per folder; existing data is migrated automatically and the original data is backed up
 - **Export Files**: Export files are now organized by folder, with the folder name included in the file name
 - **Duplicate Detection**: When importing into an existing folder, duplicate detection only considers snippets within that folder
-- **Import Folder Selector**: The folder selection dropdown when importing into an existing folder now uses the same component as the editor page
 
 ## [1.2.0] - 2026-05-26
 

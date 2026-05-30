@@ -1,7 +1,6 @@
 <!-- 通用确认弹窗组件：标题 + 内容(slot) + 按钮(slot) -->
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import BaseButton from './BaseButton.vue'
 
 const { t } = useI18n()
 
