@@ -692,14 +692,14 @@ function handleListScroll() {
         <h2 class="header-title">{{ t('app.title') }}</h2>
         <!-- 设置按钮 -->
         <button class="settings-btn" :title="t('settings.title')" @click="currentView = 'settings'">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <Icon icon="carbon:settings" width="15" height="15" />
         </button>
         <!-- 语言切换下拉菜单 -->
         <div ref="localeMenuRef" class="locale-select">
           <button class="locale-btn" @click="toggleLocaleMenu">
             <Icon :icon="currentLocaleFlag" class="locale-flag" />
             {{ currentLocaleLabel }}
-            <svg class="locale-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <Icon icon="carbon:chevron-down" class="locale-arrow" width="10" height="10" />
           </button>
           <transition name="dropdown">
             <div v-if="localeMenuOpen" class="locale-dropdown">
@@ -712,7 +712,7 @@ function handleListScroll() {
               >
                 <Icon :icon="`circle-flags:${opt.flag}`" class="locale-option-flag" />
                 <span class="locale-option-label">{{ opt.label }}</span>
-                <svg v-if="opt.value === locale" class="locale-check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <Icon v-if="opt.value === locale" icon="carbon:checkmark" class="locale-check" width="12" height="12" />
               </div>
             </div>
           </transition>
@@ -720,23 +720,23 @@ function handleListScroll() {
       </div>
       <!-- 新建片段按钮，与编辑页 btn-primary 风格统一 -->
       <button class="btn btn-primary create-btn" @click="handleCreate">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <Icon icon="carbon:add" width="15" height="15" />
         {{ t('actions.create') }}
       </button>
       <!-- 导入导出按钮行 -->
       <div class="import-export-row">
         <button class="btn btn-secondary btn-sm ie-btn" @click="handleExport">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <Icon icon="carbon:upload" width="13" height="13" />
           {{ t('importExport.exportConfig') }}
         </button>
         <button class="btn btn-secondary btn-sm ie-btn" @click="handleImport">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <Icon icon="carbon:download" width="13" height="13" />
           {{ t('importExport.importConfig') }}
         </button>
       </div>
       <!-- 新建文件夹按钮 -->
       <button class="btn btn-secondary btn-sm new-folder-btn" @click="openCreateFolder">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+        <Icon icon="carbon:folder-add" width="13" height="13" />
         {{ t('folder.create') }}
       </button>
     </div>
@@ -744,7 +744,7 @@ function handleListScroll() {
     <!-- 搜索框：与编辑页 form-input 风格统一 -->
     <div class="sidebar-search">
       <div class="search-wrapper">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <Icon icon="carbon:search" class="search-icon" width="14" height="14" />
         <input
           v-model="searchQuery"
           class="form-input search-input"
@@ -752,7 +752,7 @@ function handleListScroll() {
         />
         <!-- 清除按钮 -->
         <button v-if="searchQuery" class="search-clear" @click="searchQuery = ''">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <Icon icon="carbon:close" width="12" height="12" />
         </button>
       </div>
     </div>
@@ -770,8 +770,8 @@ function handleListScroll() {
     <!-- 排序切换按钮 -->
     <div class="sidebar-sort">
       <button class="sort-toggle-btn" @click="toggleSortOrder" :title="currentSortLabel">
-        <svg v-if="sortOrder === 'desc'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14"/><path d="M5 12l7-7 7 7"/></svg>
+        <Icon v-if="sortOrder === 'desc'" icon="carbon:arrow-down" width="12" height="12" />
+        <Icon v-else icon="carbon:arrow-up" width="12" height="12" />
         {{ currentSortLabel }}
       </button>
     </div>
@@ -792,20 +792,22 @@ function handleListScroll() {
         >
           <!-- 文件夹头部：折叠箭头 + 名称 + 数量 + 操作按钮 -->
           <div class="folder-header" @click="toggleFolder(group.folder.id)">
-            <svg
+            <Icon
+              icon="carbon:chevron-down"
               class="folder-arrow"
               :class="{ 'is-collapsed': collapsedFolders.has(group.folder.id) }"
-              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            ><polyline points="6 9 12 15 18 9"/></svg>
-            <svg class="folder-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              width="12"
+              height="12"
+            />
+            <Icon icon="carbon:folder" class="folder-icon" width="14" height="14" />
             <span class="folder-name">{{ folderDisplayName(group.folder) }}</span>
             <!-- 文件夹操作：放在数量左侧，使数量始终贴右，与默认文件夹对齐 -->
             <div v-if="group.folder.id !== DEFAULT_FOLDER_ID" class="folder-actions">
               <button class="folder-action-btn" :title="t('folder.rename')" @click.stop="openRenameFolder(group.folder)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <Icon icon="carbon:edit" width="12" height="12" />
               </button>
               <button class="folder-action-btn folder-action-danger" :title="t('folder.delete')" @click.stop="openDeleteFolder(group.folder)">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <Icon icon="carbon:trash-can" width="12" height="12" />
               </button>
             </div>
             <span class="folder-count">{{ group.snippets.length }}</span>
@@ -848,11 +850,11 @@ function handleListScroll() {
               <div class="item-actions">
                 <!-- 编辑按钮 -->
                 <button class="action-btn" :title="t('actions.edit')" @click.stop="handleEdit(snippet)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <Icon icon="carbon:edit" width="14" height="14" />
                 </button>
                 <!-- 删除按钮 -->
                 <button class="action-btn action-btn-danger" :title="t('actions.delete')" @click.stop="handleDelete(snippet)">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <Icon icon="carbon:trash-can" width="14" height="14" />
                 </button>
               </div>
             </div>
@@ -904,21 +906,21 @@ function handleListScroll() {
           <div class="strategy-options">
             <button class="strategy-option" @click="handleDuplicateStrategy('overwrite')">
               <div class="strategy-header">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <Icon icon="carbon:edit" width="16" height="16" />
                 <span class="strategy-name">{{ t('importExport.overwrite') }}</span>
               </div>
               <span class="strategy-desc">{{ t('importExport.overwriteDesc') }}</span>
             </button>
             <button class="strategy-option" @click="handleDuplicateStrategy('skip')">
               <div class="strategy-header">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                <Icon icon="carbon:error-outline" width="16" height="16" />
                 <span class="strategy-name">{{ t('importExport.skip') }}</span>
               </div>
               <span class="strategy-desc">{{ t('importExport.skipDesc') }}</span>
             </button>
             <button class="strategy-option" @click="handleDuplicateStrategy('merge')">
               <div class="strategy-header">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></svg>
+                <Icon icon="carbon:link" width="16" height="16" />
                 <span class="strategy-name">{{ t('importExport.merge') }}</span>
               </div>
               <span class="strategy-desc">{{ t('importExport.mergeDesc') }}</span>
@@ -965,14 +967,14 @@ function handleListScroll() {
           <div v-if="deleteFolderDialog.count > 0" class="strategy-options">
             <button class="strategy-option" @click="confirmDeleteFolder('move')">
               <div class="strategy-header">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><polyline points="9 14 12 11 15 14"/></svg>
+                <Icon icon="carbon:folder" width="16" height="16" />
                 <span class="strategy-name">{{ t('folder.deleteMove') }}</span>
               </div>
               <span class="strategy-desc">{{ t('folder.deleteMoveDesc') }}</span>
             </button>
             <button class="strategy-option strategy-option-danger" @click="confirmDeleteFolder('delete')">
               <div class="strategy-header">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <Icon icon="carbon:trash-can" width="16" height="16" />
                 <span class="strategy-name">{{ t('folder.deleteWithSnippets') }}</span>
               </div>
               <span class="strategy-desc">{{ t('folder.deleteWithSnippetsDesc') }}</span>
@@ -1015,7 +1017,7 @@ function handleListScroll() {
                 :checked="exportDialog.selectedIds.has(f.id)"
                 @change="toggleExportFolder(f.id)"
               />
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+              <Icon icon="carbon:folder" width="14" height="14" />
               <span class="export-option-label">{{ folderDisplayName(f) }}</span>
             </label>
           </div>

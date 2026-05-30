@@ -215,9 +215,7 @@ onBeforeUnmount(() => {
         </template>
       </div>
       <!-- 下拉箭头 -->
-      <svg class="lang-select-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
+      <Icon icon="carbon:chevron-down" class="lang-select-arrow" width="14" height="14" />
     </div>
 
     <!-- 下拉菜单列表 -->
@@ -236,27 +234,20 @@ onBeforeUnmount(() => {
         >
           <!-- 多选模式下显示复选框 -->
           <span v-if="multiple" class="checkbox" :class="{ 'is-checked': isOptionSelected(opt) }">
-            <svg v-if="isOptionSelected(opt)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <Icon v-if="isOptionSelected(opt)" icon="carbon:checkmark" width="12" height="12" />
           </span>
           <!-- 选项图标 -->
           <Icon v-if="opt.icon" :icon="opt.icon" class="lang-icon" />
           <!-- 选项文本 -->
           <span class="lang-label">{{ opt.label }}</span>
           <!-- 单选模式下的选中勾号 -->
-          <svg
+          <Icon
             v-if="!multiple && isOptionSelected(opt)"
+            icon="carbon:checkmark"
             class="lang-check"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
             width="14"
             height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          >
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
+          />
         </div>
       </div>
     </transition>

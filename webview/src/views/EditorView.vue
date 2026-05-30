@@ -7,6 +7,7 @@
  */
 import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { Icon } from '@iconify/vue'
 import type { Snippet, Folder } from '../types'
 import { DEFAULT_FOLDER_ID } from '../types'
 import { SUPPORTED_LANGUAGES } from '../utils/languages'
@@ -164,13 +165,8 @@ onMounted(() => {
       <div class="header-content">
         <!-- 模式图标 -->
         <div class="header-icon" :class="{ 'header-icon--edit': isEditing }">
-          <svg v-if="isEditing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
+          <Icon v-if="isEditing" icon="carbon:edit" width="18" height="18" />
+          <Icon v-else icon="carbon:add" width="18" height="18" />
         </div>
         <!-- 标题和副标题 -->
         <div class="header-text">
@@ -184,7 +180,7 @@ onMounted(() => {
     <div class="editor-body">
       <!-- 前缀命名规范提示 -->
       <div class="prefix-notice">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <Icon icon="carbon:information" width="14" height="14" />
         <span>{{ t('form.prefixNotice') }}</span>
       </div>
 
@@ -297,7 +293,7 @@ onMounted(() => {
           {{ t('form.cancel') }}
         </button>
         <button class="btn btn-primary" :disabled="saving" @click="handleSave">
-          <svg v-if="!saving" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <Icon v-if="!saving" icon="carbon:checkmark" width="16" height="16" />
           <span v-else class="spinner"></span>
           {{ t('form.save') }}
         </button>

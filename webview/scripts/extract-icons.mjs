@@ -52,6 +52,18 @@ function parseIconsFromLanguages() {
   if (!icons['carbon']) icons['carbon'] = []
   if (!icons['carbon'].includes('code')) icons['carbon'].push('code')
 
+  // UI 通用图标（替代内联 SVG）
+  const uiIcons = [
+    'settings', 'chevron-down', 'chevron-left', 'chevron-up',
+    'checkmark', 'add', 'upload', 'download', 'folder-add',
+    'search', 'close', 'arrow-down', 'arrow-up',
+    'folder', 'edit', 'trash-can', 'error-outline', 'link',
+    'save', 'information', 'launch',
+  ]
+  for (const name of uiIcons) {
+    if (!icons['carbon'].includes(name)) icons['carbon'].push(name)
+  }
+
   // 从 locales.json 解析国旗图标
   const localesPath = resolve(__dirname, '..', '..', 'locales.json')
   const localesData = JSON.parse(readFileSync(localesPath, 'utf-8'))

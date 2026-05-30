@@ -1,5 +1,6 @@
 <!-- 通知条组件：固定在页面底部，支持成功/警告/错误三种类型 -->
 <script setup lang="ts">
+import { Icon } from '@iconify/vue'
 import type { NotificationType } from '../composables/useNotification'
 
 defineProps<{
@@ -21,7 +22,7 @@ const emit = defineEmits<{
     <div v-if="visible" class="notification-bar" :class="`notification-${type}`">
       <span class="notification-text">{{ message }}</span>
       <button class="notification-close" @click="emit('close')">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <Icon icon="carbon:close" width="12" height="12" />
       </button>
     </div>
   </transition>

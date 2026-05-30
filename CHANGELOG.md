@@ -16,6 +16,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Changed
 
+- **Icon System**: Replaced all inline SVG icons with @iconify/vue icon library (carbon icon set)
 - **Sidebar Layout**: Sidebar now displays snippets as a collapsible folder-grouped tree
 - **Storage Structure**: Snippets are now stored in separate files per folder; existing data is migrated automatically and the original data is backed up
 - **Export Files**: Export files are now organized by folder, with the folder name included in the file name

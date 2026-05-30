@@ -62,7 +62,7 @@ const emit = defineEmits<{
     <!-- 顶部导航栏 -->
     <div class="settings-header">
       <button class="back-btn" @click="emit('back')">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <Icon icon="carbon:chevron-left" width="16" height="16" />
         {{ t('settings.back') }}
       </button>
       <h2 class="settings-title">{{ t('settings.title') }}</h2>
@@ -94,7 +94,7 @@ const emit = defineEmits<{
           <span class="info-value info-link">
             <Icon icon="mdi:github" class="info-icon" />
             GitHub
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <Icon icon="carbon:launch" width="10" height="10" />
           </span>
         </div>
         <div class="info-item clickable" @click="openExternal(GITHUB_URL + '/issues')">
@@ -102,7 +102,7 @@ const emit = defineEmits<{
           <span class="info-value info-link">
             <Icon icon="mdi:message-text-outline" class="info-icon" />
             GitHub Issues
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <Icon icon="carbon:launch" width="10" height="10" />
           </span>
         </div>
       </div>
@@ -115,13 +115,13 @@ const emit = defineEmits<{
 
       <!-- 打开代码片段目录按钮 -->
       <button class="open-dir-btn" @click="openSnippetsDirectory">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <Icon icon="carbon:folder" width="14" height="14" />
         {{ t('settings.openDirectory') }}
       </button>
 
       <!-- 清空所有数据按钮 -->
       <button class="clear-all-btn" @click="handleClearAll">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <Icon icon="carbon:trash-can" width="14" height="14" />
         {{ t('settings.clearAllData') }}
       </button>
 
