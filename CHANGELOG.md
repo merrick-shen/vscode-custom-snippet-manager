@@ -23,6 +23,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Duplicate Detection**: When importing into an existing folder, duplicate detection only considers snippets within that folder
 - **Import Compatibility**: Export files from 1.2.0 and earlier (flat snippet array format) cannot be imported; only the new folder-based format is supported
 
+### Fixed
+
+- **Save Button**: Fixed save button becoming clickable again before the backend responds, which could cause duplicate snippet creation
+
 ## [1.2.0] - 2026-05-26
 
 ### Added

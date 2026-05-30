@@ -110,8 +110,7 @@ function handleSave() {
     // 新建模式：发送创建消息
     postToExt('createSnippet', { ...form.value })
   }
-  // 延迟重置保存状态，等待后端响应
-  setTimeout(() => { saving.value = false }, 1000)
+  // saving 在后端响应回调中重置（snippetCreated/snippetUpdated/error），不再使用固定延迟
 }
 
 /** 关闭编辑器面板 */
@@ -128,11 +127,13 @@ onExtMessage('setSnippet', (payload) => {
 
 // 创建成功后关闭面板
 onExtMessage('snippetCreated', () => {
+  saving.value = false
   handleClose()
 })
 
 // 更新成功后关闭面板
 onExtMessage('snippetUpdated', () => {
+  saving.value = false
   handleClose()
 })
 
