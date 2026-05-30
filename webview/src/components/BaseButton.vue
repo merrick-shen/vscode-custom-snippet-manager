@@ -161,8 +161,4 @@ function handleClick(e: MouseEvent) {
 .base-btn__icon {
   flex-shrink: 0;
 }
-
-.base-btn__text {
-  // 文字容器，确保 slot 内容对齐
-}
 </style>

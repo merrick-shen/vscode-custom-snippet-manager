@@ -85,42 +85,19 @@ const currentSortLabel = computed(() => {
   return sortOrder.value === 'desc' ? t('sort.newestFirst') : t('sort.oldestFirst')
 })
 
-// 语言切换下拉菜单展开状态
-const localeMenuOpen = ref(false)
-// 语言切换下拉菜单容器引用
-const localeMenuRef = ref<HTMLElement | null>(null)
-
-// 语言切换下拉选项，每种语言用其自身名称和国旗显示
-const localeOptions = computed(() =>
+// 语言切换下拉选项，适配 LanguageSelect 组件格式
+const localeSelectOptions = computed(() =>
   SUPPORTED_LOCALES.map((l) => ({
     label: l.label,
     value: l.value,
-    flag: l.flag,
+    icon: `circle-flags:${l.flag}`,
   }))
 )
-
-// 当前选中语言的国旗图标名，用于触发器显示
-const currentLocaleFlag = computed(() => {
-  const found = SUPPORTED_LOCALES.find((l) => l.value === locale.value)
-  return found ? `circle-flags:${found.flag}` : 'circle-flags:us'
-})
-
-// 当前选中的语言名称，用于触发器显示
-const currentLocaleLabel = computed(() => {
-  const found = SUPPORTED_LOCALES.find((l) => l.value === locale.value)
-  return found ? found.label : '简体中文'
-})
 
 /** 切换语言，同时通知扩展持久化保存 */
 function changeLocale(val: string) {
   locale.value = val
   postToExt('changeLocale', val)
-  localeMenuOpen.value = false
-}
-
-/** 切换语言下拉菜单展开/收起 */
-function toggleLocaleMenu() {
-  localeMenuOpen.value = !localeMenuOpen.value
 }
 
 /** 切换排序方向（正序/倒序），并通知后端持久化保存 */
@@ -129,21 +106,11 @@ function toggleSortOrder() {
   postToExt('changeSortOrder', sortOrder.value)
 }
 
-/** 点击外部关闭语言下拉菜单 */
-function handleLocaleClickOutside(e: MouseEvent) {
-  if (localeMenuRef.value && !localeMenuRef.value.contains(e.target as Node)) {
-    localeMenuOpen.value = false
-  }
-}
-
 onMounted(() => {
-  document.addEventListener('click', handleLocaleClickOutside)
-  // 组件挂载时请求片段列表
   postToExt('getSnippets')
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleLocaleClickOutside)
   if (previewTimer) {
     clearTimeout(previewTimer)
     previewTimer = null
@@ -697,28 +664,12 @@ function handleListScroll() {
           <Icon icon="carbon:settings" width="15" height="15" />
         </button>
         <!-- 语言切换下拉菜单 -->
-        <div ref="localeMenuRef" class="locale-select">
-          <button class="locale-btn" @click="toggleLocaleMenu">
-            <Icon :icon="currentLocaleFlag" class="locale-flag" />
-            {{ currentLocaleLabel }}
-            <Icon icon="carbon:chevron-down" class="locale-arrow" width="10" height="10" />
-          </button>
-          <transition name="dropdown">
-            <div v-if="localeMenuOpen" class="locale-dropdown">
-              <div
-                v-for="opt in localeOptions"
-                :key="opt.value"
-                class="locale-option"
-                :class="{ 'is-selected': opt.value === locale }"
-                @click="changeLocale(opt.value)"
-              >
-                <Icon :icon="`circle-flags:${opt.flag}`" class="locale-option-flag" />
-                <span class="locale-option-label">{{ opt.label }}</span>
-                <Icon v-if="opt.value === locale" icon="carbon:checkmark" class="locale-check" width="12" height="12" />
-              </div>
-            </div>
-          </transition>
-        </div>
+        <LanguageSelect
+          :model-value="locale"
+          :options="localeSelectOptions"
+          class="locale-select"
+          @update:model-value="changeLocale"
+        />
       </div>
       <!-- 新建片段按钮，与编辑页 btn-primary 风格统一 -->
       <BaseButton variant="primary" icon="carbon:add" class="create-btn" @click="handleCreate">{{ t('actions.create') }}</BaseButton>
@@ -1077,85 +1028,39 @@ function handleListScroll() {
 .locale-select {
   position: relative;
   flex-shrink: 0;
-}
+  width: auto;
 
-.locale-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 3px $spacing-sm;
-  border: 1px solid $border-input;
-  border-radius: $radius-sm;
-  background: transparent;
-  color: $color-description;
-  font-size: 10px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color 0.15s, border-color 0.15s;
-  letter-spacing: 0.3px;
-
-  &:hover {
-    background: $bg-hover;
-    border-color: $color-focus;
+  :deep(.lang-select) {
+    width: auto;
   }
-}
 
-.locale-flag {
-  font-size: $font-size-lg;
-  line-height: 1;
-  flex-shrink: 0;
-}
+  :deep(.lang-select-trigger) {
+    width: auto;
+    padding: 3px 6px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    gap: 3px;
+  }
 
-.locale-arrow {
-  flex-shrink: 0;
-  opacity: 0.6;
-  transition: transform 0.2s;
-}
+  :deep(.lang-icon) {
+    font-size: 16px;
+  }
 
-.locale-dropdown {
-  @include dropdown-panel;
-  top: calc(100% + 4px);
-  right: 0;
-  min-width: 160px;
-}
+  :deep(.lang-label) {
+    font-size: 10px;
+  }
 
-.locale-option {
-  @include dropdown-option;
-  justify-content: space-between;
-}
+  :deep(.lang-select-arrow) {
+    width: 10px;
+    height: 10px;
+  }
 
-.locale-option-flag {
-  font-size: 16px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.locale-option-label {
-  flex: 1;
-}
-
-.locale-check {
-  flex-shrink: 0;
-  color: $btn-primary-bg;
-}
-
-.dropdown-enter-active {
-  transition: all 0.15s ease-out;
-}
-
-.dropdown-leave-active {
-  transition: all 0.1s ease-in;
-}
-
-.dropdown-enter-from {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-.dropdown-leave-to {
-  opacity: 0;
-  transform: translateY(-2px);
+  :deep(.lang-select-dropdown) {
+    right: 0;
+    left: auto;
+    min-width: 160px;
+  }
 }
 
 .create-btn {
