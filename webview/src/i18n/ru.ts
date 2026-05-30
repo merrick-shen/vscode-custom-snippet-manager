@@ -137,6 +137,7 @@ export default {
     openDirectory: 'Открыть папку сниппетов',
     storagePath: 'Путь хранения',
     clearAllData: 'Очистить все данные',
+    backupAllData: 'Резервное копирование всех данных',
   },
   clearAll: {
     title: 'Подтверждение очистки',
@@ -144,5 +145,10 @@ export default {
     confirm: 'Очистить',
     cancel: 'Отмена',
     success: 'Очищено {count} сниппет(ов)',
+  },
+  backup: {
+    success: 'Резервная копия создана — {folderCount} папок(ки), {count} сниппет(ов)',
+    failed: 'Не удалось создать резервную копию, попробуйте снова',
+    exporting: 'Экспорт...',
   },
 }

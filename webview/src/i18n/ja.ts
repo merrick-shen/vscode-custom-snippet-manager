@@ -137,6 +137,7 @@ export default {
     openDirectory: 'スニペット保存先を開く',
     storagePath: '保存先パス',
     clearAllData: 'すべてのデータを消去',
+    backupAllData: 'すべてのデータをバックアップ',
   },
   clearAll: {
     title: 'データ消去の確認',
@@ -144,5 +145,10 @@ export default {
     confirm: '消去',
     cancel: 'キャンセル',
     success: '{count} 件のスニペットを消去しました',
+  },
+  backup: {
+    success: 'バックアップ成功 — {folderCount} フォルダー、{count} スニペット',
+    failed: 'バックアップに失敗しました。もう一度お試しください',
+    exporting: 'エクスポート中...',
   },
 }

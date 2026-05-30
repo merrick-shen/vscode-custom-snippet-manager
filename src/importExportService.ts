@@ -17,6 +17,7 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import archiver = require('archiver');
 import { SnippetService, SnippetData, ImportOperation } from './snippetService';
 
 /** 导出文件的顶层结构（按文件夹组织） */
@@ -545,5 +546,96 @@ export class ImportExportService {
     const min = String(date.getMinutes()).padStart(2, '0');
     const s = String(date.getSeconds()).padStart(2, '0');
     return `${y}${m}${d}_${h}${min}${s}`;
+  }
+
+  /**
+   * 将全部文件夹数据导出为 ZIP 备份文件
+   * 每个文件夹生成一个 JSON 文件，打包后写入用户指定路径
+   * @returns 导出结果，Webview 端据此用 i18n 显示提示
+   */
+  async exportAllAsZip(): Promise<ExportResult> {
+    const allFolders = this.snippetService.getFolders();
+    if (allFolders.length === 0) {
+      return { success: false };
+    }
+
+    // 检查是否有片段数据
+    let totalSnippets = 0;
+    for (const folder of allFolders) {
+      totalSnippets += this.snippetService.getSnippetsByFolder(folder.id).length;
+    }
+    if (totalSnippets === 0) {
+      return { success: false };
+    }
+
+    // 选择保存位置
+    const timestamp = this.formatTimestamp(new Date());
+    const defaultFileName = `snippet_backup_${timestamp}.zip`;
+    const uri = await vscode.window.showSaveDialog({
+      defaultUri: vscode.Uri.file(defaultFileName),
+      filters: { 'ZIP Files': ['zip'] },
+      title: 'Save Backup',
+      saveLabel: 'Save Backup',
+    });
+
+    if (!uri) {
+      return { success: false };
+    }
+
+    const zipPath = uri.fsPath;
+
+    try {
+      await this.writeZip(allFolders, zipPath, timestamp);
+      return { success: true, folderCount: allFolders.length, count: totalSnippets };
+    } catch {
+      return { success: false };
+    }
+  }
+
+  /**
+   * 将所有文件夹数据写入 ZIP 文件
+   * @param folders 文件夹列表
+   * @param zipPath ZIP 输出路径
+   * @param timestamp 时间戳，用于 JSON 文件命名
+   */
+  private writeZip(
+    folders: { id: string; name: string }[],
+    zipPath: string,
+    timestamp: string
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const output = fs.createWriteStream(zipPath);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+
+      output.on('close', () => resolve());
+      archive.on('error', (err: Error) => reject(err));
+
+      archive.pipe(output);
+
+      const usedNames = new Set<string>();
+      for (const folder of folders) {
+        const snippets = this.snippetService.getSnippetsByFolder(folder.id);
+        if (snippets.length === 0) {
+          continue;
+        }
+
+        const exportableSnippets = snippets.map(
+          ({ usageCount, createdAt, folderId: _fid, ...rest }) => rest
+        );
+
+        const exportData: FolderExportData = {
+          version: EXPORT_VERSION,
+          exportedAt: new Date().toISOString(),
+          appVersion: this.appVersion,
+          folder: { name: folder.name },
+          snippets: exportableSnippets,
+        };
+
+        const fileName = this.resolveExportFileName(folder.name, timestamp, usedNames);
+        archive.append(JSON.stringify(exportData, null, 2), { name: fileName });
+      }
+
+      archive.finalize();
+    });
   }
 }

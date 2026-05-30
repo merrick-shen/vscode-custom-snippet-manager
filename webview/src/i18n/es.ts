@@ -137,6 +137,7 @@ export default {
     openDirectory: 'Abrir carpeta de snippets',
     storagePath: 'Ruta de almacenamiento',
     clearAllData: 'Borrar todos los datos',
+    backupAllData: 'Hacer copia de seguridad de todos los datos',
   },
   clearAll: {
     title: 'Confirmar borrado',
@@ -144,5 +145,10 @@ export default {
     confirm: 'Borrar',
     cancel: 'Cancelar',
     success: '{count} snippet(s) borrado(s)',
+  },
+  backup: {
+    success: 'Copia de seguridad creada — {folderCount} carpeta(s), {count} snippet(s)',
+    failed: 'Error al crear la copia de seguridad, inténtelo de nuevo',
+    exporting: 'Exportando...',
   },
 }

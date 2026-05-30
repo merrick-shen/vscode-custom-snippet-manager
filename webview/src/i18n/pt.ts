@@ -137,6 +137,7 @@ export default {
     openDirectory: 'Abrir pasta de snippets',
     storagePath: 'Caminho de armazenamento',
     clearAllData: 'Limpar todos os dados',
+    backupAllData: 'Fazer backup de todos os dados',
   },
   clearAll: {
     title: 'Confirmar limpeza',
@@ -144,5 +145,10 @@ export default {
     confirm: 'Limpar',
     cancel: 'Cancelar',
     success: '{count} snippet(s) limpo(s)',
+  },
+  backup: {
+    success: 'Backup criado com sucesso — {folderCount} pasta(s), {count} snippet(s)',
+    failed: 'Falha ao criar backup, tente novamente',
+    exporting: 'Exportando...',
   },
 }

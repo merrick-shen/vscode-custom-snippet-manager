@@ -336,6 +336,17 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         this.showNotification('success', 'clearAll.success', { count: String(count) });
         break;
       }
+
+      // 前端请求导出全部数据为 ZIP 备份
+      case 'exportAllBackup': {
+        const result = await this.importExportService.exportAllAsZip();
+        this.postToView('exportBackupResult', {
+          success: result.success,
+          folderCount: result.folderCount,
+          count: result.count,
+        });
+        break;
+      }
     }
   }
 

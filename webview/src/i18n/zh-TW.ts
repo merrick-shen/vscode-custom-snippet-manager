@@ -137,6 +137,7 @@ export default {
     openDirectory: '打開程式碼片段目錄',
     storagePath: '儲存路徑',
     clearAllData: '清空所有資料',
+    backupAllData: '備份全部資料',
   },
   clearAll: {
     title: '清空資料確認',
@@ -144,5 +145,10 @@ export default {
     confirm: '清空',
     cancel: '取消',
     success: '已清空 {count} 個程式碼片段',
+  },
+  backup: {
+    success: '備份成功，共 {folderCount} 個資料夾、{count} 個程式碼片段',
+    failed: '備份失敗，請重試',
+    exporting: '正在匯出...',
   },
 }

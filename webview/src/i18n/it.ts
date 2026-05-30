@@ -137,6 +137,7 @@ export default {
     openDirectory: 'Apri cartella snippet',
     storagePath: 'Percorso di salvataggio',
     clearAllData: 'Cancella tutti i dati',
+    backupAllData: 'Esegui backup di tutti i dati',
   },
   clearAll: {
     title: 'Conferma cancellazione',
@@ -144,5 +145,10 @@ export default {
     confirm: 'Cancella',
     cancel: 'Annulla',
     success: '{count} snippet cancellati',
+  },
+  backup: {
+    success: 'Backup completato — {folderCount} cartella(e), {count} snippet',
+    failed: 'Backup non riuscito, riprova',
+    exporting: 'Esportazione...',
   },
 }

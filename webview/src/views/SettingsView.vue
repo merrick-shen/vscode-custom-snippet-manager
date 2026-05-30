@@ -6,11 +6,13 @@
  * 后续可扩展实际设置功能
  */
 import { Icon } from '@iconify/vue'
-import { postToExt } from '../composables/useMessage'
+import { postToExt, onExtMessage } from '../composables/useMessage'
 import { useConfirm } from '../composables/useConfirm'
+import { useNotification } from '../composables/useNotification'
 
 const { t } = useI18n()
 const { confirmState, showConfirm, handleConfirmOk, handleConfirmCancel } = useConfirm()
+const { notification, showSuccess, showError, clearNotification } = useNotification()
 
 // 从后端注入的全局变量读取版本号和存储路径
 const appVersion = window.__APP_VERSION || '0.0.0'
@@ -48,6 +50,26 @@ function handleClearAll() {
     },
   })
 }
+
+/** 备份导出中状态 */
+const backupLoading = ref(false)
+
+/** 点击备份全部数据按钮 */
+function handleBackupAll() {
+  backupLoading.value = true
+  postToExt('exportAllBackup')
+}
+
+// 监听备份导出结果
+onExtMessage('exportBackupResult', (payload) => {
+  const result = payload as { success: boolean; folderCount?: number; count?: number }
+  backupLoading.value = false
+  if (result.success) {
+    showSuccess(t('backup.success', { folderCount: result.folderCount, count: result.count }))
+  } else {
+    showError(t('backup.failed'))
+  }
+})
 
 // 定义 emit，用于返回上一页
 const emit = defineEmits<{
@@ -117,11 +139,17 @@ const emit = defineEmits<{
         {{ t('settings.openDirectory') }}
       </button>
 
-      <!-- 清空所有数据按钮 -->
-      <button class="clear-all-btn" @click="handleClearAll">
-        <Icon icon="carbon:trash-can" width="14" height="14" />
-        {{ t('settings.clearAllData') }}
-      </button>
+      <!-- 数据管理区域 -->
+      <div class="data-management-section">
+        <button class="backup-all-btn" :disabled="backupLoading" @click="handleBackupAll">
+          <Icon icon="carbon:download" width="14" height="14" />
+          {{ backupLoading ? t('backup.exporting') : t('settings.backupAllData') }}
+        </button>
+        <button class="clear-all-btn" @click="handleClearAll">
+          <Icon icon="carbon:trash-can" width="14" height="14" />
+          {{ t('settings.clearAllData') }}
+        </button>
+      </div>
 
       <!-- 底部说明 -->
       <div class="about-footer">
@@ -139,6 +167,14 @@ const emit = defineEmits<{
       :danger="confirmState.danger"
       @confirm="handleConfirmOk"
       @cancel="handleConfirmCancel"
+    />
+
+    <!-- 通知条 -->
+    <NotificationBar
+      :visible="notification.visible"
+      :type="notification.type"
+      :message="notification.message"
+      @close="clearNotification"
     />
   </div>
 </template>
@@ -317,6 +353,40 @@ const emit = defineEmits<{
   }
 }
 
+.data-management-section {
+  @include flex-column;
+  gap: $spacing-sm;
+  width: 100%;
+  margin-bottom: $spacing-xl;
+}
+
+.backup-all-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid $border-button;
+  border-radius: $radius-md;
+  background: $btn-primary-bg;
+  color: $btn-primary-fg;
+  font-size: $font-size-base;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+
+  &:hover:not(:disabled) {
+    background: $btn-primary-hover;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
 .clear-all-btn {
   display: flex;
   align-items: center;
@@ -324,7 +394,6 @@ const emit = defineEmits<{
   gap: 6px;
   width: 100%;
   padding: $spacing-sm $spacing-lg;
-  margin-bottom: $spacing-xl;
   border: 1px solid rgba(244, 135, 113, 0.3);
   border-radius: $radius-md;
   background: rgba(244, 135, 113, 0.1);

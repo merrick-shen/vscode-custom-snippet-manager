@@ -137,6 +137,7 @@ export default {
     openDirectory: 'Snippet klasörünü aç',
     storagePath: 'Depolama yolu',
     clearAllData: 'Tüm verileri temizle',
+    backupAllData: 'Tüm verileri yedekle',
   },
   clearAll: {
     title: 'Veri temizleme onayı',
@@ -144,5 +145,10 @@ export default {
     confirm: 'Temizle',
     cancel: 'İptal',
     success: '{count} snippet temizlendi',
+  },
+  backup: {
+    success: 'Yedekleme başarılı — {folderCount} klasör, {count} snippet',
+    failed: 'Yedekleme başarısız, lütfen tekrar deneyin',
+    exporting: 'Dışa aktarılıyor...',
   },
 }

@@ -137,6 +137,7 @@ export default {
     openDirectory: '打开代码片段目录',
     storagePath: '存储路径',
     clearAllData: '清空所有数据',
+    backupAllData: '备份全部数据',
   },
   clearAll: {
     title: '清空数据确认',
@@ -144,5 +145,10 @@ export default {
     confirm: '清空',
     cancel: '取消',
     success: '已清空 {count} 个代码片段',
+  },
+  backup: {
+    success: '备份成功，共 {folderCount} 个文件夹、{count} 个代码片段',
+    failed: '备份失败，请重试',
+    exporting: '正在导出...',
   },
 }

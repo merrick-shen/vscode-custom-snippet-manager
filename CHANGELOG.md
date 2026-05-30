@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - **Folders**: Added folder support to organize snippets — create, rename, and delete folders, and assign a folder when creating or editing a snippet
 - **Folder Export**: Export now lets you select multiple folders, each exported as a separate JSON file
 - **Import Destination**: When importing, you can create a new folder or import into an existing folder
+- **Backup All Data**: Added "Backup All Data" button in settings page to export all snippets as a ZIP file, providing a complete backup before clearing data
 
 ### Changed
 

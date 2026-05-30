@@ -137,6 +137,7 @@ export default {
     openDirectory: 'Otwórz folder snippetów',
     storagePath: 'Ścieżka zapisu',
     clearAllData: 'Wyczyść wszystkie dane',
+    backupAllData: 'Utwórz kopię zapasową wszystkich danych',
   },
   clearAll: {
     title: 'Potwierdź czyszczenie',
@@ -144,5 +145,10 @@ export default {
     confirm: 'Wyczyść',
     cancel: 'Anuluj',
     success: 'Wyczyszczono {count} snippetów',
+  },
+  backup: {
+    success: 'Kopia zapasowa utworzona — {folderCount} folder(ów), {count} snippetów',
+    failed: 'Nie udało się utworzyć kopii zapasowej, spróbuj ponownie',
+    exporting: 'Eksportowanie...',
   },
 }

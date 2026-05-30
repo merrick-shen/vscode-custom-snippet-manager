@@ -137,6 +137,7 @@ export default {
     openDirectory: '스니펫 저장 폴더 열기',
     storagePath: '저장 경로',
     clearAllData: '모든 데이터 삭제',
+    backupAllData: '모든 데이터 백업',
   },
   clearAll: {
     title: '데이터 삭제 확인',
@@ -144,5 +145,10 @@ export default {
     confirm: '삭제',
     cancel: '취소',
     success: '{count}개의 스니펫이 삭제되었습니다',
+  },
+  backup: {
+    success: '백업 성공 — {folderCount}개 폴더, {count}개 스니펫',
+    failed: '백업에 실패했습니다. 다시 시도해 주세요',
+    exporting: '내보내는 중...',
   },
 }

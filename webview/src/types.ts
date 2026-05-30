@@ -77,6 +77,8 @@ export type MessageType =
   | 'localeChanged'
   | 'changeSortOrder'
   | 'clearAllSnippets'
+  | 'exportAllBackup'
+  | 'exportBackupResult'
   | 'foldersList'
   | 'createFolder'
   | 'renameFolder'
