@@ -584,10 +584,6 @@ function handleListScroll() {
     <div class="sidebar-header">
       <div class="header-content">
         <h2 class="header-title">{{ t('app.title') }}</h2>
-        <!-- 设置按钮 -->
-        <button class="settings-btn" :title="t('settings.title')" @click="currentView = 'settings'">
-          <Icon icon="carbon:settings" width="15" height="15" />
-        </button>
         <!-- 语言切换下拉菜单 -->
         <LanguageSelect
           :model-value="locale"
@@ -595,6 +591,10 @@ function handleListScroll() {
           class="locale-select"
           @update:model-value="changeLocale"
         />
+        <!-- 设置按钮 -->
+        <button class="settings-btn" :title="t('settings.title')" @click="currentView = 'settings'">
+          <Icon icon="carbon:settings" width="15" height="15" />
+        </button>
       </div>
       <!-- 新建片段按钮，与编辑页 btn-primary 风格统一 -->
       <BaseButton variant="primary" icon="carbon:add" class="create-btn" @click="handleCreate">{{ t('actions.create') }}</BaseButton>
