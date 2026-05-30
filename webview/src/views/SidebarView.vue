@@ -22,6 +22,7 @@ import ConfirmDialog from '../components/ConfirmDialog.vue'
 import NotificationBar from '../components/NotificationBar.vue'
 import StrategyOption from '../components/StrategyOption.vue'
 import BaseButton from '../components/BaseButton.vue'
+import SearchInput from '../components/SearchInput.vue'
 import SettingsView from './SettingsView.vue'
 import { SUPPORTED_LOCALES } from '../i18n'
 
@@ -682,20 +683,9 @@ function handleListScroll() {
       <BaseButton variant="secondary" size="sm" icon="carbon:folder-add" class="new-folder-btn" @click="openCreateFolder">{{ t('folder.create') }}</BaseButton>
     </div>
 
-    <!-- 搜索框：与编辑页 form-input 风格统一 -->
+    <!-- 搜索框 -->
     <div class="sidebar-search">
-      <div class="search-wrapper">
-        <Icon icon="carbon:search" class="search-icon" width="14" height="14" />
-        <input
-          v-model="searchQuery"
-          class="form-input search-input"
-          :placeholder="t('list.searchPlaceholder')"
-        />
-        <!-- 清除按钮 -->
-        <button v-if="searchQuery" class="search-clear" @click="searchQuery = ''">
-          <Icon icon="carbon:close" width="12" height="12" />
-        </button>
-      </div>
+      <SearchInput v-model="searchQuery" :placeholder="t('list.searchPlaceholder')" />
     </div>
 
     <!-- 语言筛选下拉：使用自定义组件显示图标 -->
@@ -1083,44 +1073,6 @@ function handleListScroll() {
 // ===== 搜索框 =====
 .sidebar-search {
   padding: 10px 14px $spacing-xs;
-}
-
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  position: absolute;
-  left: 10px;
-  color: $color-description;
-  pointer-events: none;
-}
-
-.search-input {
-  padding-left: 30px !important;
-  padding-right: 28px !important;
-}
-
-.search-clear {
-  @include flex-center;
-  position: absolute;
-  right: 6px;
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  border-radius: $radius-sm;
-  background: transparent;
-  color: $color-description;
-  cursor: pointer;
-  transition: background-color 0.15s;
-
-  &:hover {
-    background: $bg-hover;
-    color: $color-foreground;
-  }
 }
 
 // ===== 语言筛选 =====
