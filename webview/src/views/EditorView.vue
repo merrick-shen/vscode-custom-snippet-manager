@@ -262,7 +262,6 @@ onMounted(() => {
               :options="languageOptions"
               :placeholder="t('form.languagePlaceholder')"
               placement="top"
-              class="scope-select"
               multiple
             />
           </div>
@@ -433,11 +432,6 @@ onMounted(() => {
 }
 
 // 使用范围下拉触发器高度对齐到描述输入框（上下内边距 9px）
-.scope-select :deep(.lang-select-trigger) {
-  padding-top: 9px;
-  padding-bottom: 9px;
-}
-
 .has-error .form-input,
 .has-error .code-editor {
   border-color: $color-error;

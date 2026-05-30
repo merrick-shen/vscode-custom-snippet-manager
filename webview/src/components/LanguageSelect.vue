@@ -267,7 +267,8 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 7px 10px;
+  min-height: 32px;
+  padding: 5px 10px;
   border: 1px solid $border-input;
   border-radius: $radius-md;
   background: $bg-input;
