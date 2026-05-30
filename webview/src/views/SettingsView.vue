@@ -134,21 +134,18 @@ const emit = defineEmits<{
       </div>
 
       <!-- 打开代码片段目录按钮 -->
-      <button class="open-dir-btn" @click="openSnippetsDirectory">
-        <Icon icon="carbon:folder" width="14" height="14" />
+      <BaseButton variant="secondary" icon="carbon:folder" block class="open-dir-btn" @click="openSnippetsDirectory">
         {{ t('settings.openDirectory') }}
-      </button>
+      </BaseButton>
 
       <!-- 数据管理区域 -->
       <div class="data-management-section">
-        <button class="backup-all-btn" :disabled="backupLoading" @click="handleBackupAll">
-          <Icon icon="carbon:download" width="14" height="14" />
-          {{ backupLoading ? t('backup.exporting') : t('settings.backupAllData') }}
-        </button>
-        <button class="clear-all-btn" @click="handleClearAll">
-          <Icon icon="carbon:trash-can" width="14" height="14" />
+        <BaseButton variant="primary" icon="carbon:download" block :loading="backupLoading" @click="handleBackupAll">
+          {{ t('settings.backupAllData') }}
+        </BaseButton>
+        <BaseButton variant="danger" icon="carbon:trash-can" block @click="handleClearAll">
           {{ t('settings.clearAllData') }}
-        </button>
+        </BaseButton>
       </div>
 
       <!-- 底部说明 -->
@@ -331,26 +328,7 @@ const emit = defineEmits<{
 }
 
 .open-dir-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: $spacing-sm $spacing-lg;
   margin-bottom: $spacing-md;
-  border: 1px solid $border-button;
-  border-radius: $radius-md;
-  background: $btn-secondary-bg;
-  color: $btn-secondary-fg;
-  font-size: $font-size-base;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: $btn-secondary-hover;
-  }
 }
 
 .data-management-section {
@@ -358,56 +336,6 @@ const emit = defineEmits<{
   gap: $spacing-sm;
   width: 100%;
   margin-bottom: $spacing-xl;
-}
-
-.backup-all-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: $spacing-sm $spacing-lg;
-  border: 1px solid $border-button;
-  border-radius: $radius-md;
-  background: $btn-primary-bg;
-  color: $btn-primary-fg;
-  font-size: $font-size-base;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
-
-  &:hover:not(:disabled) {
-    background: $btn-primary-hover;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.clear-all-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: $spacing-sm $spacing-lg;
-  border: 1px solid rgba(244, 135, 113, 0.3);
-  border-radius: $radius-md;
-  background: rgba(244, 135, 113, 0.1);
-  color: $color-error;
-  font-size: $font-size-base;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
-
-  &:hover {
-    background: rgba(244, 135, 113, 0.2);
-    border-color: rgba(244, 135, 113, 0.5);
-  }
 }
 
 .about-footer {
