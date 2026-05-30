@@ -181,12 +181,14 @@ onBeforeUnmount(() => {
       <div class="lang-select-value">
         <!-- 多选模式 -->
         <template v-if="multiple">
-          <!-- 选中 "所有语言" 时显示其图标 -->
-          <Icon
-            v-if="isAllLanguages"
-            :icon="options.find(o => o.value === '*')?.icon || 'carbon:code'"
-            class="lang-icon"
-          />
+          <!-- 选中 "所有语言" 时显示其图标和文字 -->
+          <template v-if="isAllLanguages">
+            <Icon
+              :icon="options.find(o => o.value === '*')?.icon || 'carbon:code'"
+              class="lang-icon"
+            />
+            <span class="lang-label">{{ options.find(o => o.value === '*')?.label }}</span>
+          </template>
           <!-- 多选标签列表 -->
           <template v-else-if="selectedOptions.length > 0">
             <div class="multi-tags">
