@@ -239,18 +239,21 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- 描述和语言并排 -->
+      <!-- 描述 -->
+      <div class="form-section">
+        <div class="form-group">
+          <label class="form-label">{{ t('form.description') }}</label>
+          <input
+            v-model="form.description"
+            class="form-input"
+            :placeholder="t('form.descriptionPlaceholder')"
+          />
+        </div>
+      </div>
+
+      <!-- 适用语言和所属文件夹并排 -->
       <div class="form-section">
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">{{ t('form.description') }}</label>
-            <input
-              v-model="form.description"
-              class="form-input"
-              :placeholder="t('form.descriptionPlaceholder')"
-            />
-          </div>
-
           <div class="form-group">
             <label class="form-label">{{ t('form.language') }}</label>
             <LanguageSelect
@@ -262,18 +265,15 @@ onMounted(() => {
               multiple
             />
           </div>
-        </div>
-      </div>
 
-      <!-- 所属文件夹选择 -->
-      <div class="form-section">
-        <div class="form-group">
-          <label class="form-label">{{ t('folder.belongTo') }}</label>
-          <LanguageSelect
-            v-model="form.folderId"
-            :options="folderOptions"
-            placement="top"
-          />
+          <div class="form-group">
+            <label class="form-label">{{ t('folder.belongTo') }}</label>
+            <LanguageSelect
+              v-model="form.folderId"
+              :options="folderOptions"
+              placement="top"
+            />
+          </div>
         </div>
       </div>
     </div>
