@@ -26,6 +26,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed
 
 - **Save Button**: Fixed save button becoming clickable again before the backend responds, which could cause duplicate snippet creation
+- **Language Badge**: Fixed "ALL" label on language badges not being translated when a snippet applies to all languages
 
 ## [1.2.0] - 2026-05-26
 

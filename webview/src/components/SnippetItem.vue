@@ -18,6 +18,8 @@ import { Icon } from '@iconify/vue'
 import type { Snippet } from '../types'
 import { getLanguageColor, getLanguageIcon } from '../utils/languages'
 
+const { t } = useI18n()
+
 defineProps<{
   /** 片段数据 */
   snippet: Snippet
@@ -47,7 +49,7 @@ const emit = defineEmits<{
           :style="{ backgroundColor: getLanguageColor(lang) + '22', color: getLanguageColor(lang), borderColor: getLanguageColor(lang) + '44' }"
         >
           <Icon v-if="lang !== '*'" :icon="getLanguageIcon(lang)" class="lang-badge-icon" />
-          <span class="lang-badge-text">{{ lang === '*' ? 'ALL' : lang }}</span>
+          <span class="lang-badge-text">{{ lang === '*' ? t('filter.all') : lang }}</span>
         </span>
       </div>
       <div class="item-meta">
