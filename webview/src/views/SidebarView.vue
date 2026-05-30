@@ -21,6 +21,7 @@ import LanguageSelect from '../components/LanguageSelect.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import NotificationBar from '../components/NotificationBar.vue'
 import StrategyOption from '../components/StrategyOption.vue'
+import BaseButton from '../components/BaseButton.vue'
 import SettingsView from './SettingsView.vue'
 import { SUPPORTED_LOCALES } from '../i18n'
 
@@ -720,26 +721,14 @@ function handleListScroll() {
         </div>
       </div>
       <!-- 新建片段按钮，与编辑页 btn-primary 风格统一 -->
-      <button class="btn btn-primary create-btn" @click="handleCreate">
-        <Icon icon="carbon:add" width="15" height="15" />
-        {{ t('actions.create') }}
-      </button>
+      <BaseButton variant="primary" icon="carbon:add" class="create-btn" @click="handleCreate">{{ t('actions.create') }}</BaseButton>
       <!-- 导入导出按钮行 -->
       <div class="import-export-row">
-        <button class="btn btn-secondary btn-sm ie-btn" @click="handleExport">
-          <Icon icon="carbon:upload" width="13" height="13" />
-          {{ t('importExport.exportConfig') }}
-        </button>
-        <button class="btn btn-secondary btn-sm ie-btn" @click="handleImport">
-          <Icon icon="carbon:download" width="13" height="13" />
-          {{ t('importExport.importConfig') }}
-        </button>
+        <BaseButton variant="secondary" size="sm" icon="carbon:upload" class="ie-btn" @click="handleExport">{{ t('importExport.exportConfig') }}</BaseButton>
+        <BaseButton variant="secondary" size="sm" icon="carbon:download" class="ie-btn" @click="handleImport">{{ t('importExport.importConfig') }}</BaseButton>
       </div>
       <!-- 新建文件夹按钮 -->
-      <button class="btn btn-secondary btn-sm new-folder-btn" @click="openCreateFolder">
-        <Icon icon="carbon:folder-add" width="13" height="13" />
-        {{ t('folder.create') }}
-      </button>
+      <BaseButton variant="secondary" size="sm" icon="carbon:folder-add" class="new-folder-btn" @click="openCreateFolder">{{ t('folder.create') }}</BaseButton>
     </div>
 
     <!-- 搜索框：与编辑页 form-input 风格统一 -->
@@ -911,7 +900,7 @@ function handleListScroll() {
         </div>
       </template>
       <template #footer>
-        <button class="btn btn-secondary btn-sm" @click="handleDuplicateCancel">{{ t('form.cancel') }}</button>
+        <BaseButton variant="secondary" size="sm" @click="handleDuplicateCancel">{{ t('form.cancel') }}</BaseButton>
       </template>
     </ConfirmDialog>
 
@@ -949,10 +938,10 @@ function handleListScroll() {
       </template>
       <template #footer>
         <template v-if="deleteFolderDialog.count === 0">
-          <button class="btn btn-secondary btn-sm" @click="cancelDeleteFolder">{{ t('form.cancel') }}</button>
-          <button class="btn btn-danger btn-sm" @click="confirmDeleteFolder('delete')">{{ t('folder.delete') }}</button>
+          <BaseButton variant="secondary" size="sm" @click="cancelDeleteFolder">{{ t('form.cancel') }}</BaseButton>
+          <BaseButton variant="danger" size="sm" @click="confirmDeleteFolder('delete')">{{ t('folder.delete') }}</BaseButton>
         </template>
-        <button v-else class="btn btn-secondary btn-sm" @click="cancelDeleteFolder">{{ t('form.cancel') }}</button>
+        <BaseButton v-else variant="secondary" size="sm" @click="cancelDeleteFolder">{{ t('form.cancel') }}</BaseButton>
       </template>
     </ConfirmDialog>
 
@@ -986,12 +975,8 @@ function handleListScroll() {
         </div>
       </template>
       <template #footer>
-        <button class="btn btn-secondary btn-sm" @click="cancelExport">{{ t('form.cancel') }}</button>
-        <button
-          class="btn btn-primary btn-sm"
-          :disabled="exportDialog.selectedIds.size === 0"
-          @click="confirmExport"
-        >{{ t('importExport.exportConfig') }}</button>
+        <BaseButton variant="secondary" size="sm" @click="cancelExport">{{ t('form.cancel') }}</BaseButton>
+        <BaseButton variant="primary" size="sm" :disabled="exportDialog.selectedIds.size === 0" @click="confirmExport">{{ t('importExport.exportConfig') }}</BaseButton>
       </template>
     </ConfirmDialog>
 
@@ -1037,8 +1022,8 @@ function handleListScroll() {
         </div>
       </template>
       <template #footer>
-        <button class="btn btn-secondary btn-sm" @click="cancelPlacement">{{ t('form.cancel') }}</button>
-        <button class="btn btn-primary btn-sm" @click="confirmPlacement">{{ t('importExport.importConfig') }}</button>
+        <BaseButton variant="secondary" size="sm" @click="cancelPlacement">{{ t('form.cancel') }}</BaseButton>
+        <BaseButton variant="primary" size="sm" @click="confirmPlacement">{{ t('importExport.importConfig') }}</BaseButton>
       </template>
     </ConfirmDialog>
 
@@ -1717,25 +1702,5 @@ function handleListScroll() {
 // ===== 共享样式 =====
 .form-input {
   @include input-base;
-}
-
-.btn {
-  @include btn-base;
-}
-
-.btn-sm {
-  @include btn-sm;
-}
-
-.btn-primary {
-  @include btn-primary;
-}
-
-.btn-secondary {
-  @include btn-secondary;
-}
-
-.btn-danger {
-  @include btn-danger;
 }
 </style>

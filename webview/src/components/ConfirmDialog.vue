@@ -1,6 +1,7 @@
 <!-- 通用确认弹窗组件：标题 + 内容(slot) + 按钮(slot) -->
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import BaseButton from './BaseButton.vue'
 
 const { t } = useI18n()
 
@@ -40,8 +41,8 @@ const emit = defineEmits<{
       </div>
       <div class="modal-footer">
         <slot name="footer">
-          <button class="btn btn-secondary btn-sm" @click="emit('cancel')">{{ cancelLabel || t('form.cancel') }}</button>
-          <button class="btn btn-sm" :class="danger ? 'btn-danger' : 'btn-primary'" @click="emit('confirm')">{{ confirmLabel || t('form.save') }}</button>
+          <BaseButton variant="secondary" size="sm" @click="emit('cancel')">{{ cancelLabel || t('form.cancel') }}</BaseButton>
+          <BaseButton :variant="danger ? 'danger' : 'primary'" size="sm" @click="emit('confirm')">{{ confirmLabel || t('form.save') }}</BaseButton>
         </slot>
       </div>
     </div>
@@ -81,26 +82,5 @@ const emit = defineEmits<{
 
 .modal-footer {
   @include modal-footer;
-}
-
-// 按钮样式使用 :deep 穿透到 slot 内容
-:deep(.btn) {
-  @include btn-base;
-}
-
-:deep(.btn-sm) {
-  @include btn-sm;
-}
-
-:deep(.btn-primary) {
-  @include btn-primary;
-}
-
-:deep(.btn-secondary) {
-  @include btn-secondary;
-}
-
-:deep(.btn-danger) {
-  @include btn-danger;
 }
 </style>

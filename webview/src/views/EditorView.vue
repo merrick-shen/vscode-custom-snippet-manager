@@ -13,6 +13,7 @@ import { DEFAULT_FOLDER_ID } from '../types'
 import { SUPPORTED_LANGUAGES } from '../utils/languages'
 import { postToExt, onExtMessage } from '../composables/useMessage'
 import LanguageSelect from '../components/LanguageSelect.vue'
+import BaseButton from '../components/BaseButton.vue'
 import CodeEditor from '../components/CodeEditor.vue'
 
 const { t, locale } = useI18n()
@@ -289,14 +290,8 @@ onMounted(() => {
         <span v-if="serverError" class="server-error">{{ serverError }}</span>
       </transition>
       <div class="footer-actions">
-        <button class="btn btn-secondary" @click="handleClose">
-          {{ t('form.cancel') }}
-        </button>
-        <button class="btn btn-primary" :disabled="saving" @click="handleSave">
-          <Icon v-if="!saving" icon="carbon:checkmark" width="16" height="16" />
-          <span v-else class="spinner"></span>
-          {{ t('form.save') }}
-        </button>
+        <BaseButton variant="secondary" @click="handleClose">{{ t('form.cancel') }}</BaseButton>
+        <BaseButton variant="primary" icon="carbon:checkmark" :loading="saving" @click="handleSave">{{ t('form.save') }}</BaseButton>
       </div>
     </div>
   </div>
@@ -518,31 +513,5 @@ onMounted(() => {
   display: flex;
   gap: 10px;
   flex-shrink: 0;
-}
-
-.btn {
-  @include btn-base;
-}
-
-.btn-secondary {
-  @include btn-secondary;
-}
-
-.btn-primary {
-  @include btn-primary;
-}
-
-.spinner {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 </style>
