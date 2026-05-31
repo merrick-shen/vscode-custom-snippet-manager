@@ -153,7 +153,7 @@ console.log('$1', $2);$0
 
 ## 👥 开发团队
 
-Horyce & GLM 5.1（AI 辅助）
+Horyce
 
 ---
 

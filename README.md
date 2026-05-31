@@ -152,7 +152,7 @@ Issues and Pull Requests are welcome:
 
 ## 👥 Team
 
-Horyce (with AI assistance)
+Horyce
 
 ---
 

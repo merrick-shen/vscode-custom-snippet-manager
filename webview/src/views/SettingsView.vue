@@ -54,6 +54,21 @@ function handleClearAll() {
 /** 备份导出中状态 */
 const backupLoading = ref(false)
 
+/** 是否为 macOS（用于显示不同的快捷键） */
+const isMac = ref(false)
+
+/** 快捷键列表 */
+const shortcuts = computed(() => [
+  { key: 'insertSnippet', keys: isMac.value ? '⌘⌥I' : 'Ctrl+Alt+I', when: t('settings.whenEditorFocus') },
+  { key: 'triggerCompletion', keys: isMac.value ? '⌘⌥Space' : 'Ctrl+Alt+Space', when: t('settings.whenEditorFocus') },
+  { key: 'saveSelectionToSnippet', keys: t('settings.contextMenu'), when: t('settings.whenTextSelected') },
+])
+
+/** 检测平台 */
+onMounted(() => {
+  isMac.value = navigator.platform.toUpperCase().includes('MAC')
+})
+
 /** 点击备份全部数据按钮 */
 function handleBackupAll() {
   backupLoading.value = true
@@ -124,6 +139,20 @@ const emit = defineEmits<{
             GitHub Issues
             <Icon icon="carbon:launch" width="10" height="10" />
           </span>
+        </div>
+      </div>
+
+      <!-- 快捷键说明 -->
+      <div class="shortcuts-section">
+        <h4 class="section-title">{{ t('settings.shortcuts') }}</h4>
+        <div class="shortcuts-list">
+          <div v-for="item in shortcuts" :key="item.key" class="shortcut-item">
+            <span class="shortcut-desc">{{ t('settings.shortcut_' + item.key) }}</span>
+            <div class="shortcut-right">
+              <kbd class="shortcut-key">{{ item.keys }}</kbd>
+              <span v-if="item.when" class="shortcut-when">{{ item.when }}</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -313,6 +342,67 @@ const emit = defineEmits<{
 
 .storage-path-section {
   @include info-panel;
+}
+
+// ===== 快捷键说明 =====
+.shortcuts-section {
+  width: 100%;
+  margin-bottom: $spacing-xl;
+}
+
+.section-title {
+  margin: 0 0 $spacing-sm;
+  padding: 0 14px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-description;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.shortcuts-list {
+  @include flex-column;
+  gap: 2px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-radius: $radius-md;
+  gap: $spacing-sm;
+}
+
+.shortcut-desc {
+  font-size: $font-size-base;
+  color: $color-foreground;
+  flex: 1;
+  min-width: 0;
+}
+
+.shortcut-right {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex-shrink: 0;
+}
+
+.shortcut-key {
+  @include code-text;
+  font-size: $font-size-xs;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid $border-input;
+  background: $bg-code-block;
+  white-space: nowrap;
+}
+
+.shortcut-when {
+  font-size: $font-size-xs;
+  color: $color-description;
+  opacity: 0.7;
+  white-space: nowrap;
 }
 
 .storage-path-label {
