@@ -557,8 +557,11 @@ export class SnippetService {
   async batchImport(operations: ImportOperation[]): Promise<void> {
     await this.ready();
     const affected = new Set<string>();
+    // 批量导入时为每个片段生成递增 1ms 的唯一时间戳，避免同批次片段 createdAt 相同导致排序失效
+    const baseTime = Date.now();
 
-    for (const op of operations) {
+    for (let i = 0; i < operations.length; i++) {
+      const op = operations[i];
       if (op.type === 'create') {
         const folderId = this.resolveFolderId(op.folderId);
         const snippet: SnippetData = {
@@ -566,7 +569,7 @@ export class SnippetService {
           id: this.generateId(),
           language: this.normalizeLanguage(op.data.language ?? '*'),
           usageCount: 0,
-          createdAt: new Date().toISOString(),
+          createdAt: new Date(baseTime + i).toISOString(),
         };
         const list = this.snippetsByFolder.get(folderId) ?? [];
         list.push(snippet);
