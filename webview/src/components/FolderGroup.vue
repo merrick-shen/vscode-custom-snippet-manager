@@ -129,7 +129,7 @@ function handleDrop(event: DragEvent) {
             <Icon icon="carbon:draggable" width="14" height="14" />
           </div>
           <label class="folder-checkbox" @click.stop="handleCheckboxClick">
-            <input type="checkbox" :checked="selected" tabindex="-1" />
+            <BaseCheckbox :model-value="selected" size="sm" />
           </label>
         </div>
       </template>
@@ -249,13 +249,6 @@ function handleDrop(event: DragEvent) {
   display: flex;
   align-items: center;
   cursor: pointer;
-
-  input[type='checkbox'] {
-    cursor: pointer;
-    width: 14px;
-    height: 14px;
-    margin: 0;
-  }
 }
 
 .folder-icon {

@@ -12,6 +12,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BaseButton: typeof import('./components/BaseButton.vue')['default']
+    BaseCheckbox: typeof import('./components/BaseCheckbox.vue')['default']
+    BaseRadio: typeof import('./components/BaseRadio.vue')['default']
     CodeEditor: typeof import('./components/CodeEditor.vue')['default']
     ConfirmDialog: typeof import('./components/ConfirmDialog.vue')['default']
     FolderGroup: typeof import('./components/FolderGroup.vue')['default']

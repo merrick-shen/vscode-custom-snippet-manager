@@ -949,7 +949,7 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
         <p>{{ t('folder.exportSelectHint') }}</p>
         <div class="export-options">
           <label class="export-check-item export-check-all">
-            <input type="checkbox" :checked="exportAllSelected" @change="toggleExportAll" />
+            <BaseCheckbox :model-value="exportAllSelected" @click="toggleExportAll" />
             <span class="export-option-label">{{ t('folder.exportAll') }}</span>
           </label>
           <label
@@ -957,10 +957,9 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
             :key="f.id"
             class="export-check-item"
           >
-            <input
-              type="checkbox"
-              :checked="exportDialog.selectedIds.has(f.id)"
-              @change="toggleExportFolder(f.id)"
+            <BaseCheckbox
+              :model-value="exportDialog.selectedIds.has(f.id)"
+              @click="toggleExportFolder(f.id)"
             />
             <Icon icon="carbon:folder" width="14" height="14" />
             <span class="export-option-label">{{ folderDisplayName(f) }}</span>
@@ -984,11 +983,11 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
         <p>{{ t('importExport.placementHint', { count: placementDialog.count }) }}</p>
         <div class="placement-modes">
           <label class="placement-mode">
-            <input type="radio" value="new" v-model="placementDialog.mode" />
+            <BaseRadio v-model="placementDialog.mode" value="new" />
             <span>{{ t('importExport.placementNew') }}</span>
           </label>
           <label class="placement-mode">
-            <input type="radio" value="existing" v-model="placementDialog.mode" />
+            <BaseRadio v-model="placementDialog.mode" value="existing" />
             <span>{{ t('importExport.placementExisting') }}</span>
           </label>
         </div>
@@ -1255,11 +1254,6 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
     background: $bg-list-hover;
     border-color: $color-focus;
   }
-
-  input[type='checkbox'] {
-    cursor: pointer;
-    flex-shrink: 0;
-  }
 }
 
 .export-check-all {
@@ -1288,10 +1282,6 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
   font-size: $font-size-base;
   color: $color-foreground;
   cursor: pointer;
-
-  input[type='radio'] {
-    cursor: pointer;
-  }
 }
 
 .placement-field {

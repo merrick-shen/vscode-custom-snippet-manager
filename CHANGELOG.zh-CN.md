@@ -6,6 +6,12 @@
 
 [English Changelog](./CHANGELOG.md)
 
+## [Unreleased]
+
+### 变更
+
+- **复选框与单选框样式**：将原生复选框和单选框替换为自定义的 BaseCheckbox 和 BaseRadio 组件，统一视觉风格，与插件整体设计保持一致
+
 ## [1.3.0] - 2026-06-03
 
 ### 新增

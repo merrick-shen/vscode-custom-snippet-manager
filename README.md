@@ -12,7 +12,7 @@
       <img src="https://img.shields.io/badge/English-README-blue?style=for-the-badge" alt="English" />
     </a>
     <a href="./README.zh-CN.md">
-      <img src="https://img.shields.io/badge/中文-说明-red?style=for-the-badge" alt="中文" />
+      <img src="https://img.shields.io/badge/中文-README-red?style=for-the-badge" alt="中文" />
     </a>
   </p>
   <p>🚀 A powerful snippet manager for VS Code with a modern UI, smart autocomplete, and multi-language support.</p>

@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [Unreleased]
+
+### Changed
+
+- **Checkbox & Radio Style**: Replaced native checkboxes and radio buttons with custom BaseCheckbox and BaseRadio components, providing a consistent look that matches the plugin's design theme
+
 ## [1.3.0] - 2026-06-03
 
 ### Added
