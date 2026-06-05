@@ -30,13 +30,14 @@ import uk from './uk'
 import ro from './ro'
 import el from './el'
 import hi from './hi'
-import localesData from '../../../locales.json'
+import type { LocaleOption } from './locales'
 
-/** 支持的语言列表，用于语言切换下拉菜单（数据来源：locales.json） */
-export const SUPPORTED_LOCALES = localesData.locales
+/** 支持的语言列表，用于语言切换下拉菜单 */
+export { SUPPORTED_LOCALES } from './locales'
+export type { LocaleOption } from './locales'
 
 /** 语言标识符类型 */
-export type LocaleValue = (typeof SUPPORTED_LOCALES)[number]['value']
+export type LocaleValue = LocaleOption['value']
 
 // 读取后端注入的语言偏好，默认简体中文
 const savedLocale = window.__LOCALE || 'zh'
