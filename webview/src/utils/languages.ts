@@ -88,23 +88,3 @@ export function getLanguageIcon(lang: string): string {
   return configByValue.get(lang)?.icon ?? 'carbon:code'
 }
 
-/** 获取所有需要提取的图标配置（供 extract-icons.mjs 使用） */
-export function getNeededIcons(): Record<string, string[]> {
-  const icons: Record<string, string[]> = {}
-  for (const config of LANGUAGE_CONFIGS) {
-    const colonIndex = config.icon.indexOf(':')
-    if (colonIndex === -1) continue
-    const prefix = config.icon.substring(0, colonIndex)
-    const name = config.icon.substring(colonIndex + 1)
-    if (!icons[prefix]) {
-      icons[prefix] = []
-    }
-    icons[prefix].push(name)
-  }
-  // 补充非语言图标
-  if (!icons['mdi']) icons['mdi'] = []
-  icons['mdi'].push('translate')
-  if (!icons['carbon']) icons['carbon'] = []
-  icons['carbon'].push('code')
-  return icons
-}
