@@ -6,6 +6,8 @@
 
 [English Changelog](./CHANGELOG.md)
 
+## [Unreleased]
+
 ## [1.3.1] - 2026-06-04
 
 ### 变更

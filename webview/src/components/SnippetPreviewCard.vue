@@ -50,7 +50,10 @@ function show(event: MouseEvent, snippet: Snippet) {
   if (previewTimer) clearTimeout(previewTimer)
   const el = event.currentTarget as HTMLElement
   previewTimer = setTimeout(() => {
+    // 延迟回调内重新获取位置，避免滚动导致位置过期
     const itemRect = el.getBoundingClientRect()
+    // 元素不在视口内则不显示
+    if (itemRect.bottom < 0 || itemRect.top > window.innerHeight) return
     const top = itemRect.top
     const left = itemRect.left
     const width = itemRect.width
@@ -81,6 +84,14 @@ function hide() {
   }
   previewState.value.visible = false
 }
+
+// 组件卸载时清理定时器，防止回调更新已卸载组件
+onBeforeUnmount(() => {
+  if (previewTimer) {
+    clearTimeout(previewTimer)
+    previewTimer = null
+  }
+})
 
 defineExpose({ show, hide })
 </script>

@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [Unreleased]
+
 ## [1.3.1] - 2026-06-04
 
 ### Changed
