@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- **Snippet Preview Position**: Fixed the issue where the hover preview card could appear at wrong position after scrolling the snippet list
+
 ## [1.3.1] - 2026-06-04
 
 ### Changed
