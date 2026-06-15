@@ -48,6 +48,9 @@ const emit = defineEmits<{
   (e: 'drop', event: DragEvent, folderId: string): void
 }>()
 
+/** 文件夹头部元素引用，用于设置自定义拖拽图像 */
+const folderHeaderRef = ref<HTMLElement | null>(null)
+
 /** 是否为默认文件夹 */
 const isDefault = computed(() => props.folder.id === props.defaultFolderId)
 
@@ -66,6 +69,10 @@ function handleDragStart(event: DragEvent) {
   if (!canInteract.value) {
     event.preventDefault()
     return
+  }
+  // 使用整个文件夹头部作为拖拽图像，而非仅显示小图标
+  if (event.dataTransfer && folderHeaderRef.value) {
+    event.dataTransfer.setDragImage(folderHeaderRef.value, 16, 12)
   }
   emit('dragstart', event, props.folder.id)
 }
@@ -105,7 +112,7 @@ function handleDrop(event: DragEvent) {
     @dragleave="handleDragLeave"
     @drop="handleDrop"
   >
-    <div class="folder-header" @click="multiSelectMode ? undefined : emit('toggle', folder.id)">
+    <div ref="folderHeaderRef" class="folder-header" @click="multiSelectMode ? undefined : emit('toggle', folder.id)">
       <!-- 折叠箭头：多选模式下默认文件夹保留占位 -->
       <template v-if="multiSelectMode">
         <div v-if="isDefault" class="folder-arrow-placeholder" />
