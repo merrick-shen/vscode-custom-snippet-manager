@@ -1024,6 +1024,7 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
       :visible="notification.visible"
       :type="notification.type"
       :message="notification.message"
+      :auto-hide="notification.autoHide"
       @close="clearNotification"
     />
     </template>

@@ -12,6 +12,8 @@ interface NotificationState {
   visible: boolean
   type: NotificationType
   message: string
+  /** 是否自动隐藏（成功/警告自动隐藏，错误需手动关闭） */
+  autoHide: boolean
 }
 
 export function useNotification() {
@@ -19,19 +21,21 @@ export function useNotification() {
     visible: false,
     type: 'error',
     message: '',
+    autoHide: false,
   })
 
-  // useTimeoutFn 自动在组件卸载时清理定时器，解决 #4
+  // useTimeoutFn 自动在组件卸载时清理定时器
   const { start: startAutoHide, stop: stopAutoHide } = useTimeoutFn(() => {
     notification.value.visible = false
   }, 3000)
 
   /** 显示通知，成功/警告 3 秒后自动隐藏，错误需手动关闭 */
   function showNotification(type: NotificationType, msg: string) {
-    notification.value = { visible: true, type, message: msg }
+    const autoHide = type !== 'error'
+    notification.value = { visible: true, type, message: msg, autoHide }
     // 先停止已有的自动隐藏定时器
     stopAutoHide()
-    if (type !== 'error') {
+    if (autoHide) {
       startAutoHide()
     }
   }

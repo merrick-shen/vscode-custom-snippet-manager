@@ -213,6 +213,7 @@ const emit = defineEmits<{
       :visible="notification.visible"
       :type="notification.type"
       :message="notification.message"
+      :auto-hide="notification.autoHide"
       @close="clearNotification"
     />
   </div>

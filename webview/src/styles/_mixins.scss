@@ -189,21 +189,6 @@
   border-top: 1px solid $border-panel;
 }
 
-// ===== 通知条 =====
-@mixin notification-bar($type: 'info') {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px $spacing-md;
-  font-size: $font-size-sm;
-  border-top: 1px solid;
-  z-index: 1000;
-}
-
 // ===== 文本截断 =====
 @mixin text-ellipsis {
   overflow: hidden;

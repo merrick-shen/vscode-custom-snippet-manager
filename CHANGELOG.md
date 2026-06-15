@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Changed
 
 - **Folder Drag**: Improved folder drag to show the entire folder item following the cursor instead of only the drag icon
+- **Notification Bar**: Redesigned notification bar with type icons and colored accent bar for quick type distinction, added auto-hide progress indicator
 
 ### Fixed
 
