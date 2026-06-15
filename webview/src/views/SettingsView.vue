@@ -12,7 +12,7 @@ import { useNotification } from '../composables/useNotification'
 
 const { t } = useI18n()
 const { confirmState, showConfirm, handleConfirmOk, handleConfirmCancel } = useConfirm()
-const { notification, showSuccess, showError, clearNotification } = useNotification()
+const { notification, showSuccess, showWarning, showError, clearNotification } = useNotification()
 
 // 从后端注入的全局变量读取版本号和存储路径
 const appVersion = window.__APP_VERSION || '0.0.0'
@@ -83,6 +83,19 @@ onExtMessage('exportBackupResult', (payload) => {
     showSuccess(t('backup.success', { folderCount: result.folderCount, count: result.count }))
   } else {
     showError(t('backup.failed'))
+  }
+})
+
+// 监听后端发送的通知消息（清空数据成功等）
+onExtMessage('showNotification', (payload) => {
+  const data = payload as { type: 'success' | 'warning' | 'error'; messageKey: string; params?: Record<string, string> }
+  const message = t(`${data.messageKey}`, data.params ?? {})
+  if (data.type === 'success') {
+    showSuccess(message)
+  } else if (data.type === 'warning') {
+    showWarning(message)
+  } else {
+    showError(message)
   }
 })
 

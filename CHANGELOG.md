@@ -8,9 +8,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Changed
+
+- **Folder Drag**: Improved folder drag to show the entire folder item following the cursor instead of only the drag icon
+
 ### Fixed
 
 - **Snippet Preview Position**: Fixed the issue where the hover preview card could appear at wrong position after scrolling the snippet list
+- **Settings Page Notification**: Fixed the issue where the clear-all notification appeared on the main page instead of the settings page
 
 ## [1.3.1] - 2026-06-04
 
