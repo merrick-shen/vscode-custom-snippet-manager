@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed
 
 - **Code Completion**: Fixed the issue where code completion could fail to show snippets if triggered before data loading completed
+- **Import Folder Name Validation**: Fixed the issue where entering the default folder's localized display name (e.g. "default folder") was incorrectly rejected during import placement
 
 ## [1.3.2] - 2026-06-16
 

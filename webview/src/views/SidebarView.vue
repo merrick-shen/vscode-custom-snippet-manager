@@ -523,8 +523,10 @@ function validatePlacementName(): boolean {
     return false
   }
   const lower = trimmed.toLowerCase()
+  // 使用 f.name 校验，与后端 folderNameExists 逻辑一致
+  // 默认文件夹 name 为空字符串，不会与用户输入冲突
   const conflict = placementDialog.value.folders.some(
-    (f) => folderDisplayName(f).trim().toLowerCase() === lower
+    (f) => f.name.trim().toLowerCase() === lower
   )
   if (conflict) {
     placementDialog.value.nameError = 'importExport.placementNameConflict'
