@@ -20,12 +20,14 @@ export class SnippetCompletionProvider implements vscode.CompletionItemProvider 
    * 根据当前文档语言筛选匹配的片段，将 prefix 作为触发关键词
    * 通过分析当前行已输入的文本来确定替换范围
    */
-  public provideCompletionItems(
+  public async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
     _token: vscode.CancellationToken,
     _context: vscode.CompletionContext
-  ): vscode.CompletionItem[] {
+  ): Promise<vscode.CompletionItem[]> {
+    // 等待数据加载完成，避免初始化未完成时返回空数组导致补全失效
+    await this.snippetService.ready();
     // 获取当前编辑器的语言标识符
     const currentLang = document.languageId;
     // 获取所有片段

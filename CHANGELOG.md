@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [Unreleased]
+
+### Fixed
+
+- **Code Completion**: Fixed the issue where code completion could fail to show snippets if triggered before data loading completed
+
 ## [1.3.2] - 2026-06-16
 
 ### Changed
