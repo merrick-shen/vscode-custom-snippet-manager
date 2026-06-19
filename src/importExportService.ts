@@ -608,6 +608,7 @@ export class ImportExportService {
       const archive = archiver('zip', { zlib: { level: 9 } });
 
       output.on('close', () => resolve());
+      output.on('error', (err: Error) => reject(err));
       archive.on('error', (err: Error) => reject(err));
 
       archive.pipe(output);
