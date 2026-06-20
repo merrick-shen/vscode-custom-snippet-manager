@@ -12,6 +12,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - **Language Settings**: Plugin language now auto-syncs with VS Code display language; language selector moved from header to settings page with manual override and reset-to-auto option
 
+### Changed
+
+- **Editor Layout**: Restructured the snippet editor page — name and prefix inputs fixed at the top, description/language/folder selectors fixed at the bottom, code editor auto-fills the remaining space
+
 ### Fixed
 
 - **Code Completion**: Fixed the issue where code completion could fail to show snippets if triggered before data loading completed

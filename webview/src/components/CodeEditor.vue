@@ -201,6 +201,8 @@ watch(() => props.placeholder, (newPlaceholder) => {
   min-height: 180px;
   border-radius: $radius-md;
   overflow: hidden;
+  // 在 flex 填充模式下自适应父容器高度
+  flex: 1;
 
   :deep(.cm-editor) {
     height: 100%;

@@ -175,104 +175,112 @@ onMounted(() => {
 
     <!-- 表单主体区域 -->
     <div class="editor-body">
-      <!-- 前缀命名规范提示 -->
-      <div class="prefix-notice">
-        <Icon icon="carbon:information" width="14" height="14" />
-        <span>{{ t('form.prefixNotice') }}</span>
+      <!-- 顶部固定区域：前缀提示 + 名称/前缀 -->
+      <div class="editor-top">
+        <!-- 前缀命名规范提示 -->
+        <div class="prefix-notice">
+          <Icon icon="carbon:information" width="14" height="14" />
+          <span>{{ t('form.prefixNotice') }}</span>
+        </div>
+
+        <!-- 名称和前缀并排 -->
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-group" :class="{ 'has-error': errors.name }">
+              <label class="form-label">
+                {{ t('form.name') }}
+                <span class="required-dot">*</span>
+              </label>
+              <input
+                v-model="form.name"
+                class="form-input"
+                :placeholder="t('form.namePlaceholder')"
+                @input="clearError('name')"
+              />
+              <transition name="slide-fade">
+                <span v-if="errors.name" class="form-error">{{ errors.name }}</span>
+              </transition>
+            </div>
+
+            <div class="form-group" :class="{ 'has-error': errors.prefix }">
+              <label class="form-label">
+                {{ t('form.prefix') }}
+                <span class="required-dot">*</span>
+              </label>
+              <input
+                v-model="form.prefix"
+                class="form-input"
+                :placeholder="t('form.prefixPlaceholder')"
+                @input="clearError('prefix')"
+              />
+              <transition name="slide-fade">
+                <span v-if="errors.prefix" class="form-error">{{ errors.prefix }}</span>
+              </transition>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- 名称和前缀并排 -->
-      <div class="form-section">
-        <div class="form-row">
-          <div class="form-group" :class="{ 'has-error': errors.name }">
+      <!-- 中间自适应区域：代码编辑器 -->
+      <div class="editor-middle">
+        <div class="form-section form-section--fill">
+          <div class="form-group form-group--fill" :class="{ 'has-error': errors.body }">
             <label class="form-label">
-              {{ t('form.name') }}
+              {{ t('form.body') }}
               <span class="required-dot">*</span>
+              <span class="form-hint">{{ t('form.bodyHint') }}</span>
             </label>
-            <input
-              v-model="form.name"
-              class="form-input"
-              :placeholder="t('form.namePlaceholder')"
-              @input="clearError('name')"
-            />
+            <div class="code-editor-wrapper code-editor-wrapper--fill">
+              <CodeEditor
+                v-model="form.body"
+                :language="form.language === '*' ? '' : form.language"
+                :placeholder="t('form.bodyPlaceholder')"
+                @update:model-value="clearError('body')"
+              />
+            </div>
             <transition name="slide-fade">
-              <span v-if="errors.name" class="form-error">{{ errors.name }}</span>
+              <span v-if="errors.body" class="form-error">{{ errors.body }}</span>
             </transition>
           </div>
+        </div>
+      </div>
 
-          <div class="form-group" :class="{ 'has-error': errors.prefix }">
-            <label class="form-label">
-              {{ t('form.prefix') }}
-              <span class="required-dot">*</span>
-            </label>
+      <!-- 底部固定区域：描述 + 语言/文件夹 -->
+      <div class="editor-bottom">
+        <!-- 描述 -->
+        <div class="form-section">
+          <div class="form-group">
+            <label class="form-label">{{ t('form.description') }}</label>
             <input
-              v-model="form.prefix"
+              v-model="form.description"
               class="form-input"
-              :placeholder="t('form.prefixPlaceholder')"
-              @input="clearError('prefix')"
-            />
-            <transition name="slide-fade">
-              <span v-if="errors.prefix" class="form-error">{{ errors.prefix }}</span>
-            </transition>
-          </div>
-        </div>
-      </div>
-
-      <!-- 代码内容区域 -->
-      <div class="form-section">
-        <div class="form-group" :class="{ 'has-error': errors.body }">
-          <label class="form-label">
-            {{ t('form.body') }}
-            <span class="required-dot">*</span>
-            <span class="form-hint">{{ t('form.bodyHint') }}</span>
-          </label>
-          <div class="code-editor-wrapper">
-            <CodeEditor
-              v-model="form.body"
-              :language="form.language === '*' ? '' : form.language"
-              :placeholder="t('form.bodyPlaceholder')"
-              @update:model-value="clearError('body')"
+              :placeholder="t('form.descriptionPlaceholder')"
             />
           </div>
-          <transition name="slide-fade">
-            <span v-if="errors.body" class="form-error">{{ errors.body }}</span>
-          </transition>
         </div>
-      </div>
 
-      <!-- 描述 -->
-      <div class="form-section">
-        <div class="form-group">
-          <label class="form-label">{{ t('form.description') }}</label>
-          <input
-            v-model="form.description"
-            class="form-input"
-            :placeholder="t('form.descriptionPlaceholder')"
-          />
-        </div>
-      </div>
+        <!-- 适用语言和所属文件夹并排 -->
+        <div class="form-section">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">{{ t('form.language') }}</label>
+              <LanguageSelect
+                v-model="form.language"
+                :options="languageOptions"
+                :placeholder="t('form.languagePlaceholder')"
+                placement="top"
+                multiple
+              />
+            </div>
 
-      <!-- 适用语言和所属文件夹并排 -->
-      <div class="form-section">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">{{ t('form.language') }}</label>
-            <LanguageSelect
-              v-model="form.language"
-              :options="languageOptions"
-              :placeholder="t('form.languagePlaceholder')"
-              placement="top"
-              multiple
-            />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">{{ t('folder.belongTo') }}</label>
-            <LanguageSelect
-              v-model="form.folderId"
-              :options="folderOptions"
-              placement="top"
-            />
+            <div class="form-group">
+              <label class="form-label">{{ t('folder.belongTo') }}</label>
+              <LanguageSelect
+                v-model="form.folderId"
+                :options="folderOptions"
+                placement="top"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -356,10 +364,31 @@ onMounted(() => {
 // ===== 表单主体 =====
 .editor-body {
   flex: 1;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 20px 28px;
   @include flex-column;
-  gap: 20px;
+  gap: 16px;
+}
+
+// 顶部固定区域
+.editor-top {
+  flex-shrink: 0;
+  @include flex-column;
+  gap: 16px;
+}
+
+// 中间自适应区域：代码编辑器填满剩余空间
+.editor-middle {
+  flex: 1;
+  min-height: 0;
+  @include flex-column;
+}
+
+// 底部固定区域
+.editor-bottom {
+  flex-shrink: 0;
+  @include flex-column;
+  gap: 16px;
 }
 
 .prefix-notice {
@@ -383,6 +412,12 @@ onMounted(() => {
 .form-section {
   @include flex-column;
   gap: 6px;
+
+  // 代码编辑器区域自适应填充
+  &--fill {
+    flex: 1;
+    min-height: 0;
+  }
 }
 
 .form-row {
@@ -398,6 +433,12 @@ onMounted(() => {
 .form-group {
   @include flex-column;
   gap: 6px;
+
+  // 代码编辑器组自适应填充
+  &--fill {
+    flex: 1;
+    min-height: 0;
+  }
 }
 
 .form-label {
@@ -473,6 +514,14 @@ onMounted(() => {
   &:focus-within {
     border-color: $color-focus;
     box-shadow: 0 0 0 1px $color-focus;
+  }
+
+  // 自适应填充模式
+  &--fill {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 }
 
