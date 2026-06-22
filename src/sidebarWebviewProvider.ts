@@ -11,13 +11,8 @@ import { SnippetService } from './snippetService';
 import { ImportExportService } from './importExportService';
 import { WebviewPanel } from './webviewPanel';
 import { getErrorHtml } from './webviewUtils';
+import { MessageType, WebviewMessage } from './messageTypes';
 import localesData from '../locales.json';
-
-/** Webview 消息格式 */
-interface WebviewMessage {
-  type: string;
-  payload?: unknown;
-}
 
 /**
  * 导入存放方式选择结果
@@ -541,7 +536,7 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
   }
 
   /** 向侧边栏 webview 发送消息 */
-  private postToView(type: string, payload?: unknown): void {
+  private postToView(type: MessageType, payload?: unknown): void {
     this.view?.webview.postMessage({ type, payload });
   }
 
