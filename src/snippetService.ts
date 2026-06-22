@@ -227,6 +227,8 @@ export class SnippetService {
 
   /** 规范化单条片段，剔除运行时 folderId 并补全缺省字段 */
   private normalizeSnippet(s: SnippetData): SnippetData {
+    // folderId 是运行时由后端附加在内存中的字段，不参与持久化存储
+    // 读取文件后需将其剔除，避免冗余数据写入磁盘
     const { folderId: _omit, ...rest } = s;
     void _omit;
     return {
