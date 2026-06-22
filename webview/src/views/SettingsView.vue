@@ -56,16 +56,12 @@ const currentLocaleLabel = computed(() => {
 
 /** 在外部浏览器中打开链接 */
 function openExternal(url: string) {
-  if (window.vscode) {
-    window.vscode.postMessage({ type: 'openExternal', payload: url })
-  }
+  postToExt('openExternal', url)
 }
 
 /** 打开代码片段存储目录 */
 function openSnippetsDirectory() {
-  if (window.vscode) {
-    window.vscode.postMessage({ type: 'openSnippetsDirectory' })
-  }
+  postToExt('openSnippetsDirectory')
 }
 
 /** 点击清空数据按钮，弹出二次确认 */

@@ -49,6 +49,8 @@ export type SortOrder = 'desc' | 'asc'
  * - editorReady: 编辑器 webview 加载完成通知
  * - setSnippet: 后端向编辑器发送片段数据用于回填
  * - changeLocale: 前端切换语言，通知后端持久化保存
+ * - openExternal: 前端请求在外部浏览器打开链接
+ * - openSnippetsDirectory: 前端请求打开代码片段存储目录
  * - error: 错误消息
  */
 export type MessageType =
@@ -86,6 +88,8 @@ export type MessageType =
   | 'deleteFolder'
   | 'batchDeleteFolders'
   | 'reorderFolders'
+  | 'openExternal'
+  | 'openSnippetsDirectory'
   | 'error'
 
 /** Webview 发送给扩展的消息格式 */
