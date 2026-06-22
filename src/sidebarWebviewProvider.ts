@@ -385,7 +385,8 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
       // 前端请求在外部浏览器中打开链接
       case 'openExternal': {
         const url = msg.payload as string;
-        if (url && typeof url === 'string') {
+        // 仅允许打开 HTTPS 链接，防止通过 file://、vscode:// 等非安全协议执行恶意操作
+        if (url && typeof url === 'string' && url.startsWith('https://')) {
           vscode.env.openExternal(vscode.Uri.parse(url));
         }
         break;
