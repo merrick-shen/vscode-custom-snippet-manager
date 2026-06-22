@@ -109,29 +109,37 @@ const languageOptions = computed(() => [
   })),
 ])
 
+// 先按语言筛选，结果作为后续搜索和排序的基础
+// 单独缓存可避免在搜索关键词变化时重复执行语言筛选
+const languageFilteredSnippets = computed(() => {
+  if (!languageFilter.value || languageFilter.value === '*') {
+    return snippets.value
+  }
+
+  const filterLangs = languageFilter.value.split(',').map((l: string) => l.trim())
+  return snippets.value.filter((s) => {
+    const langs = s.language.split(',').map((l: string) => l.trim())
+    // 片段含通配符 '*' 或与任一筛选语言匹配时显示
+    return langs.includes('*') || filterLangs.some((fl: string) => langs.includes(fl))
+  })
+})
+
+// 缓存 Fuse 实例，仅在语言筛选结果（即 snippets 或 languageFilter）变化时重建
+// 搜索关键词变化时复用同一实例，避免大量片段时频繁重建导致卡顿
+const fuseInstance = computed(() => {
+  return new Fuse(languageFilteredSnippets.value, {
+    keys: ['name', 'prefix', 'description'],
+    threshold: 0.4,
+  })
+})
+
 // 根据 Fuse.js 模糊搜索 + 语言筛选 + 排序过滤片段列表
 const filteredSnippets = computed(() => {
-  let result = snippets.value
-
-  // 按语言筛选：支持多选，片段的 language 字段支持逗号分隔的多语言
-  if (languageFilter.value && languageFilter.value !== '*') {
-    const filterLangs = languageFilter.value.split(',').map((l: string) => l.trim())
-    result = result.filter(
-      (s) => {
-        const langs = s.language.split(',').map((l: string) => l.trim())
-        // 片段含通配符 '*' 或与任一筛选语言匹配时显示
-        return langs.includes('*') || filterLangs.some((fl: string) => langs.includes(fl))
-      }
-    )
-  }
+  let result = languageFilteredSnippets.value
 
   // 按关键词模糊搜索
   if (searchQuery.value.trim()) {
-    const fuse = new Fuse(result, {
-      keys: ['name', 'prefix', 'description'],
-      threshold: 0.4,
-    })
-    result = fuse.search(searchQuery.value).map((r) => r.item)
+    result = fuseInstance.value.search(searchQuery.value).map((r) => r.item)
   }
 
   // 排序：按添加日期，支持正序（由旧至新）和倒序（由新至旧）

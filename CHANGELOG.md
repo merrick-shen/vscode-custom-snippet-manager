@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Changed
+
+- **Search Performance**: Cached the Fuse.js instance so it is only rebuilt when snippets or language filter changes, reducing lag while typing search queries with many snippets
+
 ### Fixed
 
 - **Code Completion**: Fixed inaccurate replacement range when snippet prefix contains spaces or special characters (e.g. `for of`)
