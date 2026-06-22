@@ -141,6 +141,8 @@ const sections = computed(() => [
 
 <style scoped lang="scss">
 .syntax-help {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-height: 38px;
   border: 1px solid $border-input;
@@ -188,10 +190,11 @@ const sections = computed(() => [
   }
 
   &__body {
+    flex: 1 1 auto;
+    min-height: 0;
     padding: 0 $spacing-md 12px;
     border-top: 1px solid $border-input;
     overflow-y: auto;
-    max-height: calc(100% - 38px);
   }
 
   &__section {
