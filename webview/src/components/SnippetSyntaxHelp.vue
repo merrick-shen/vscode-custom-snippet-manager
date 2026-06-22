@@ -141,10 +141,19 @@ const sections = computed(() => [
 
 <style scoped lang="scss">
 .syntax-help {
+  width: 100%;
+  max-height: 38px;
   border: 1px solid $border-input;
   border-radius: $radius-lg;
   background: var(--vscode-editor-background);
   overflow: hidden;
+  pointer-events: auto;
+  transition: max-height 0.25s ease;
+
+  &--expanded {
+    max-height: 100%;
+    border-radius: $radius-lg;
+  }
 
   &__header {
     display: flex;
@@ -181,8 +190,8 @@ const sections = computed(() => [
   &__body {
     padding: 0 $spacing-md 12px;
     border-top: 1px solid $border-input;
-    max-height: 360px;
     overflow-y: auto;
+    max-height: calc(100% - 38px);
   }
 
   &__section {

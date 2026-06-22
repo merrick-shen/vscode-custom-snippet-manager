@@ -237,7 +237,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- 中间自适应区域：代码编辑器 -->
+      <!-- 中间自适应区域：代码编辑器 + 浮动语法提示 -->
       <div class="editor-middle">
         <div class="form-section form-section--fill">
           <div class="form-group form-group--fill" :class="{ 'has-error': errors.body }">
@@ -257,13 +257,13 @@ onMounted(() => {
             </transition>
           </div>
         </div>
+        <div class="syntax-help-wrapper">
+          <SnippetSyntaxHelp />
+        </div>
       </div>
 
-      <!-- 底部固定区域：片段语法帮助 + 描述 + 语言/文件夹 -->
+      <!-- 底部固定区域：描述 + 语言/文件夹 -->
       <div class="editor-bottom">
-        <!-- 片段语法提示 -->
-        <SnippetSyntaxHelp />
-
         <!-- 描述 -->
         <div class="form-section">
           <div class="form-group">
@@ -398,11 +398,25 @@ onMounted(() => {
   gap: 16px;
 }
 
-// 中间自适应区域：代码编辑器填满剩余空间
+// 中间自适应区域：代码编辑器填满剩余空间，并作为语法提示的浮动定位上下文
 .editor-middle {
+  position: relative;
   flex: 1;
   min-height: 0;
   @include flex-column;
+}
+
+// 语法提示浮动包装：折叠时只露出底部标题栏，展开时覆盖整个代码编辑器区域
+.syntax-help-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
 }
 
 // 底部固定区域
