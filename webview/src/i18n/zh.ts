@@ -35,6 +35,7 @@ export default {
   },
   syntax: {
     title: 'VS Code 片段语法提示',
+    shortTitle: '语法提示',
     basicTitle: '基本语法',
     selectionTitle: '选区与光标',
     fileTitle: '文件与路径',

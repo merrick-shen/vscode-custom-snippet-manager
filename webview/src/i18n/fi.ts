@@ -31,6 +31,7 @@ export default {
   },
   syntax: {
     title: 'VS Code Snippet Syntax Tips',
+    shortTitle: 'Syntax',
     basicTitle: 'Basic',
     selectionTitle: 'Selection & Cursor',
     fileTitle: 'File & Path',

@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - **Snippet Editor**: New "Save and Continue" button in creation mode lets you save the current snippet and immediately start creating the next one without closing the editor
+- **Snippet Editor**: Added a collapsible VS Code snippet syntax help panel in the code body area, covering tabstops, placeholders, variables, transforms, and escapes
 
 ### Changed
 

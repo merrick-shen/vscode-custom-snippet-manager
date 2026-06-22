@@ -107,7 +107,8 @@ const sections = computed(() => [
   <div class="syntax-help" :class="{ 'syntax-help--expanded': expanded }">
     <button class="syntax-help__header" type="button" @click="toggle">
       <Icon icon="carbon:code" width="16" height="16" />
-      <span class="syntax-help__title">{{ t('syntax.title') }}</span>
+      <span class="syntax-help__title syntax-help__title--short">{{ t('syntax.shortTitle') }}</span>
+      <span class="syntax-help__title syntax-help__title--full">{{ t('syntax.title') }}</span>
       <Icon
         class="syntax-help__arrow"
         icon="carbon:chevron-down"
@@ -141,20 +142,32 @@ const sections = computed(() => [
 
 <style scoped lang="scss">
 .syntax-help {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-height: 38px;
-  border: 1px solid $border-input;
-  border-radius: $radius-lg;
-  background: var(--vscode-editor-background);
+  width: auto;
+  max-height: 32px;
+  border: none;
+  border-radius: 16px;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
   overflow: hidden;
   pointer-events: auto;
-  transition: max-height 0.25s ease;
+  box-shadow: $shadow-primary-btn;
+  transition: all 0.25s ease;
 
   &--expanded {
+    right: 0;
+    bottom: 0;
+    width: 100%;
     max-height: 100%;
+    border: 1px solid $border-input;
     border-radius: $radius-lg;
+    background: var(--vscode-editor-background);
+    color: $color-foreground;
+    box-shadow: none;
   }
 
   &__header {
@@ -162,30 +175,55 @@ const sections = computed(() => [
     align-items: center;
     gap: $spacing-sm;
     width: 100%;
-    padding: 10px $spacing-md;
+    padding: 6px 10px;
     border: none;
     background: transparent;
-    color: $color-foreground;
+    color: inherit;
     font-size: $font-size-sm;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    white-space: nowrap;
 
     &:hover {
       background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.05));
+    }
+
+    .syntax-help--expanded & {
+      padding: 10px $spacing-md;
     }
   }
 
   &__title {
     flex: 1;
     text-align: left;
+
+    &--short {
+      display: inline;
+    }
+
+    &--full {
+      display: none;
+    }
+  }
+
+  &--expanded &__title {
+    &--short {
+      display: none;
+    }
+
+    &--full {
+      display: inline;
+    }
   }
 
   &__arrow {
+    display: none;
     transition: transform 0.2s ease;
   }
 
   &--expanded &__arrow {
+    display: inline;
     transform: rotate(180deg);
   }
 
