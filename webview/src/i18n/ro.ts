@@ -24,6 +24,8 @@ export default {
     language: 'Limbaj',
     languagePlaceholder: 'Selectați limbajul (selecție multiplă posibilă)',
     save: 'Salvați',
+    saveAndClose: 'Salvați și închideți',
+    saveAndContinue: 'Salvați și continuă crearea',
     cancel: 'Anulați',
     nameRequired: 'Numele este obligatoriu',
     prefixRequired: 'Prefixul este obligatoriu',

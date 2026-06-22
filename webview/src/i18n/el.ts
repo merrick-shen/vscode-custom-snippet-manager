@@ -24,6 +24,8 @@ export default {
     language: 'Γλώσσα',
     languagePlaceholder: 'Επιλέξτε γλώσσα (δυνατή πολλαπλή επιλογή)',
     save: 'Αποθήκευση',
+    saveAndClose: 'Αποθήκευση και κλείσιμο',
+    saveAndContinue: 'Αποθήκευση και συνέχεια δημιουργίας',
     cancel: 'Ακύρωση',
     nameRequired: 'Το όνομα είναι υποχρεωτικό',
     prefixRequired: 'Το πρόθεμα είναι υποχρεωτικό',

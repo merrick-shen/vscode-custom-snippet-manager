@@ -28,6 +28,8 @@ export default {
     language: 'Lenguaje',
     languagePlaceholder: 'Seleccione lenguaje(s) — se permiten varios',
     save: 'Guardar',
+    saveAndClose: 'Guardar y cerrar',
+    saveAndContinue: 'Guardar y seguir creando',
     cancel: 'Cancelar',
     nameRequired: 'El nombre es obligatorio',
     prefixRequired: 'El prefijo es obligatorio',

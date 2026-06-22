@@ -28,6 +28,8 @@ export default {
     language: '대상 언어',
     languagePlaceholder: '대상 언어 선택 (다중 선택 가능)',
     save: '저장',
+    saveAndClose: '저장 및 닫기',
+    saveAndContinue: '저장 후 계속 생성',
     cancel: '취소',
     nameRequired: '이름을 입력하세요',
     prefixRequired: '접두사를 입력하세요',

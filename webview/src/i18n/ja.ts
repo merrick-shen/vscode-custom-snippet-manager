@@ -28,6 +28,8 @@ export default {
     language: '対象言語',
     languagePlaceholder: '対象言語を選択（複数選択可）',
     save: '保存',
+    saveAndClose: '保存して閉じる',
+    saveAndContinue: '保存して続けて作成',
     cancel: 'キャンセル',
     nameRequired: '名前を入力してください',
     prefixRequired: 'プレフィックスを入力してください',

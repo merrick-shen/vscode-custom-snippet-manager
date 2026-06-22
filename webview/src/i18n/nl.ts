@@ -24,6 +24,8 @@ export default {
     language: 'Taal',
     languagePlaceholder: 'Selecteer taal (meerdere keuzes mogelijk)',
     save: 'Opslaan',
+    saveAndClose: 'Opslaan en sluiten',
+    saveAndContinue: 'Opslaan en doorgaan met maken',
     cancel: 'Annuleren',
     nameRequired: 'Naam is verplicht',
     prefixRequired: 'Voorvoegsel is verplicht',

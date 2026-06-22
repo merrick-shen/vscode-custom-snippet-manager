@@ -24,6 +24,8 @@ export default {
     language: 'Jazyk',
     languagePlaceholder: 'Vyberte jazyk (možný vícevýběr)',
     save: 'Uložit',
+    saveAndClose: 'Uložit a zavřít',
+    saveAndContinue: 'Uložit a pokračovat v tvorbě',
     cancel: 'Zrušit',
     nameRequired: 'Název je povinný',
     prefixRequired: 'Předpona je povinná',

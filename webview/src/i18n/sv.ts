@@ -24,6 +24,8 @@ export default {
     language: 'Språk',
     languagePlaceholder: 'Välj språk (flera val möjliga)',
     save: 'Spara',
+    saveAndClose: 'Spara och stäng',
+    saveAndContinue: 'Spara och fortsätt skapa',
     cancel: 'Avbryt',
     nameRequired: 'Namn är obligatoriskt',
     prefixRequired: 'Prefix är obligatoriskt',

@@ -28,6 +28,8 @@ const form = ref({
 })
 // 保存中状态，防止重复提交
 const saving = ref(false)
+// 保存成功后是否继续创建（新建模式），用于区分保存并关闭 / 保存并继续创建
+const continueAfterSave = ref(false)
 // 是否为编辑模式
 const isEditing = ref(false)
 // 校验错误信息
@@ -73,8 +75,9 @@ watch(
       isEditing.value = false
       form.value = { name: '', prefix: '', body: '', description: '', language: '*', folderId: DEFAULT_FOLDER_ID }
     }
-    // 切换模式时清除校验错误
+    // 切换模式时清除校验错误和继续创建标志
     errors.value = {}
+    continueAfterSave.value = false
   },
   { immediate: true }
 )
@@ -98,10 +101,13 @@ function clearError(field: string) {
   }
 }
 
-/** 保存片段：校验通过后发送创建或更新消息 */
-function handleSave() {
+/** 保存片段：校验通过后发送创建或更新消息
+ * @param andContinue 新建模式下为 true 时保存成功后重置表单继续创建，不关闭编辑器
+ */
+function handleSave(andContinue: boolean = false) {
   if (!validate()) return
   saving.value = true
+  continueAfterSave.value = andContinue
   serverError.value = ''
   if (editingSnippet.value) {
     // 编辑模式：发送更新消息
@@ -125,15 +131,24 @@ onExtMessage('setSnippet', (payload) => {
   serverError.value = ''
 })
 
-// 创建成功后关闭面板
+// 创建成功后根据标志决定关闭面板或继续创建
 onExtMessage('snippetCreated', () => {
   saving.value = false
-  handleClose()
+  if (continueAfterSave.value) {
+    // 保存并继续：清空表单回到新建模式，保留当前所选文件夹
+    editingSnippet.value = null
+    const currentFolderId = form.value.folderId
+    form.value = { name: '', prefix: '', body: '', description: '', language: '*', folderId: currentFolderId }
+    continueAfterSave.value = false
+  } else {
+    handleClose()
+  }
 })
 
 // 更新成功后关闭面板
 onExtMessage('snippetUpdated', () => {
   saving.value = false
+  continueAfterSave.value = false
   handleClose()
 })
 
@@ -142,6 +157,7 @@ onExtMessage('error', (payload) => {
   const data = payload as { errorKey: string; errorParams?: Record<string, string> }
   serverError.value = t(data.errorKey, data.errorParams ?? {})
   saving.value = false
+  continueAfterSave.value = false
 })
 
 // 监听侧边栏语言切换，同步更新编辑器面板的 locale
@@ -294,7 +310,11 @@ onMounted(() => {
       </transition>
       <div class="footer-actions">
         <BaseButton variant="secondary" @click="handleClose">{{ t('form.cancel') }}</BaseButton>
-        <BaseButton variant="primary" icon="carbon:checkmark" :loading="saving" @click="handleSave">{{ t('form.save') }}</BaseButton>
+        <template v-if="!isEditing">
+          <BaseButton variant="secondary" icon="carbon:add" :loading="saving && continueAfterSave" :disabled="saving" @click="handleSave(true)">{{ t('form.saveAndContinue') }}</BaseButton>
+          <BaseButton variant="primary" icon="carbon:checkmark" :loading="saving && !continueAfterSave" :disabled="saving" @click="handleSave(false)">{{ t('form.saveAndClose') }}</BaseButton>
+        </template>
+        <BaseButton v-else variant="primary" icon="carbon:checkmark" :loading="saving" @click="handleSave(false)">{{ t('form.save') }}</BaseButton>
       </div>
     </div>
   </div>

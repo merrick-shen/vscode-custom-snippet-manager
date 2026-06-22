@@ -24,6 +24,8 @@ export default {
     language: 'Ngôn ngữ',
     languagePlaceholder: 'Chọn ngôn ngữ (có thể chọn nhiều)',
     save: 'Lưu',
+    saveAndClose: 'Lưu và đóng',
+    saveAndContinue: 'Lưu và tiếp tục tạo',
     cancel: 'Hủy',
     nameRequired: 'Tên là bắt buộc',
     prefixRequired: 'Tiền tố là bắt buộc',

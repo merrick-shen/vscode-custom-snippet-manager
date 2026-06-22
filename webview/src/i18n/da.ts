@@ -24,6 +24,8 @@ export default {
     language: 'Sprog',
     languagePlaceholder: 'Vælg sprog (flere valg mulige)',
     save: 'Gem',
+    saveAndClose: 'Gem og luk',
+    saveAndContinue: 'Gem og fortsæt med at oprette',
     cancel: 'Annuller',
     nameRequired: 'Navn er obligatorisk',
     prefixRequired: 'Præfiks er obligatorisk',

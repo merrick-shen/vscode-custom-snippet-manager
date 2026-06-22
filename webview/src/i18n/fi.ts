@@ -24,6 +24,8 @@ export default {
     language: 'Kieli',
     languagePlaceholder: 'Valitse kieli (monivalinta mahdollinen)',
     save: 'Tallenna',
+    saveAndClose: 'Tallenna ja sulje',
+    saveAndContinue: 'Tallenna ja jatka luomista',
     cancel: 'Peruuta',
     nameRequired: 'Nimi on pakollinen',
     prefixRequired: 'Etuliite on pakollinen',

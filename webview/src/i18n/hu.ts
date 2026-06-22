@@ -24,6 +24,8 @@ export default {
     language: 'Nyelv',
     languagePlaceholder: 'Válasszon nyelvet (többválasztás lehetséges)',
     save: 'Mentés',
+    saveAndClose: 'Mentés és bezárás',
+    saveAndContinue: 'Mentés és folytatás létrehozás',
     cancel: 'Mégse',
     nameRequired: 'A név kötelező',
     prefixRequired: 'Az előtag kötelező',

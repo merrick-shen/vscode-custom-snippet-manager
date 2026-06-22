@@ -28,6 +28,8 @@ export default {
     language: '適用語言',
     languagePlaceholder: '選擇適用語言（支援多選）',
     save: '儲存',
+    saveAndClose: '儲存並關閉',
+    saveAndContinue: '儲存並繼續建立',
     cancel: '取消',
     nameRequired: '請輸入名稱',
     prefixRequired: '請輸入前綴',

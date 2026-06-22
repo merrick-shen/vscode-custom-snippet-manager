@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- **Snippet Editor**: New "Save and Continue" button in creation mode lets you save the current snippet and immediately start creating the next one without closing the editor
+
 ### Changed
 
 - **Search Performance**: Cached the Fuse.js instance so it is only rebuilt when snippets or language filter changes, reducing lag while typing search queries with many snippets

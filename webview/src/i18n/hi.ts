@@ -24,6 +24,8 @@ export default {
     language: 'भाषा',
     languagePlaceholder: 'भाषा चुनें (बहुविकल्पीय चयन संभव)',
     save: 'सहेजें',
+    saveAndClose: 'सहेजें और बंद करें',
+    saveAndContinue: 'सहेजें और बनाना जारी रखें',
     cancel: 'रद्द करें',
     nameRequired: 'नाम आवश्यक है',
     prefixRequired: 'उपसर्ग आवश्यक है',

@@ -28,6 +28,8 @@ export default {
     language: 'Dil',
     languagePlaceholder: 'Dil(ler)i seçin — birden fazla seçilebilir',
     save: 'Kaydet',
+    saveAndClose: 'Kaydet ve kapat',
+    saveAndContinue: 'Kaydet ve oluşturmaya devam et',
     cancel: 'İptal',
     nameRequired: 'Ad zorunludur',
     prefixRequired: 'Önek zorunludur',

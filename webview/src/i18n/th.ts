@@ -24,6 +24,8 @@ export default {
     language: 'ภาษา',
     languagePlaceholder: 'เลือกภาษา (เลือกได้หลายภาษา)',
     save: 'บันทึก',
+    saveAndClose: 'บันทึกและปิด',
+    saveAndContinue: 'บันทึกและสร้างต่อ',
     cancel: 'ยกเลิก',
     nameRequired: 'ต้องระบุชื่อ',
     prefixRequired: 'ต้องระบุคำนำหน้า',

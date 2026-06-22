@@ -24,6 +24,8 @@ export default {
     language: 'Мова',
     languagePlaceholder: 'Виберіть мову (можна вибрати кілька)',
     save: 'Зберегти',
+    saveAndClose: 'Зберегти і закрити',
+    saveAndContinue: 'Зберегти і продовжити створення',
     cancel: 'Скасувати',
     nameRequired: 'Назва обов\'язкова',
     prefixRequired: 'Префікс обов\'язковий',
