@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Zadejte spouštěcí předponu, např. log',
     prefixNotice: 'Doplňování kódu nepodporuje předpony začínající číslicí. Použijte písmeno (a-z, A-Z) nebo podtržítko (_) jako první znak.',
     body: 'Obsah kódu',
-    bodyPlaceholder: 'Zadejte obsah kódu, podporuje $1, $2, $0 zástupné značky kurzoru',
-    bodyHint: 'Podporuje $1, $2, $0 zástupné značky kurzoru',
     description: 'Popis',
     descriptionPlaceholder: 'Zadejte popis úryvku kódu',
     language: 'Jazyk',

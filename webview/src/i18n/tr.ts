@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'Tetikleyici öneki girin, örn. log',
     prefixNotice: 'Otomatik tamamlama, rakamla başlayan önekleri desteklemez. İlk karakter olarak bir harf (a-z, A-Z) veya alt çizgi (_) kullanın ve başta rakam veya özel simgelerden kaçının.',
     body: 'Gövde',
-    bodyPlaceholder: 'Snippet gövdesini girin, $1, $2, $0 sekme duraklarını destekler',
-    bodyHint: '$1, $2, $0 sekme duraklarını destekler',
     description: 'Açıklama',
     descriptionPlaceholder: 'Snippet açıklamasını girin',
     language: 'Dil',

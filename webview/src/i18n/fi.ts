@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Anna laukaisuetuliite, esim. log',
     prefixNotice: 'Koodintäydennys ei tue numerolla alkavia etuliitteitä. Käytä kirjainta (a-z, A-Z) tai alaviivaa (_) ensimmäisenä merkkinä.',
     body: 'Koodisisältö',
-    bodyPlaceholder: 'Anna koodisisältö, tukee $1, $2, $0 kursoripaikkamerkkejä',
-    bodyHint: 'Tukee $1, $2, $0 kursoripaikkamerkkejä',
     description: 'Kuvaus',
     descriptionPlaceholder: 'Anna koodinpätkän kuvaus',
     language: 'Kieli',

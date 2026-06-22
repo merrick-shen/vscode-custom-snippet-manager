@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Nhập tiền tố kích hoạt, ví dụ log',
     prefixNotice: 'Tự động hoàn thành không hỗ trợ tiền tố bắt đầu bằng số. Hãy sử dụng chữ cái (a-z, A-Z) hoặc gạch dưới (_) làm ký tự đầu tiên.',
     body: 'Nội dung mã',
-    bodyPlaceholder: 'Nhập nội dung mã, hỗ trợ $1, $2, $0 điểm giữ chỗ con trỏ',
-    bodyHint: 'Hỗ trợ $1, $2, $0 điểm giữ chỗ con trỏ',
     description: 'Mô tả',
     descriptionPlaceholder: 'Nhập mô tả đoạn mã',
     language: 'Ngôn ngữ',

@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'トリガープレフィックスを入力（例: log）',
     prefixNotice: 'コード補完は数字で始まるプレフィックスをサポートしていません。先頭文字には英字（a-z, A-Z）またはアンダースコア（_）を使用し、数字や特殊記号での開始は避けてください。',
     body: 'コード内容',
-    bodyPlaceholder: 'コード内容を入力（$1, $2, $0 タブストップ対応）',
-    bodyHint: '$1, $2, $0 タブストップ対応',
     description: '説明',
     descriptionPlaceholder: 'スニペットの説明を入力',
     language: '対象言語',

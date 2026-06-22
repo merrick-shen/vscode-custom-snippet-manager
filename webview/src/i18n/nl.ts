@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Voer trigger-voorvoegsel in, bijv. log',
     prefixNotice: 'Code-aanvulling ondersteunt geen voorvoegsels die met een cijfer beginnen. Gebruik een letter (a-z, A-Z) of underscore (_) als eerste teken.',
     body: 'Code-inhoud',
-    bodyPlaceholder: 'Voer code-inhoud in, ondersteunt $1, $2, $0 cursorplaatsaanduidingen',
-    bodyHint: 'Ondersteunt $1, $2, $0 cursorplaatsaanduidingen',
     description: 'Beschrijving',
     descriptionPlaceholder: 'Voer een beschrijving van het codefragment in',
     language: 'Taal',

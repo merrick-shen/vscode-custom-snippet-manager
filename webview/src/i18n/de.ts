@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'Trigger-Präfix eingeben, z.B. log',
     prefixNotice: 'Die Autovervollständigung unterstützt keine Präfixe, die mit einer Ziffer beginnen. Verwenden Sie einen Buchstaben (a-z, A-Z) oder Unterstrich (_) als erstes Zeichen und vermeiden Sie Ziffern oder Sonderzeichen am Anfang.',
     body: 'Inhalt',
-    bodyPlaceholder: 'Snippet-Inhalt eingeben, unterstützt $1, $2, $0 Tabstopps',
-    bodyHint: 'Unterstützt $1, $2, $0 Tabstopps',
     description: 'Beschreibung',
     descriptionPlaceholder: 'Snippet-Beschreibung eingeben',
     language: 'Sprache',

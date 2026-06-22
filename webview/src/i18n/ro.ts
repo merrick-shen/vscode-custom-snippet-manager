@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Introduceți prefixul declanșator, ex. log',
     prefixNotice: 'Completarea automată nu suportă prefixe care încep cu o cifră. Folosiți o literă (a-z, A-Z) sau underscore (_) ca prim caracter.',
     body: 'Conținut cod',
-    bodyPlaceholder: 'Introduceți conținutul codului, suportă $1, $2, $0 marcaje de poziție cursor',
-    bodyHint: 'Suportă $1, $2, $0 marcaje de poziție cursor',
     description: 'Descriere',
     descriptionPlaceholder: 'Introduceți descrierea fragmentului de cod',
     language: 'Limbaj',

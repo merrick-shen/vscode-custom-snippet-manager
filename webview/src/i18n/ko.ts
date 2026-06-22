@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: '트리거 접두사 입력 (예: log)',
     prefixNotice: '코드 자동완성은 숫자로 시작하는 접두사를 지원하지 않습니다. 첫 글자로 영문자(a-z, A-Z) 또는 밑줄(_)을 사용하고, 숫자나 특수 기호로 시작하지 마세요.',
     body: '코드 내용',
-    bodyPlaceholder: '코드 내용 입력 ($1, $2, $0 탭스톱 지원)',
-    bodyHint: '$1, $2, $0 탭스톱 지원',
     description: '설명',
     descriptionPlaceholder: '스니펫 설명 입력',
     language: '대상 언어',

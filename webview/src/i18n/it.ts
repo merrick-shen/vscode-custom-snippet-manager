@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: "Inserisci il prefisso di attivazione, es. log",
     prefixNotice: "L'autocompletamento non supporta prefissi che iniziano con una cifra. Usa una lettera (a-z, A-Z) o un trattino basso (_) come primo carattere ed evita cifre o simboli speciali all'inizio.",
     body: 'Corpo',
-    bodyPlaceholder: "Inserisci il corpo dello snippet, supporta tabstop $1, $2, $0",
-    bodyHint: 'Supporta tabstop $1, $2, $0',
     description: 'Descrizione',
     descriptionPlaceholder: "Inserisci la descrizione dello snippet",
     language: 'Linguaggio',

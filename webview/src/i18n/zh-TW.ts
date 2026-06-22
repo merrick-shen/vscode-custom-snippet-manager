@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: '輸入觸發前綴，如 log',
     prefixNotice: '程式碼提示暫不支援以數字開頭的程式碼前綴。建議使用字母（a-z, A-Z）或底線（_）作為前綴起始字元，避免使用數字或特殊符號。',
     body: '程式碼內容',
-    bodyPlaceholder: '輸入程式碼內容，支援 $1, $2, $0 游標佔位符',
-    bodyHint: '支援 $1, $2, $0 游標佔位符',
     description: '描述',
     descriptionPlaceholder: '輸入程式碼片段描述',
     language: '適用語言',

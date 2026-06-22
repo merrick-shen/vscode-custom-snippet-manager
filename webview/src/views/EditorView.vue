@@ -244,13 +244,11 @@ onMounted(() => {
             <label class="form-label">
               {{ t('form.body') }}
               <span class="required-dot">*</span>
-              <span class="form-hint">{{ t('form.bodyHint') }}</span>
             </label>
             <div class="code-editor-wrapper code-editor-wrapper--fill">
               <CodeEditor
                 v-model="form.body"
                 :language="form.language === '*' ? '' : form.language"
-                :placeholder="t('form.bodyPlaceholder')"
                 @update:model-value="clearError('body')"
               />
             </div>

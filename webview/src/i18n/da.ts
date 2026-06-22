@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Indtast udløserpræfiks, f.eks. log',
     prefixNotice: 'Kodkomplettering understøtter ikke præfikser, der starter med et tal. Brug et bogstav (a-z, A-Z) eller understregning (_) som første tegn.',
     body: 'Kodeindhold',
-    bodyPlaceholder: 'Indtast kodeindhold, understøtter $1, $2, $0 markørpladsholdere',
-    bodyHint: 'Understøtter $1, $2, $0 markørpladsholdere',
     description: 'Beskrivelse',
     descriptionPlaceholder: 'Indtast kodestykkets beskrivelse',
     language: 'Sprog',

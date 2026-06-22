@@ -14,6 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Changed
 
+- **Snippet Editor**: Removed tabstop placeholder hints from the code body field for a cleaner editing interface
 - **Search Performance**: Cached the Fuse.js instance so it is only rebuilt when snippets or language filter changes, reducing lag while typing search queries with many snippets
 
 ### Fixed

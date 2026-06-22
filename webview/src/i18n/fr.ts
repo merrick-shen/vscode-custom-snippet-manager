@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'Entrez le préfixe déclencheur, ex. log',
     prefixNotice: "L'autocomplétion ne prend pas en charge les préfixes commençant par un chiffre. Utilisez une lettre (a-z, A-Z) ou un tiret bas (_) comme premier caractère et évitez les chiffres ou symboles spéciaux au début.",
     body: 'Corps',
-    bodyPlaceholder: 'Entrez le corps du snippet, prend en charge les tabstopps $1, $2, $0',
-    bodyHint: 'Prend en charge les tabstopps $1, $2, $0',
     description: 'Description',
     descriptionPlaceholder: 'Entrez la description du snippet',
     language: 'Langage',

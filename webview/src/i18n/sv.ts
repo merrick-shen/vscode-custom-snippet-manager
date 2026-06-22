@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Ange utlösarprefix, t.ex. log',
     prefixNotice: 'Kodkomplettering stöder inte prefix som börjar med en siffra. Använd en bokstav (a-z, A-Z) eller understreck (_) som första tecken.',
     body: 'Kodinnehåll',
-    bodyPlaceholder: 'Ange kodinnehåll, stöder $1, $2, $0 markörplatshållare',
-    bodyHint: 'Stöder $1, $2, $0 markörplatshållare',
     description: 'Beskrivning',
     descriptionPlaceholder: 'Ange kodavsnittets beskrivning',
     language: 'Språk',

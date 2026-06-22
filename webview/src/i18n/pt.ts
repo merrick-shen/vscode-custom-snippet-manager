@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'Digite o prefixo disparador, ex. log',
     prefixNotice: 'O autocompletar não suporta prefixos que começam com um número. Use uma letra (a-z, A-Z) ou sublinhado (_) como primeiro caractere e evite números ou símbolos especiais no início.',
     body: 'Corpo',
-    bodyPlaceholder: 'Digite o corpo do snippet, suporta tabstops $1, $2, $0',
-    bodyHint: 'Suporta tabstops $1, $2, $0',
     description: 'Descrição',
     descriptionPlaceholder: 'Digite a descrição do snippet',
     language: 'Linguagem',

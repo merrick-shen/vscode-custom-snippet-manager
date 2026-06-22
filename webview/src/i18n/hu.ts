@@ -17,8 +17,6 @@ export default {
     prefixPlaceholder: 'Adja meg az előtagot, pl. log',
     prefixNotice: 'A kódkiegészítés nem támogatja a számmal kezdődő előtagokat. Használjon betűt (a-z, A-Z) vagy aláhúzást (_) első karakterként.',
     body: 'Kódtartalom',
-    bodyPlaceholder: 'Adja meg a kódtartalmat, támogatja a $1, $2, $0 kurzorhelyőrzőket',
-    bodyHint: 'Támogatja a $1, $2, $0 kurzorhelyőrzőket',
     description: 'Leírás',
     descriptionPlaceholder: 'Adja meg a kódrészlet leírását',
     language: 'Nyelv',

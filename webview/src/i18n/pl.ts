@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'Wprowadź prefiks wyzwalacza, np. log',
     prefixNotice: 'Autouzupełnianie nie obsługuje prefiksów zaczynających się od cyfry. Użyj litery (a-z, A-Z) lub podkreślenia (_) jako pierwszego znaku i unikaj cyfr oraz symboli specjalnych na początku.',
     body: 'Treść',
-    bodyPlaceholder: 'Wprowadź treść snippetu, obsługuje tabstopy $1, $2, $0',
-    bodyHint: 'Obsługuje tabstopy $1, $2, $0',
     description: 'Opis',
     descriptionPlaceholder: 'Wprowadź opis snippetu',
     language: 'Język',

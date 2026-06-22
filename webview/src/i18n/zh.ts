@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: '输入触发前缀，如 log',
     prefixNotice: '代码提示暂不支持以数字开头的代码前缀。建议使用字母（a-z, A-Z）或下划线（_）作为前缀起始字符，避免使用数字或特殊符号。',
     body: '代码内容',
-    bodyPlaceholder: '输入代码内容，支持 $1, $2, $0 光标占位符',
-    bodyHint: '支持 $1, $2, $0 光标占位符',
     description: '描述',
     descriptionPlaceholder: '输入代码片段描述',
     language: '适用语言',

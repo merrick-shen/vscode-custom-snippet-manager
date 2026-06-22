@@ -21,8 +21,6 @@ export default {
     prefixPlaceholder: 'Ingrese el prefijo disparador, ej. log',
     prefixNotice: 'El autocompletado no admite prefijos que comiencen con un número. Use una letra (a-z, A-Z) o guion bajo (_) como primer carácter y evite números o símbolos especiales al inicio.',
     body: 'Cuerpo',
-    bodyPlaceholder: 'Ingrese el cuerpo del snippet, soporta tabstops $1, $2, $0',
-    bodyHint: 'Soporta tabstops $1, $2, $0',
     description: 'Descripción',
     descriptionPlaceholder: 'Ingrese la descripción del snippet',
     language: 'Lenguaje',
