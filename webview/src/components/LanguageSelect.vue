@@ -74,46 +74,42 @@ function isOptionSelected(opt: { value: string }): boolean {
 
 /** 选择某个选项 */
 function selectOption(opt: { label: string; value: string; icon?: string }) {
-  if (props.multiple) {
-    // 多选模式
-    const vals = [...selectedValues.value]
-    const idx = vals.indexOf(opt.value)
-
-    if (opt.value === '*') {
-      // 点击 "所有语言"：选中它并清除其他选项
-      if (idx >= 0) {
-        // 已选中则取消（不允许全部取消，至少保留一个）
-        return
-      }
-      emit('update:modelValue', '*')
-    } else {
-      // 点击具体语言
-      // 先移除 "所有语言"（如果有的话）
-      const allIdx = vals.indexOf('*')
-      if (allIdx >= 0) {
-        vals.splice(allIdx, 1)
-      }
-      if (idx >= 0 || (allIdx >= 0 && vals.indexOf(opt.value) >= 0)) {
-        // 已选中则取消
-        const removeIdx = vals.indexOf(opt.value)
-        if (removeIdx >= 0) {
-          vals.splice(removeIdx, 1)
-        }
-        // 如果取消后没有选中任何语言，回退到 "所有语言"
-        if (vals.length === 0) {
-          emit('update:modelValue', '*')
-          return
-        }
-      } else {
-        // 未选中则添加
-        vals.push(opt.value)
-      }
-      emit('update:modelValue', vals.join(','))
-    }
-  } else {
-    // 单选模式
+  if (!props.multiple) {
+    // 单选模式：直接更新并关闭下拉
     emit('update:modelValue', opt.value)
     isOpen.value = false
+    return
+  }
+
+  // 多选模式下 modelValue 是逗号分隔的字符串，解析为基本类型数组进行值比较
+  const vals = [...selectedValues.value]
+
+  if (opt.value === '*') {
+    // 点击 "所有语言"：直接切换到全选状态
+    emit('update:modelValue', '*')
+    return
+  }
+
+  // 点击具体语言：先移除 "所有语言"（如果存在），避免 mixed 状态
+  const allIdx = vals.indexOf('*')
+  if (allIdx >= 0) {
+    vals.splice(allIdx, 1)
+  }
+
+  const idx = vals.indexOf(opt.value)
+  if (idx >= 0) {
+    // 已选中则取消
+    vals.splice(idx, 1)
+  } else {
+    // 未选中则添加
+    vals.push(opt.value)
+  }
+
+  // 如果取消后没有选中任何语言，回退到 "所有语言"，避免空选
+  if (vals.length === 0) {
+    emit('update:modelValue', '*')
+  } else {
+    emit('update:modelValue', vals.join(','))
   }
 }
 
