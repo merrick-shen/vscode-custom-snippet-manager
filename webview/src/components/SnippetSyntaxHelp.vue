@@ -116,8 +116,8 @@ const sections = computed(() => [
         height="16"
       />
     </button>
-    <transition name="expand">
-      <div v-show="expanded" class="syntax-help__body">
+    <div v-show="expanded" class="syntax-help__body-wrapper">
+      <div class="syntax-help__body">
         <div
           v-for="(section, sIdx) in sections"
           :key="sIdx"
@@ -136,7 +136,7 @@ const sections = computed(() => [
           </div>
         </div>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -156,7 +156,9 @@ const sections = computed(() => [
   overflow: hidden;
   pointer-events: auto;
   box-shadow: $shadow-primary-btn;
-  transition: all 0.25s ease;
+  // 使用更平滑的缓动曲线，让胶囊到面板的形态变化更自然
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
 
   &--expanded {
     right: 0;
@@ -227,8 +229,24 @@ const sections = computed(() => [
     transform: rotate(180deg);
   }
 
-  &__body {
+  // 外层包裹层负责高度展开动画，使用 grid-template-rows 动画实际高度，避免固定 max-height 带来的顿挫
+  &__body-wrapper {
     flex: 1 1 auto;
+    display: grid;
+    grid-template-rows: 0fr;
+    min-height: 0;
+    opacity: 0;
+    transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.25s ease 0.05s;
+    overflow: hidden;
+  }
+
+  &--expanded &__body-wrapper {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  &__body {
     min-height: 0;
     padding: 0 $spacing-md 12px;
     border-top: 1px solid $border-input;
@@ -284,23 +302,5 @@ const sections = computed(() => [
   }
 }
 
-.expand-enter-active,
-.expand-leave-active {
-  transition: all 0.2s ease;
-  overflow: hidden;
-}
 
-.expand-enter-from,
-.expand-leave-to {
-  opacity: 0;
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.expand-enter-to,
-.expand-leave-from {
-  opacity: 1;
-  max-height: 420px;
-}
 </style>

@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [Unreleased]
+
+### Changed
+
+- **Snippet Editor**: Smoother expand/collapse animation for the snippet syntax help panel
+
 ## [1.4.0] - 2026-06-23
 
 ### Added
