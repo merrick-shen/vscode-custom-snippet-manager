@@ -493,7 +493,7 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
 
     <!-- 语言筛选下拉：使用自定义组件显示图标 -->
     <div class="sidebar-filter">
-      <LanguageSelect
+      <BaseSelect
         v-model="languageFilter"
         :options="languageOptions"
         :placeholder="t('form.languagePlaceholder')"
@@ -711,7 +711,7 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
           </span>
         </div>
         <div v-else class="placement-field">
-          <LanguageSelect
+          <BaseSelect
             v-model="placementDialog.targetFolderId"
             :options="placementFolderOptions"
             :placeholder="t('folder.namePlaceholder')"

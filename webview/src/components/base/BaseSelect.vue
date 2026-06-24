@@ -1,10 +1,9 @@
-<!-- 语言选择下拉组件：支持多选模式和图标显示的自定义下拉菜单 -->
+<!-- 通用下拉选择组件：支持单选/多选模式和图标显示 -->
 <script setup lang="ts">
 /**
- * 语言选择下拉组件
- * 支持多选模式：选中 "所有语言" 时自动清除其他选项
- * 选中其他语言时自动取消 "所有语言"
- * 逗号分隔存储，如 "javascript,typescript"
+ * 通用下拉选择组件
+ * 支持单选和多选模式：多选时选中 "全部" 选项（value 为 '*'）会自动清除其他选项
+ * 选中其他选项时自动取消 "全部"，逗号分隔存储，如 "javascript,typescript"
  */
 import { Icon } from '@iconify/vue'
 
@@ -56,8 +55,8 @@ const selectedOptions = computed(() => {
   return props.options.filter((opt) => vals.includes(opt.value) && opt.value !== '*')
 })
 
-// 是否选中了 "所有语言"
-const isAllLanguages = computed(() => selectedValues.value.includes('*'))
+// 是否选中了 "全部" 选项
+const isAllSelected = computed(() => selectedValues.value.includes('*'))
 
 /** 切换下拉菜单展开/收起 */
 function toggle() {
@@ -85,12 +84,12 @@ function selectOption(opt: { label: string; value: string; icon?: string }) {
   const vals = [...selectedValues.value]
 
   if (opt.value === '*') {
-    // 点击 "所有语言"：直接切换到全选状态
+    // 点击 "全部" 选项：直接切换到全选状态
     emit('update:modelValue', '*')
     return
   }
 
-  // 点击具体语言：先移除 "所有语言"（如果存在），避免 mixed 状态
+  // 点击具体选项：先移除 "全部"（如果存在），避免 mixed 状态
   const allIdx = vals.indexOf('*')
   if (allIdx >= 0) {
     vals.splice(allIdx, 1)
@@ -105,7 +104,7 @@ function selectOption(opt: { label: string; value: string; icon?: string }) {
     vals.push(opt.value)
   }
 
-  // 如果取消后没有选中任何语言，回退到 "所有语言"，避免空选
+  // 如果取消后没有选中任何项，回退到 "全部"，避免空选
   if (vals.length === 0) {
     emit('update:modelValue', '*')
   } else {
@@ -177,8 +176,8 @@ onBeforeUnmount(() => {
       <div class="lang-select-value">
         <!-- 多选模式 -->
         <template v-if="multiple">
-          <!-- 选中 "所有语言" 时显示其图标和文字 -->
-          <template v-if="isAllLanguages">
+          <!-- 选中 "全部" 选项时显示其图标和文字 -->
+          <template v-if="isAllSelected">
             <Icon
               :icon="options.find(o => o.value === '*')?.icon || 'carbon:code'"
               class="lang-icon"

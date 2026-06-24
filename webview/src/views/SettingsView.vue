@@ -39,7 +39,7 @@ const emit = defineEmits<{
   resetLocaleToAuto: []
 }>()
 
-// 语言下拉选项，适配 LanguageSelect 组件格式
+// 语言下拉选项，适配 BaseSelect 组件格式
 const localeSelectOptions = computed(() =>
   SUPPORTED_LOCALES.map((l) => ({
     label: l.label,
@@ -161,7 +161,7 @@ onExtMessage('showNotification', (payload) => {
             </span>
           </div>
           <!-- 语言选择下拉 -->
-          <LanguageSelect
+          <BaseSelect
             :model-value="currentLocale"
             :options="localeSelectOptions"
             class="locale-select-full"

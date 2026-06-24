@@ -14,8 +14,8 @@ declare module 'vue' {
     BaseButton: typeof import('./components/base/BaseButton.vue')['default']
     BaseCheckbox: typeof import('./components/base/BaseCheckbox.vue')['default']
     BaseRadio: typeof import('./components/base/BaseRadio.vue')['default']
+    BaseSelect: typeof import('./components/base/BaseSelect.vue')['default']
     ConfirmDialog: typeof import('./components/feedback/ConfirmDialog.vue')['default']
-    LanguageSelect: typeof import('./components/form/LanguageSelect.vue')['default']
     NotificationBar: typeof import('./components/feedback/NotificationBar.vue')['default']
   }
 }

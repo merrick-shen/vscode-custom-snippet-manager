@@ -48,7 +48,7 @@ const languageOptions = computed(() =>
   }))
 )
 
-/** 文件夹下拉选项，默认文件夹用 i18n 名称（无图标，复用 LanguageSelect） */
+/** 文件夹下拉选项，默认文件夹用 i18n 名称（无图标，复用 BaseSelect） */
 const folderOptions = computed(() =>
   folders.value.map((f) => ({
     value: f.id,
@@ -283,7 +283,7 @@ onMounted(() => {
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">{{ t('form.language') }}</label>
-              <LanguageSelect
+              <BaseSelect
                 v-model="form.language"
                 :options="languageOptions"
                 :placeholder="t('form.languagePlaceholder')"
@@ -294,7 +294,7 @@ onMounted(() => {
 
             <div class="form-group">
               <label class="form-label">{{ t('folder.belongTo') }}</label>
-              <LanguageSelect
+              <BaseSelect
                 v-model="form.folderId"
                 :options="folderOptions"
                 placement="top"
