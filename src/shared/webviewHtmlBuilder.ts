@@ -5,7 +5,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { getErrorHtml } from '../webviewUtils';
+import { getErrorHtml } from './webviewUtils';
 import localesData from '../../locales.json';
 
 /** Webview HTML 构建选项 */

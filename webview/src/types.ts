@@ -39,4 +39,4 @@ export const DEFAULT_FOLDER_ID = 'default'
 export type SortOrder = 'desc' | 'asc'
 
 // 消息类型、通信接口与后端共享同一套定义，避免两端不一致
-export type { MessageType, WebviewMessage, ExtMessage } from '../../src/messageTypes'
+export type { MessageType, WebviewMessage, ExtMessage } from '../../src/shared/messageTypes'

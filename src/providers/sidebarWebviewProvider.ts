@@ -7,12 +7,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { SnippetService } from './snippetService';
-import { ImportExportService } from './importExportService';
-import { WebviewPanel } from './webviewPanel';
-import { MessageType, WebviewMessage } from './messageTypes';
-import { buildWebviewHtml, resolveLocale as resolveLocaleShared, getLocaleSource as getLocaleSourceShared } from './shared/webviewHtmlBuilder';
-import localesData from '../locales.json';
+import { SnippetService } from '../services/snippetService';
+import { ImportExportService } from '../services/importExportService';
+import { WebviewPanel } from './editorWebviewPanel';
+import { MessageType, WebviewMessage } from '../shared/messageTypes';
+import { buildWebviewHtml, resolveLocale as resolveLocaleShared, getLocaleSource as getLocaleSourceShared } from '../shared/webviewHtmlBuilder';
+import localesData from '../../locales.json';
 
 /**
  * 导入存放方式选择结果

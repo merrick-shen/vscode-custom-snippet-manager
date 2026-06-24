@@ -4,10 +4,10 @@
  * 实现代码片段的完整生命周期：创建、编辑、删除、补全和插入
  */
 import * as vscode from 'vscode';
-import { WebviewPanel } from './webviewPanel';
-import { SidebarWebviewProvider } from './sidebarWebviewProvider';
-import { SnippetService } from './snippetService';
-import { SnippetCompletionProvider } from './snippetProvider';
+import { WebviewPanel } from './providers/editorWebviewPanel';
+import { SidebarWebviewProvider } from './providers/sidebarWebviewProvider';
+import { SnippetService } from './services/snippetService';
+import { SnippetCompletionProvider } from './providers/snippetCompletionProvider';
 
 /** 模块级引用，供 deactivate 时刷盘使用 */
 let snippetService: SnippetService;

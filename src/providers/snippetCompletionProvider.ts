@@ -4,8 +4,8 @@
  * 根据当前编辑器语言自动筛选适用的代码片段
  */
 import * as vscode from 'vscode';
-import { SnippetService, SnippetData } from './snippetService';
-import { LANGUAGE_ALIASES } from './languages';
+import { SnippetService, SnippetData } from '../services/snippetService';
+import { LANGUAGE_ALIASES } from '../shared/languages';
 
 export class SnippetCompletionProvider implements vscode.CompletionItemProvider {
   /** 片段数据服务，用于获取片段列表 */

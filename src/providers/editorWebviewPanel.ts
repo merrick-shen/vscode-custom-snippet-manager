@@ -5,8 +5,8 @@
  * 支持编辑器就绪检测，确保数据在 webview 完全加载后才发送
  */
 import * as vscode from 'vscode';
-import { SnippetService, SnippetData } from './snippetService';
-import { buildWebviewHtml, resolveLocale as resolveLocaleShared } from './shared/webviewHtmlBuilder';
+import { SnippetService, SnippetData } from '../services/snippetService';
+import { buildWebviewHtml, resolveLocale as resolveLocaleShared } from '../shared/webviewHtmlBuilder';
 
 /** Webview 发送的消息格式 */
 interface WebviewMessage {
