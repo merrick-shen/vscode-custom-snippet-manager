@@ -6,10 +6,10 @@
  * 语言设置支持自动检测（跟随 VS Code 语言）和手动选择
  */
 import { Icon } from '@iconify/vue'
-import { postToExt, onExtMessage } from '../composables/useMessage'
-import { useConfirm } from '../composables/useConfirm'
-import { useNotification } from '../composables/useNotification'
-import { SUPPORTED_LOCALES } from '../i18n'
+import { postToExt, onExtMessage } from '../../composables/useMessage'
+import { useConfirm } from '../../composables/useConfirm'
+import { useNotification } from '../../composables/useNotification'
+import { SUPPORTED_LOCALES } from '../../i18n'
 
 const { t } = useI18n()
 const { confirmState, showConfirm, handleConfirmOk, handleConfirmCancel } = useConfirm()
@@ -143,7 +143,7 @@ onExtMessage('showNotification', (payload) => {
       <!-- 插件 Logo 和名称 -->
       <div class="about-brand">
         <div class="about-logo">
-          <img src="../assets/logo.png" alt="logo" class="about-logo-img" />
+          <img src="../../assets/logo.png" alt="logo" class="about-logo-img" />
         </div>
         <h3 class="about-name">{{ APP_NAME }}</h3>
         <span class="about-version">v{{ appVersion }}</span>
