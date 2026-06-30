@@ -10,6 +10,7 @@ import type { Snippet, Folder } from '@/types'
 import { DEFAULT_FOLDER_ID } from '@/types'
 import { SUPPORTED_LANGUAGES } from '@/utils/languages'
 import { postToExt, onExtMessage } from '@/composables/useMessage'
+import { ensureLocale } from '@/i18n'
 import CodeEditor from '@/views/editor/components/CodeEditor.vue'
 import SnippetSyntaxHelp from '@/views/editor/components/SnippetSyntaxHelp.vue'
 
@@ -162,9 +163,11 @@ onExtMessage('error', (payload) => {
   continueAfterSave.value = false
 })
 
-// 监听侧边栏语言切换，同步更新编辑器面板的 locale
-onExtMessage('localeChanged', (payload) => {
-  locale.value = payload as string
+// 监听侧边栏语言切换，先确保语言已加载再同步更新编辑器面板的 locale
+onExtMessage('localeChanged', async (payload) => {
+  const lang = payload as string
+  await ensureLocale(lang)
+  locale.value = lang
 })
 
 // 组件挂载时通知后端编辑器已就绪

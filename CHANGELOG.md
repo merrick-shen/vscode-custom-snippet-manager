@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Changed
 
 - **Snippet Editor**: Smoother expand/collapse animation for the snippet syntax help panel
+- **Performance**: Reduced webview initial load time by lazy-loading language packs — only the current and fallback languages are bundled on startup, other languages load on demand when switched to
 
 ## [1.4.0] - 2026-06-23
 

@@ -16,6 +16,7 @@ import { useNotification } from '@/composables/useNotification'
 import { useConfirm } from '@/composables/useConfirm'
 import { useImportExportDialogs } from '@/composables/useImportExportDialogs'
 import { useFolderDialogs } from '@/composables/useFolderDialogs'
+import { ensureLocale } from '@/i18n'
 import SettingsView from '@/views/settings/SettingsView.vue'
 import SnippetPreviewCard from '@/views/sidebar/components/SnippetPreviewCard.vue'
 import FolderGroup from '@/views/sidebar/components/FolderGroup.vue'
@@ -74,8 +75,9 @@ const currentSortLabel = computed(() => {
 const localeSource = ref<'auto' | 'manual'>(window.__LOCALE_SOURCE || 'auto')
 
 
-/** 切换语言，标记为手动模式并通知后端持久化 */
-function changeLocale(val: string) {
+/** 切换语言，先确保目标语言翻译已加载，再标记为手动模式并通知后端持久化 */
+async function changeLocale(val: string) {
+  await ensureLocale(val)
   locale.value = val
   localeSource.value = 'manual'
   postToExt('changeLocale', val)
@@ -233,10 +235,11 @@ onExtMessage('error', (payload) => {
   showError(t(data.errorKey, data.errorParams ?? {}))
 })
 
-// 监听后端语言变更通知（重置为自动模式时触发）
-onExtMessage('localeChanged', (payload) => {
+// 监听后端语言变更通知（重置为自动模式时触发），先确保语言已加载再切换
+onExtMessage('localeChanged', async (payload) => {
   if (typeof payload === 'object' && payload !== null && 'locale' in payload) {
     const data = payload as { locale: string; source: 'auto' | 'manual' }
+    await ensureLocale(data.locale)
     locale.value = data.locale
     localeSource.value = data.source
   }
