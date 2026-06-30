@@ -8,6 +8,7 @@
  */
 import { Icon } from '@iconify/vue'
 import Fuse from 'fuse.js'
+import { refDebounced } from '@vueuse/core'
 import type { Snippet, SortOrder, Folder } from '@/types'
 import { DEFAULT_FOLDER_ID } from '@/types'
 import { SUPPORTED_LANGUAGES } from '@/utils/languages'
@@ -61,6 +62,8 @@ function toggleFolder(folderId: string) {
 }
 // 搜索关键词
 const searchQuery = ref('')
+// 防抖搜索词：输入框立即响应，搜索逻辑延迟 200ms 执行，避免快速输入时频繁触发 Fuse.js 搜索
+const debouncedQuery = refDebounced(searchQuery, 200)
 // 语言筛选值，'*' 表示全部，多选时逗号分隔
 const languageFilter = ref('*')
 // 排序方向，从后端注入的偏好初始化，默认倒序（由新至旧）
@@ -136,9 +139,9 @@ const fuseInstance = computed(() => {
 const filteredSnippets = computed(() => {
   let result = languageFilteredSnippets.value
 
-  // 按关键词模糊搜索
-  if (searchQuery.value.trim()) {
-    result = fuseInstance.value.search(searchQuery.value).map((r) => r.item)
+  // 按关键词模糊搜索（使用防抖值，避免快速输入时频繁触发）
+  if (debouncedQuery.value.trim()) {
+    result = fuseInstance.value.search(debouncedQuery.value).map((r) => r.item)
   }
 
   // 排序：按添加日期，支持正序（由旧至新）和倒序（由新至旧）
@@ -152,9 +155,9 @@ const filteredSnippets = computed(() => {
   return sorted
 })
 
-// 是否处于搜索或语言筛选状态（模板空状态判断与分组过滤共用）
+// 是否处于搜索或语言筛选状态（模板空状态判断与分组过滤共用，搜索使用防抖值保持一致）
 const isFiltering = computed(
-  () => !!searchQuery.value.trim() || (languageFilter.value !== '*' && !!languageFilter.value)
+  () => !!debouncedQuery.value.trim() || (languageFilter.value !== '*' && !!languageFilter.value)
 )
 
 /**
