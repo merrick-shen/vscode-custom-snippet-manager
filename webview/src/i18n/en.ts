@@ -88,6 +88,8 @@ export default {
     escapeDollar: 'Escape dollar sign',
     escapeBrace: 'Escape closing brace',
     escapeBackslash: 'Escape backslash',
+    copy: 'Copy',
+    copied: 'Copied',
   },
   delete: {
     title: 'Delete Confirmation',

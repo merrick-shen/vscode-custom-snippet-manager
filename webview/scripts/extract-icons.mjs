@@ -60,6 +60,7 @@ function parseIconsFromLanguages() {
     'folder', 'edit', 'trash-can', 'error-outline', 'link',
     'save', 'information', 'launch',
     'draggable', 'checkbox', 'checkbox-checked',
+    'copy',
   ]
   for (const name of carbonUiIcons) {
     if (!icons['carbon'].includes(name)) icons['carbon'].push(name)

@@ -12,6 +12,22 @@ function toggle() {
   expanded.value = !expanded.value
 }
 
+// 已复制项的 code 集合，用于在按钮上短暂显示对勾反馈
+const copiedCodes = ref<Record<string, boolean>>({})
+
+/** 复制语法代码到剪贴板，并在 1.5 秒内显示对勾反馈 */
+async function copyCode(code: string) {
+  try {
+    await navigator.clipboard.writeText(code)
+    copiedCodes.value[code] = true
+    setTimeout(() => {
+      copiedCodes.value[code] = false
+    }, 1500)
+  } catch (err) {
+    console.error('[SnippetSyntaxHelp] 复制失败:', err)
+  }
+}
+
 // VS Code SnippetString 完整语法说明
 const sections = computed(() => [
   {
@@ -132,6 +148,19 @@ const sections = computed(() => [
             >
               <code class="syntax-help__code">{{ item.code }}</code>
               <span class="syntax-help__desc">{{ item.desc }}</span>
+              <button
+                class="syntax-help__copy"
+                type="button"
+                :title="copiedCodes[item.code] ? t('syntax.copied') : t('syntax.copy')"
+                :aria-label="copiedCodes[item.code] ? t('syntax.copied') : t('syntax.copy')"
+                @click="copyCode(item.code)"
+              >
+                <Icon
+                  :icon="copiedCodes[item.code] ? 'carbon:checkmark' : 'carbon:copy'"
+                  width="12"
+                  height="12"
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -299,6 +328,33 @@ const sections = computed(() => [
     color: $color-description;
     font-size: $font-size-xs;
     @include text-ellipsis;
+  }
+
+  &__copy {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: $color-description;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.2s, background-color 0.2s, color 0.2s, transform 0.1s;
+
+    &:hover {
+      opacity: 1;
+      background: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.08));
+      color: $color-foreground;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
   }
 }
 

@@ -88,6 +88,8 @@ export default {
     escapeDollar: '转义美元符号',
     escapeBrace: '转义右花括号',
     escapeBackslash: '转义反斜杠',
+    copy: '复制',
+    copied: '已复制',
   },
   delete: {
     title: '删除确认',

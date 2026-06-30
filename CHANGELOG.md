@@ -8,6 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- **Snippet Editor**: Each syntax tip in the snippet syntax help panel now has a copy button, letting you quickly copy syntax tokens like `$1` or `${1:label}` with a single click
+
 ### Changed
 
 - **Snippet Editor**: Smoother expand/collapse animation for the snippet syntax help panel
