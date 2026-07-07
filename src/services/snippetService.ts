@@ -715,49 +715,6 @@ export class SnippetService {
   }
 
   /**
-   * 批量删除文件夹，默认文件夹不可删除
-   * @param folderIds 要删除的文件夹 ID 列表
-   * @param action 片段处理方式：move 移入默认文件夹，delete 连同片段删除
-   * @returns 成功删除的文件夹数量
-   */
-  async batchDeleteFolders(folderIds: string[], action: DeleteFolderAction): Promise<number> {
-    await this.ready();
-    // 过滤掉默认文件夹和不存在的文件夹
-    const validIds = folderIds.filter((id) => id !== DEFAULT_FOLDER_ID && this.folders.some((f) => f.id === id));
-    if (validIds.length === 0) {
-      return 0;
-    }
-
-    if (action === 'move') {
-      // 将所有待删除文件夹的片段并入默认文件夹
-      const defaultList = this.snippetsByFolder.get(DEFAULT_FOLDER_ID) ?? [];
-      for (const folderId of validIds) {
-        const snippets = this.snippetsByFolder.get(folderId) ?? [];
-        defaultList.push(...snippets);
-      }
-      this.snippetsByFolder.set(DEFAULT_FOLDER_ID, defaultList);
-      await this.saveFolderSnippets(DEFAULT_FOLDER_ID);
-    }
-
-    // 从清单和内存缓存移除，删除磁盘文件
-    for (const folderId of validIds) {
-      const idx = this.folders.findIndex((f) => f.id === folderId);
-      if (idx !== -1) {
-        this.folders.splice(idx, 1);
-      }
-      this.snippetsByFolder.delete(folderId);
-      this.dirtyFolders.delete(folderId);
-    }
-    this.invalidateAllCache();
-
-    await Promise.all([
-      this.saveFoldersMeta(),
-      ...validIds.map((folderId) => this.deleteFolderFile(folderId)),
-    ]);
-    return validIds.length;
-  }
-
-  /**
    * 更新文件夹排序顺序
    * @param folderIds 按新顺序排列的文件夹 ID 列表
    */

@@ -37,7 +37,6 @@ export type MessageType =
   | 'createFolder'
   | 'renameFolder'
   | 'deleteFolder'
-  | 'batchDeleteFolders'
   | 'reorderFolders'
   | 'openExternal'
   | 'openSnippetsDirectory'

@@ -1,10 +1,10 @@
-<!-- 文件夹分组组件：折叠头部 + 片段列表，支持多选模式 -->
+<!-- 文件夹分组组件：折叠头部 + 片段列表，支持拖拽排序 -->
 <script setup lang="ts">
 /**
  * FolderGroup 组件
  *
  * 渲染一个文件夹分组，包含可折叠的文件夹头部和内部片段列表。
- * 多选模式下：编辑按钮替换为拖拽图标，删除按钮替换为复选框，默认文件夹不可选/拖拽
+ * 非默认文件夹头部右侧显示拖拽手柄，可拖拽排序；hover 时显示编辑/删除按钮。
  */
 import { Icon } from '@iconify/vue'
 import type { Snippet, Folder } from '@/types'
@@ -21,13 +21,9 @@ const props = defineProps<{
   defaultFolderId: string
   /** 文件夹显示名称（已处理 i18n） */
   folderDisplayName: string
-  /** 是否处于多选模式 */
-  multiSelectMode?: boolean
-  /** 多选模式下是否被选中 */
-  selected?: boolean
-  /** 多选模式下是否正在拖拽 */
+  /** 是否正在拖拽 */
   dragging?: boolean
-  /** 多选模式下拖拽经过时的放置指示 */
+  /** 拖拽经过时的放置指示 */
   dragOver?: boolean
   /** 拖拽位置：before 或 after */
   dragPosition?: 'before' | 'after'
@@ -41,7 +37,6 @@ const emit = defineEmits<{
   (e: 'deleteSnippet', snippet: Snippet): void
   (e: 'snippetMouseenter', event: MouseEvent, snippet: Snippet): void
   (e: 'snippetMouseleave'): void
-  (e: 'select', folderId: string): void
   (e: 'dragstart', event: DragEvent, folderId: string): void
   (e: 'dragend'): void
   (e: 'dragover', event: DragEvent, folderId: string): void
@@ -58,19 +53,12 @@ const dragHandleRef = ref<HTMLElement | null>(null)
 /** 是否为默认文件夹 */
 const isDefault = computed(() => props.folder.id === props.defaultFolderId)
 
-/** 多选模式下是否可交互（默认文件夹不可选/拖拽） */
-const canInteract = computed(() => props.multiSelectMode && !isDefault.value)
-
-/** 处理复选框点击 */
-function handleCheckboxClick() {
-  if (canInteract.value) {
-    emit('select', props.folder.id)
-  }
-}
+/** 是否可拖拽（默认文件夹不可拖拽） */
+const canDrag = computed(() => !isDefault.value)
 
 /** 拖拽开始 */
 function handleDragStart(event: DragEvent) {
-  if (!canInteract.value) {
+  if (!canDrag.value) {
     event.preventDefault()
     return
   }
@@ -88,7 +76,7 @@ function handleDragStart(event: DragEvent) {
 
 /** 拖拽经过 */
 function handleDragOver(event: DragEvent) {
-  if (!canInteract.value) return
+  if (!canDrag.value) return
   event.preventDefault()
   emit('dragover', event, props.folder.id)
 }
@@ -100,7 +88,7 @@ function handleDragLeave() {
 
 /** 放置 */
 function handleDrop(event: DragEvent) {
-  if (!canInteract.value) return
+  if (!canDrag.value) return
   event.preventDefault()
   emit('drop', event, props.folder.id)
 }
@@ -110,25 +98,18 @@ function handleDrop(event: DragEvent) {
   <div
     class="folder-group"
     :class="{
-      'is-selected': multiSelectMode && selected,
-      'is-dragging': multiSelectMode && dragging,
-      'is-drag-over': multiSelectMode && dragOver,
-      'is-default-folder': multiSelectMode && isDefault,
-      'drag-before': multiSelectMode && dragOver && dragPosition === 'before',
-      'drag-after': multiSelectMode && dragOver && dragPosition === 'after',
+      'is-dragging': dragging,
+      'is-drag-over': dragOver,
+      'is-default-folder': isDefault,
+      'drag-before': dragOver && dragPosition === 'before',
+      'drag-after': dragOver && dragPosition === 'after',
     }"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
     @drop="handleDrop"
   >
-    <div ref="folderHeaderRef" class="folder-header" @click="multiSelectMode ? undefined : emit('toggle', folder.id)">
-      <!-- 折叠箭头：多选模式下默认文件夹保留占位 -->
-      <template v-if="multiSelectMode">
-        <div v-if="isDefault" class="folder-arrow-placeholder" />
-        <div v-else class="folder-arrow-placeholder" />
-      </template>
+    <div ref="folderHeaderRef" class="folder-header" @click="emit('toggle', folder.id)">
       <Icon
-        v-else
         icon="carbon:chevron-down"
         class="folder-arrow"
         :class="{ 'is-collapsed': isCollapsed }"
@@ -136,34 +117,32 @@ function handleDrop(event: DragEvent) {
         height="12"
       />
       <Icon icon="carbon:folder" class="folder-icon" width="14" height="14" />
-      <span class="folder-name" :class="{ 'folder-name-disabled': multiSelectMode && isDefault }">{{ folderDisplayName }}</span>
-      <!-- 操作区域：多选模式 vs 默认模式 -->
-      <template v-if="multiSelectMode">
-        <!-- 多选模式下：拖拽图标（原编辑位置）+ 复选框（原删除位置） -->
-        <div v-if="!isDefault" class="folder-actions folder-actions-visible">
-          <div ref="dragHandleRef" class="folder-drag-handle" draggable="true" @click.stop @dragstart="handleDragStart" @dragend="emit('dragend')">
-            <Icon icon="carbon:draggable" width="14" height="14" />
-          </div>
-          <label class="folder-checkbox" @click.stop="handleCheckboxClick">
-            <BaseCheckbox :model-value="selected" size="sm" />
-          </label>
+      <span class="folder-name">{{ folderDisplayName }}</span>
+      <!-- 操作区域：非默认文件夹显示编辑/删除按钮 + 拖拽手柄 -->
+      <div v-if="!isDefault" class="folder-actions">
+        <button class="folder-action-btn" @click.stop="emit('rename', folder)">
+          <Icon icon="carbon:edit" width="12" height="12" />
+        </button>
+        <button class="folder-action-btn folder-action-danger" @click.stop="emit('deleteFolder', folder)">
+          <Icon icon="carbon:trash-can" width="12" height="12" />
+        </button>
+        <!-- 拖拽手柄：常驻显示，用于排序 -->
+        <div
+          ref="dragHandleRef"
+          class="folder-drag-handle"
+          draggable="true"
+          @click.stop
+          @dragstart="handleDragStart"
+          @dragend="emit('dragend')"
+        >
+          <Icon icon="carbon:draggable" width="14" height="14" />
         </div>
-      </template>
-      <template v-else>
-        <div v-if="folder.id !== defaultFolderId" class="folder-actions">
-          <button class="folder-action-btn" @click.stop="emit('rename', folder)">
-            <Icon icon="carbon:edit" width="12" height="12" />
-          </button>
-          <button class="folder-action-btn folder-action-danger" @click.stop="emit('deleteFolder', folder)">
-            <Icon icon="carbon:trash-can" width="12" height="12" />
-          </button>
-        </div>
-      </template>
+      </div>
       <span class="folder-count">{{ snippets.length }}</span>
     </div>
 
-    <!-- 非多选模式下显示片段列表 -->
-    <div v-if="!multiSelectMode" v-show="!isCollapsed" class="snippet-items">
+    <!-- 片段列表 -->
+    <div v-show="!isCollapsed" class="snippet-items">
       <div v-if="snippets.length === 0" class="folder-empty">
         {{ $t('folder.emptyHint') }}
       </div>
@@ -190,12 +169,7 @@ function handleDrop(event: DragEvent) {
     opacity: 0.4;
   }
 
-  &.is-selected .folder-header {
-    background-color: $bg-list-hover;
-  }
-
   &.is-default-folder .folder-header {
-    opacity: 0.6;
     cursor: default;
   }
 
@@ -238,7 +212,7 @@ function handleDrop(event: DragEvent) {
   &:hover {
     background-color: $bg-list-hover;
 
-    .folder-actions:not(.folder-actions-visible) {
+    .folder-actions {
       opacity: 1;
     }
   }
@@ -254,19 +228,6 @@ function handleDrop(event: DragEvent) {
   }
 }
 
-.folder-arrow-placeholder {
-  flex-shrink: 0;
-  width: 12px;
-  height: 12px;
-}
-
-.folder-checkbox {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
 .folder-icon {
   flex-shrink: 0;
   opacity: 0.7;
@@ -278,10 +239,6 @@ function handleDrop(event: DragEvent) {
   font-weight: 600;
   color: $color-foreground;
   @include text-ellipsis;
-}
-
-.folder-name-disabled {
-  opacity: 0.6;
 }
 
 .folder-count {
@@ -298,14 +255,10 @@ function handleDrop(event: DragEvent) {
 .folder-actions {
   flex-shrink: 0;
   display: flex;
+  align-items: center;
   gap: 2px;
   opacity: 0;
   transition: opacity 0.15s ease;
-}
-
-// 多选模式下拖拽图标始终可见
-.folder-actions-visible {
-  opacity: 1 !important;
 }
 
 .folder-drag-handle {

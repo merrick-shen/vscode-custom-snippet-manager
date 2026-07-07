@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [中文更新日志](./CHANGELOG.zh-CN.md)
 
+## [Unreleased]
+
+### Removed
+
+- **Folder Management**: Removed the "Manage Folders" button and batch delete feature; folder drag-to-reorder is now always available without entering manage mode
+
 ## [1.5.0] - 2026-07-06
 
 ### Added

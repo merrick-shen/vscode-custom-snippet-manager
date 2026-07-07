@@ -207,20 +207,6 @@ export class SidebarWebviewProvider implements vscode.WebviewViewProvider {
         break;
       }
 
-      // 前端请求批量删除文件夹
-      case 'batchDeleteFolders': {
-        const { folderIds, action } = msg.payload as { folderIds: string[]; action: 'move' | 'delete' };
-        const count = await this.snippetService.batchDeleteFolders(folderIds, action === 'delete' ? 'delete' : 'move');
-        if (count > 0) {
-          this.postFoldersList();
-          this.postSnippetsList();
-          this.showNotification('success', 'folder.batchDeleteSuccess', { count: String(count) });
-        } else {
-          this.showNotification('warning', 'folder.batchDeleteFailed');
-        }
-        break;
-      }
-
       // 前端请求文件夹排序
       case 'reorderFolders': {
         const folderIds = msg.payload as string[];
