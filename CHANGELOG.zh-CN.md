@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 变更
+
+- **界面布局**：搜索框与排序按钮整合为同一行，排序按钮缩小尺寸，布局更紧凑
+
 ### 移除
 
 - **文件夹管理**：移除"管理文件夹"按钮及批量删除功能，文件夹拖拽排序改为常驻可用（无需进入管理模式）

@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Layout**: Search box and sort button are now on the same row with a more compact sort button
+
 ### Removed
 
 - **Folder Management**: Removed the "Manage Folders" button and batch delete feature; folder drag-to-reorder is now always available without entering manage mode

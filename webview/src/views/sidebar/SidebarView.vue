@@ -419,9 +419,14 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
       <BaseButton variant="secondary" size="sm" icon="carbon:folder-add" class="new-folder-btn" @click="openCreateFolder">{{ t('folder.create') }}</BaseButton>
     </div>
 
-    <!-- 搜索框 -->
+    <!-- 搜索框 + 排序按钮同一行 -->
     <div class="sidebar-search">
       <SearchInput v-model="searchQuery" :placeholder="t('list.searchPlaceholder')" />
+      <button class="sort-toggle-btn" @click="toggleSortOrder" :title="currentSortLabel">
+        <Icon v-if="sortOrder === 'desc'" icon="carbon:arrow-down" width="12" height="12" />
+        <Icon v-else icon="carbon:arrow-up" width="12" height="12" />
+        {{ currentSortLabel }}
+      </button>
     </div>
 
     <!-- 语言筛选下拉：使用自定义组件显示图标 -->
@@ -432,15 +437,6 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
         :placeholder="t('form.languagePlaceholder')"
         multiple
       />
-    </div>
-
-    <!-- 排序切换按钮 -->
-    <div class="sidebar-sort">
-      <button class="sort-toggle-btn" @click="toggleSortOrder" :title="currentSortLabel">
-        <Icon v-if="sortOrder === 'desc'" icon="carbon:arrow-down" width="12" height="12" />
-        <Icon v-else icon="carbon:arrow-up" width="12" height="12" />
-        {{ currentSortLabel }}
-      </button>
     </div>
 
     <!-- 片段列表区域 -->
@@ -700,9 +696,18 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
   font-size: $font-size-xs;
 }
 
-// ===== 搜索框 =====
+// ===== 搜索框 + 排序按钮 =====
 .sidebar-search {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
   padding: 10px 14px $spacing-xs;
+
+  // 搜索框占满剩余空间
+  :deep(.search-input-wrapper) {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 // ===== 语言筛选 =====
@@ -710,25 +715,23 @@ function handleFolderDrop(_event: DragEvent, targetFolderId: string) {
   padding: $spacing-xs 14px $spacing-sm;
 }
 
-// ===== 排序切换 =====
-.sidebar-sort {
-  padding: 0 14px $spacing-sm;
-}
-
+// ===== 排序切换按钮（缩小尺寸，紧贴搜索框右侧） =====
 .sort-toggle-btn {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
-  width: 100%;
-  padding: $spacing-xs $spacing-sm;
+  gap: 4px;
+  flex-shrink: 0;
+  align-self: stretch;
+  padding: 0 8px;
   border: 1px solid var(--vscode-dropdown-border, #3c3c3c);
-  border-radius: $radius-sm;
+  border-radius: $radius-md;
   background: var(--vscode-dropdown-background, #3c3c3c);
   color: var(--vscode-dropdown-foreground, #cccccc);
   font-size: $font-size-xs;
   cursor: pointer;
   font-family: inherit;
   line-height: 1.4;
+  white-space: nowrap;
   transition: background 0.15s;
 
   &:hover {
