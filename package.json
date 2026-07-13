@@ -8,17 +8,17 @@
   },
   "publisher": "Horyce",
   "author": {
-    "name": "Horyce",
+    "name": "Merrick Shen",
     "email": "smh070912@gmail.com"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/horyce/vscode-custom-snippet-manager"
+    "url": "https://github.com/merrick-shen/vscode-custom-snippet-manager"
   },
-  "homepage": "https://github.com/horyce/vscode-custom-snippet-manager#readme",
+  "homepage": "https://github.com/merrick-shen/vscode-custom-snippet-manager#readme",
   "bugs": {
-    "url": "https://github.com/horyce/vscode-custom-snippet-manager/issues"
+    "url": "https://github.com/merrick-shen/vscode-custom-snippet-manager/issues"
   },
   "galleryBanner": {
     "color": "#1e1e1e",

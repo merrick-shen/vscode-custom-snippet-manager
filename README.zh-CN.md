@@ -5,7 +5,7 @@
     <a href="https://marketplace.visualstudio.com/items?itemName=Horyce.custom-snippet-manager">
       <img src="https://img.shields.io/badge/VSCode-Extension-blue?style=for-the-badge" alt="VS Code" />
     </a>
-    <a href="https://github.com/horyce/vscode-custom-snippet-manager/blob/main/LICENSE">
+    <a href="https://github.com/merrick-shen/vscode-custom-snippet-manager/blob/main/LICENSE">
       <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="License" />
     </a>
     <a href="./README.md">
@@ -162,7 +162,7 @@ console.log('$1', $2);$0
 
 欢迎提交 Issue 或 Pull Request：
 
-👉 https://github.com/horyce/vscode-custom-snippet-manager
+👉 https://github.com/merrick-shen/vscode-custom-snippet-manager
 
 ---
 

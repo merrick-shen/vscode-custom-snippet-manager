@@ -21,7 +21,7 @@ const storagePath = window.__STORAGE_PATH || ''
 
 // 插件信息常量
 const APP_NAME = 'Custom Snippet Manager'
-const GITHUB_URL = 'https://github.com/horyce/vscode-custom-snippet-manager'
+const GITHUB_URL = 'https://github.com/merrick-shen/vscode-custom-snippet-manager'
 const LICENSE = 'MIT'
 
 // 语言设置相关 props
